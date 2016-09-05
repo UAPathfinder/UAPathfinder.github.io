@@ -21,4 +21,4 @@ func MySQLQuery (input string) string{
         con, err := sql.Open("mysql", store.user+":"+store.password+"@/"+store.database)
         defer con.Close()
 }
-
+//this is a github test
