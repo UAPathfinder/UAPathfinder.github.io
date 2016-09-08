@@ -2,7 +2,7 @@ package main
 
 import (
 //"bufio"
-//"fmt"
+"fmt"
 //"os"
 //"database/sql" //non-functional MySQL imports
 // _ "/mysql"
@@ -23,14 +23,26 @@ type Course struct { //ex 3960:401 Data Structures
 	CourseId  int
 	Priority  int //from 1 to 10
 	Manditory bool
-	//List<Class> Classes, but that's not a thing in Go.
-	//Maybe a slice of an arbatrarially large array?
-	//or implement c++ vector
+	Classes []Class//initializing an empty slice
 }
 
 func main() {
-	_courses := GetCourses() //or replace with whatever list thing we figure out
+	
 }
+
+func FillCourses(courses map[int]int){
+	for i := range courses {
+		fmt.Println(courses[i])
+	}
+}
+
+/* So I don't forget the syntax
+func courseThing(c Course){
+	fmt.Println(c.CourseId)
+	c.Classes = append(c.Classes,  Class{ClassId: 4444444})
+	fmt.Println(c.Classes[0].ClassI
+}
+*/
 
 func MySQLQuery(input string) string {
 	//this will return the MySQL query string, right now it doesn't
@@ -41,8 +53,8 @@ func MySQLQuery(input string) string {
 
 func GetCourses() map[int]int {
 	//retrives list of course id's with priorities
-	var output map[int]int
-	output[1] = 2
+	output := make(map[int]int)
+	output[1] = 2 //tempoary output for testing
 	return output
 }
 
