@@ -1,0 +1,11 @@
+ClassId,CourseId,StartTime,EndTime,MeetingDays,ProfessorName,MeetingLocation
+1,1,9:00:00,10:00:00,MWF,Bob Jones,Leigh Hall
+2,1,11:30:00,13:00:00,TH,John Smith,Hall Building
+3,1,5:05:00,6:15:00,MW,Kyle Thompson,TBA
+4,2,9:25:00,10:45:00,THF,Tom Thompson,East Cafeteria
+5,2,7:45:00,10:00:00,MW,Mike Killington,Leigh Hall
+6,2,18:00:00,19:45:00,TH,Lee Xiao,CAS Building
+7,3,12:00:00,13:00:00,MWF,Tom Kelly,Hall Building
+8,4,13:00:00,15:00:00,TH,John Ison,Polskey
+9,4,14:00:00,16:00:00,MWF,Sarah Janes,Brown Hall
+10,5,10:00:00,12:00:00,MW,Virginia Johnson,Market Building
