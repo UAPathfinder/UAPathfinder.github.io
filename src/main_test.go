@@ -52,6 +52,47 @@ if output != 9{
 
 }
 
+func TestOrderCombos(t *testing.T){
+class1 := Class{ClassId:1,CourseId: 1,StartTime: SimpleParse("09:00:00"),EndTime: SimpleParse("10:00:00"),MeetingDays: "MWF",ProfessorName: "Bob Jones",MeetingLocation: "Leigh Hall"}
+//The sample data is all the same prof and location because we're not testing those portions right now
+class3 := Class{ClassId:3,CourseId: 1,StartTime: SimpleParse("05:05:00"),EndTime: SimpleParse("06:15:00"),MeetingDays: "MW",ProfessorName: "Bob Jones",MeetingLocation: "Leigh Hall"}
+class4 := Class{ClassId:4,CourseId: 2,StartTime: SimpleParse("09:25:00"),EndTime: SimpleParse("10:45:00"),MeetingDays: "THF",ProfessorName: "Bob Jones",MeetingLocation: "Leigh Hall"}
+class5 := Class{ClassId:5,CourseId: 2,StartTime: SimpleParse("07:45:00"),EndTime: SimpleParse("10:00:00"),MeetingDays: "MW",ProfessorName: "Bob Jones",MeetingLocation: "Leigh Hall"}
+
+var arr1 = []Class{class1, class5}
+var arr2 = []Class{class3, class4}
+var arr3 = []Class{class1, class4}
+var arr4 = []Class{class3, class5}
+
+combo1 := Combo{Classes: arr1, Score: 45}
+combo2 := Combo{Classes: arr2, Score: 145}
+combo3 := Combo{Classes: arr3, Score: 4}
+combo4 := Combo{Classes: arr4, Score: 85}
+
+var comboArr = []Combo{combo1, combo2, combo3, combo4}
+OrderCombos(comboArr)
+
+if !CompareCombos(combo1, combo1){
+	t.Fatalf("CompareCombos is broke")
+}
+
+if !(CompareCombos(comboArr[0], combo1) && CompareCombos(comboArr[1], combo2) && CompareCombos(comboArr[2], combo3)) {
+	 t.Fatalf("OrderCombos Failed.")
+}
+
+}
+
+
+
+func CompareCombos(input1, input2 Combo) bool{
+	for i := range input1.Classes {
+		if input1.Classes[i] != input2.Classes[i]{
+			return false
+		}
+	}
+	return true
+}
+
 func SimpleParse(input string) time.Time{
         output, _ := time.Parse("15:04:05", input)
         return output

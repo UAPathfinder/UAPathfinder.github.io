@@ -57,7 +57,7 @@ func ScoreCombo(combo Combo) {
 }
 
 func OrderCombos(combos []Combo) {
-	sort.Sort(ByScore(combos))
+	sort.Reverse(ByScore(combos))
 }
 
 func FillCourses(courses map[int]int) { //has to wait for sql stuff
@@ -65,14 +65,6 @@ func FillCourses(courses map[int]int) { //has to wait for sql stuff
 		courses[i]++
 	}
 }
-
-/* So I don't forget the syntax
-func courseThing(c Course){
-	fmt.Println(c.CourseId)
-	c.Classes = append(c.Classes,  Class{ClassId: 4444444})
-	fmt.Println(c.Classes[0].ClassI
-}
-*/
 
 func MySQLQuery(input string) string {
 	//this will return the MySQL query string, right now it doesn't
