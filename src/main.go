@@ -44,7 +44,7 @@ func (a ByScore) Less(i, j int) bool { return a[i].Score < a[j].Score }
 func main() {
 }
 
-func NumCombos(courses []Course) int { //untested, waiting for data
+func NumCombos(courses []Course) int {
 	var total int = 1
 	for i := range courses {
 		total *= len(courses[i].Classes)
@@ -80,4 +80,6 @@ func GetCourses() map[int]int { //has to wait for sql stuff
 	return output
 }
 
-//func ComputeCombinations //multiplies all course.Classes.length by each other
+func DoesOverlap(Class1Start, Class1End, Class2Start, Class2End time.Time) bool {
+	return !(Class2Start.After(Class1End) || Class1Start.After(Class2End))
+}
