@@ -44,6 +44,7 @@ func (a ByScore) Less(i, j int) bool { return a[i].Score < a[j].Score }
 func main() {
 }
 
+
 func NumCombos(courses []Course) int {
 	var total int = 1
 	for i := range courses {
@@ -54,6 +55,21 @@ func NumCombos(courses []Course) int {
 
 func ScoreCombo(combo Combo) {
 
+}
+
+func GenerateCombos(courses []Course, result *[]Combo, depth int, current Combo) {
+//There is almost certiantly a better way to do this
+	_ = "breakpoint"
+	if depth == len(courses) {
+		*result = append(*result, current)
+		_ = "breakpoint"
+	}else{
+		for i := 0; i < len(courses[depth].Classes); i++ {
+			var tempCurrent Combo
+			tempCurrent.Classes = append(current.Classes, courses[depth].Classes[i])
+			GenerateCombos(courses, result, depth + 1, tempCurrent)
+		}
+	}
 }
 
 func OrderCombos(combos []Combo) {
