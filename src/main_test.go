@@ -113,6 +113,9 @@ func TestDoesOverlap(t *testing.T) {
 	Class1End := SimpleParse("10:00:00")
 	Class2Start := SimpleParse("09:30:00")
 	Class2End := SimpleParse("10:30:00")
+	//Class3End := SimpleParse("11:30:00")
+	//output := DoesOverlap(Class1Start, Class1End, Class1End, Class3End)
+	//t.Fatalf("for same class: %t", output)
 	if !DoesOverlap(Class1Start, Class1End, Class2Start, Class2End) {
 		t.Fatalf("DoesOverlap Failed")
 	}
