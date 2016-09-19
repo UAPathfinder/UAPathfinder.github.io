@@ -82,6 +82,32 @@ func TestOrderCombos(t *testing.T) {
 
 }
 
+
+func TestDoesHaveOverlap(t *testing.T) {
+        class1 := Class{ClassId: 1, CourseId: 1, StartTime: SimpleParse("09:00:00"), EndTime: SimpleParse("10:00:00"), MeetingDays: "MWF", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
+        //The sample data is all the same prof and location because we're not testing those portions right now
+        //class3 := Class{ClassId: 3, CourseId: 1, StartTime: SimpleParse("05:05:00"), EndTime: SimpleParse("06:15:00"), MeetingDays: "MW", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
+        class4 := Class{ClassId: 4, CourseId: 2, StartTime: SimpleParse("09:25:00"), EndTime: SimpleParse("10:45:00"), MeetingDays: "THF", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
+        class5 := Class{ClassId: 5, CourseId: 2, StartTime: SimpleParse("10:45:00"), EndTime: SimpleParse("11:00:00"), MeetingDays: "MW", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
+
+        var noOverlap = []Class{class1, class5}
+        //var arr2 = []Class{class3, class4}
+        var hasOverlap = []Class{class1, class4}
+        //var arr4 = []Class{class3, class5}
+
+        combo1 := Combo{Classes: noOverlap, Score: 45}
+        combo2 := Combo{Classes: hasOverlap, Score: 145}
+        //combo3 := Combo{Classes: arr3, Score: 4}
+        //combo4 := Combo{Classes: arr4, Score: 85}
+
+        if DoesHaveOverlap(combo1) {
+                t.Fatalf("no Overlap")
+        }
+	if !DoesHaveOverlap(combo2) {
+                t.Fatalf("has overlap")
+        }
+}
+
 func TestDoesOverlap(t *testing.T) {
 	Class1Start := SimpleParse("09:00:00")
 	Class1End := SimpleParse("10:00:00")
@@ -90,7 +116,7 @@ func TestDoesOverlap(t *testing.T) {
 	if !DoesOverlap(Class1Start, Class1End, Class2Start, Class2End) {
 		t.Fatalf("DoesOverlap Failed")
 	}
-	if !DoesOverlap(Class2Start, Class2End, Class1Start, Class1End) {
+	if DoesOverlap(Class1Start, Class2Start, Class1End, Class2End) {
 		t.Fatalf("DoesOverlap Failed")
 	}
 
@@ -102,7 +128,7 @@ func TestGenerateCombos(t *testing.T) {
         //The sample data is all the same prof and location because we're not testing those portions right now
         class2 := Class{ClassId: 2, CourseId: 1, StartTime: SimpleParse("11:30:00"), EndTime: SimpleParse("13:00:00"), MeetingDays: "TH", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
         class3 := Class{ClassId: 3, CourseId: 1, StartTime: SimpleParse("05:05:00"), EndTime: SimpleParse("06:15:00"), MeetingDays: "MW", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
-        class4 := Class{ClassId: 4, CourseId: 2, StartTime: SimpleParse("09:25:00"), EndTime: SimpleParse("10:45:00"), MeetingDays: "THF", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
+        class4 := Class{ClassId: 4, CourseId: 2, StartTime: SimpleParse("10:25:00"), EndTime: SimpleParse("11:45:00"), MeetingDays: "THF", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
         class5 := Class{ClassId: 5, CourseId: 2, StartTime: SimpleParse("07:45:00"), EndTime: SimpleParse("10:00:00"), MeetingDays: "MW", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
         class6 := Class{ClassId: 6, CourseId: 2, StartTime: SimpleParse("18:00:00"), EndTime: SimpleParse("19:45:00"), MeetingDays: "TH", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
 
@@ -126,7 +152,7 @@ func TestGenerateCombos(t *testing.T) {
 		t.Logf("\n")
 	}
 
-	if (len(result) != NumCombos(courses)){
+	if (len(result) != 7){
 		t.Fatalf("is not right size.  is : %d", len(result))
 	}
 

@@ -34,6 +34,19 @@ type Combo struct {
 }
 
 type Criteria struct {
+	Breaks Criterion //distance between classes
+	Professor Criterion
+	EarliestClass Criterion
+	LatestClass Criterion
+	Days Criterion //if Max is true, listed days are days off
+}
+
+type Criterion struct{ //singular of Criteria, basically an advanced key/value pair
+	Maximize bool
+	Manditory bool
+	Weight int
+	Time time.Time //for time-related criteria
+	Other string //mostly for days
 }
 
 type ByScore []Combo                 //implements sort.Interface for []Combo based on Score
@@ -45,7 +58,7 @@ func main() {
 }
 
 
-func NumCombos(courses []Course) int {
+func NumCombos(courses []Course) int { //total possiable combos, includes ones with class confilicts
 	var total int = 1
 	for i := range courses {
 		total *= len(courses[i].Classes)
@@ -53,16 +66,38 @@ func NumCombos(courses []Course) int {
 	return total
 }
 
-func ScoreCombo(combo Combo) {
+func ScoreCombo(combo Combo, criteria Criteria) int{
+	return ScoreBreaks(combo, criteria) + ScoreProfs(combo, criteria) + ScoreEarliestClass(combo, criteria) + ScoreLatestClass(combo, criteria) + ScoreDays(combo, criteria)
+}
 
+func ScoreBreaks(combo Combo, criteria Criteria) int{
+	return 0
+}
+
+func ScoreProfs(combo Combo, criteria Criteria) int{
+//will have to do some sort of query to rateMyProfessor
+	return 0 //temp
+}
+
+func ScoreEarliestClass(combo Combo, criteria Criteria) int{
+	return 0
+}
+
+func ScoreLatestClass(combo Combo, criteria Criteria) int{
+	return 0
+}
+
+func ScoreDays(combo Combo, criteria Criteria) int{
+	return 0
 }
 
 func GenerateCombos(courses []Course, result *[]Combo, depth int, current Combo) {
 //There is almost certiantly a better way to do this
-	_ = "breakpoint"
 	if depth == len(courses) {
-		*result = append(*result, current)
-		_ = "breakpoint"
+		if !DoesHaveOverlap(current){
+			*result = append(*result, current)
+		}
+
 	}else{
 		for i := 0; i < len(courses[depth].Classes); i++ {
 			var tempCurrent Combo
@@ -70,6 +105,18 @@ func GenerateCombos(courses []Course, result *[]Combo, depth int, current Combo)
 			GenerateCombos(courses, result, depth + 1, tempCurrent)
 		}
 	}
+}
+
+func DoesHaveOverlap(combo Combo) bool{
+	for i := 0; i < len(combo.Classes); i++ {
+		for j := i + 1; j < len(combo.Classes); j++{
+			if DoesOverlap(combo.Classes[i].StartTime, combo.Classes[i].EndTime, combo.Classes[j].StartTime, combo.Classes[j].EndTime) {
+				return true
+                        }
+                }
+        }
+	return false
+
 }
 
 func OrderCombos(combos []Combo) {
