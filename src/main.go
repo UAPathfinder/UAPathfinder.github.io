@@ -25,6 +25,8 @@ func ScoreCombo(combo Combo, criteria Criteria) int{
 	return ScoreBreaks(combo, criteria) + ScoreProfs(combo, criteria) + ScoreEarliestClass(combo, criteria) + ScoreLatestClass(combo, criteria) + ScoreDays(combo, criteria)
 }
 
+//note: I don't really know how to do these, so some of them may have some inherent bias
+
 func ScoreBreaks(combo Combo, criteria Criteria) int{
 	return 0
 }
@@ -42,12 +44,26 @@ func ScoreLatestClass(combo Combo, criteria Criteria) int{
 	return 0
 }
 
-func ScoreDays(combo Combo, criteria Criteria) int{
-	return 0
+func ScoreDays(combo Combo, criteria Criteria) int{ //
+	output := 0
+	for class := range combo.Classes { //this needs some work because I don't think go foreach ranges work like C#
+		for ClassDay := range class.MeetingDays {
+			for CriteriaDay := range criteria.Days.Other {
+				if ClassDay == CriteriaDay{
+					if criteria.Days.Manditory {
+					output = -10000000
+					}else{
+						output -= 1
+					}
+				}
+			}
+		}
+	}
+	output *= criteria.Days.Weight
+	return output
 }
 
 func GenerateCombos(courses []Course, result *[]Combo, depth int, current Combo) {
-//There is almost certiantly a better way to do this
 	if depth == len(courses) {
 		if !DoesHaveOverlap(current){
 			*result = append(*result, current)
@@ -58,6 +74,7 @@ func GenerateCombos(courses []Course, result *[]Combo, depth int, current Combo)
 			var tempCurrent Combo
 			tempCurrent.Classes = append(current.Classes, courses[depth].Classes[i])
 			GenerateCombos(courses, result, depth + 1, tempCurrent)
+			//yes, it's recursive.  it only goes [depth] layers deep before returning so the stack shouldn't overflow for a reasonable number of courses
 		}
 	}
 }
@@ -74,16 +91,21 @@ func DoesHaveOverlap(combo Combo) bool{
 
 }
 
-func OrderCombos(combos []Combo) {
+func OrderCombos(combos *[]Combo) {
 	sort.Reverse(ByScore(combos))
+}
+
+func OrderClasses(combo *Combo){
+	sort.Reverse(ByStartTime(combo.Classes))
 }
 
 func FillCourses(courses map[int]int) { //has to wait for sql stuff
 	for i := range courses {
 		courses[i]++
 	}
-}
 
+
+}
 func MySQLQuery(input string) string {
 	//this will return the MySQL query string, right now it doesn't
 	//con, err := sql.Open("mysql", store.user+":"+store.password+"@/"+store.database)

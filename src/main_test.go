@@ -26,10 +26,6 @@ func TestFillCourses(t *testing.T) {
 	}
 }
 
-type Flex struct { //allowes for a mixed array
-	f byte
-}
-
 func TestNumCombos(t *testing.T) {
 	class1 := Class{ClassId: 1, CourseId: 1, StartTime: SimpleParse("09:00:00"), EndTime: SimpleParse("10:00:00"), MeetingDays: "MWF", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
 	//The sample data is all the same prof and location because we're not testing those portions right now
@@ -70,7 +66,7 @@ func TestOrderCombos(t *testing.T) {
 	combo4 := Combo{Classes: arr4, Score: 85}
 
 	var comboArr = []Combo{combo1, combo2, combo3, combo4}
-	OrderCombos(comboArr)
+	OrderCombos(&comboArr)
 
 	if !CompareCombos(combo1, combo1) {
 		t.Fatalf("CompareCombos is broke")
@@ -82,6 +78,24 @@ func TestOrderCombos(t *testing.T) {
 
 }
 
+func TestOrderClasses(t testing.T) {
+	class1 := Class{ClassId: 1, CourseId: 1, StartTime: SimpleParse("09:00:00"), EndTime: SimpleParse("10:00:00"), MeetingDays: "MWF", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
+	class2 := Class{ClassId: 2, CourseId: 1, StartTime: SimpleParse("11:30:00"), EndTime: SimpleParse("13:00:00"), MeetingDays: "TH", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
+        //The sample data is all the same prof and location because we're not testing those portions right now
+        class3 := Class{ClassId: 3, CourseId: 1, StartTime: SimpleParse("10:05:00"), EndTime: SimpleParse("11:15:00"), MeetingDays: "MW", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
+        class4 := Class{ClassId: 4, CourseId: 2, StartTime: SimpleParse("11:25:00"), EndTime: SimpleParse("12:45:00"), MeetingDays: "THF", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
+        class5 := Class{ClassId: 5, CourseId: 2, StartTime: SimpleParse("13:45:00"), EndTime: SimpleParse("14:00:00"), MeetingDays: "MW", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
+
+	classes := []Class{class1, class2, class3, class5, class4}
+	combo := Combo{Classes: classes}
+
+	OrderClasses(&combo)
+
+	if !(combo.Classes[0] == class1 && combo.Classes[1] == class2 && combo.Classes[2] == class3 && combo.Classes[3] == class4 && combo.Classes[4] == class5)  {
+                t.Fatalf("OrderClasses failed.")
+        }
+	
+}
 
 func TestDoesHaveOverlap(t *testing.T) {
         class1 := Class{ClassId: 1, CourseId: 1, StartTime: SimpleParse("09:00:00"), EndTime: SimpleParse("10:00:00"), MeetingDays: "MWF", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
