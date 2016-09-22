@@ -44,12 +44,12 @@ func ScoreLatestClass(combo Combo, criteria Criteria) int{
 	return 0
 }
 
-func ScoreDays(combo Combo, criteria Criteria) int{ //
+func ScoreDays(combo Combo, criteria Criteria) int{ //could use some refactoring
 	output := 0
-	for class := range combo.Classes { //this needs some work because I don't think go foreach ranges work like C#
-		for ClassDay := range class.MeetingDays {
+	for class := range combo.Classes {
+		for ClassDay := range combo.Classes[class].MeetingDays {
 			for CriteriaDay := range criteria.Days.Other {
-				if ClassDay == CriteriaDay{
+				if combo.Classes[class].MeetingDays[ClassDay] == criteria.Days.Other[CriteriaDay]{
 					if criteria.Days.Manditory {
 					output = -10000000
 					}else{
@@ -92,11 +92,11 @@ func DoesHaveOverlap(combo Combo) bool{
 }
 
 func OrderCombos(combos *[]Combo) {
-	sort.Reverse(ByScore(combos))
+	sort.Reverse(ByScore(*combos))
 }
 
 func OrderClasses(combo *Combo){
-	sort.Reverse(ByStartTime(combo.Classes))
+	sort.Sort(ByStartTime(combo.Classes))
 }
 
 func FillCourses(courses map[int]int) { //has to wait for sql stuff

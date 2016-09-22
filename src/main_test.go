@@ -78,7 +78,7 @@ func TestOrderCombos(t *testing.T) {
 
 }
 
-func TestOrderClasses(t testing.T) {
+func TestOrderClasses(t *testing.T) {
 	class1 := Class{ClassId: 1, CourseId: 1, StartTime: SimpleParse("09:00:00"), EndTime: SimpleParse("10:00:00"), MeetingDays: "MWF", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
 	class2 := Class{ClassId: 2, CourseId: 1, StartTime: SimpleParse("11:30:00"), EndTime: SimpleParse("13:00:00"), MeetingDays: "TH", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
         //The sample data is all the same prof and location because we're not testing those portions right now
@@ -91,7 +91,8 @@ func TestOrderClasses(t testing.T) {
 
 	OrderClasses(&combo)
 
-	if !(combo.Classes[0] == class1 && combo.Classes[1] == class2 && combo.Classes[2] == class3 && combo.Classes[3] == class4 && combo.Classes[4] == class5)  {
+	if !(combo.Classes[0] == class1 && combo.Classes[1] == class3 && combo.Classes[2] == class4 && combo.Classes[3] == class2 && combo.Classes[4] == class5)  {
+		t.Log(combo)
                 t.Fatalf("OrderClasses failed.")
         }
 	
