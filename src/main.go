@@ -10,6 +10,8 @@ import (
 	// _ "/mysql"
 )
 
+var AllCourses []Course
+
 func main() {
 }
 
@@ -110,8 +112,31 @@ func ScoreDays(combo Combo, criteria Criteria) int { //could use some refactorin
 
 func GenerateCombos(courses []Course, result *[]Combo, depth int, current Combo) { //eventuially this should be modified to not add a class if that class isn't manditory and then also start the score of that combo slightly lowered since it dropped a class
 	if depth == len(courses) {
-		if !DoesHaveOverlap(current) {
+		hasOverlap, issue1, issue2 := DoesHaveOverlap(current)
+		if !hasOverlap {
 			*result = append(*result, current)
+		} else {
+			course1 := GetCourse(current.Classes[issue1].CourseId)
+			course2 := GetCourse(current.Classes[issue2].CourseId)
+			if !course1.Manditory && !course2.Manditory {
+				if course1.Priority < course2.Priority {
+					current.Classes = append(current.Classes[:issue1], current.Classes[issue1+1:]...)
+					current.Score -= course1.Priority
+					GenerateCombos(courses, result, depth, current) //kicks it back with the same depth to check for overlaps again
+				} else if course1.Priority > course2.Priority {
+					current.Classes = append(current.Classes[:issue2], current.Classes[issue2+1:]...)
+					current.Score -= course2.Priority
+					GenerateCombos(courses, result, depth, current) //kicks it back with the same depth to check for overlaps again
+				} //otherwise don't append
+			} else if course1.Manditory {
+				current.Classes = append(current.Classes[:issue2], current.Classes[issue2+1:]...)
+				current.Score -= course2.Priority
+				GenerateCombos(courses, result, depth, current) //kicks it back with the same depth to check for overlaps again
+			} else if course2.Manditory {
+				current.Classes = append(current.Classes[:issue1], current.Classes[issue1+1:]...)
+				current.Score -= course2.Priority
+				GenerateCombos(courses, result, depth, current) //kicks it back with the same depth to check for overlaps again
+			} //otherwise don't append
 		}
 
 	} else {
@@ -123,28 +148,38 @@ func GenerateCombos(courses []Course, result *[]Combo, depth int, current Combo)
 			//yes, it's recursive.  it only goes [depth] layers deep before returning so the stack shouldn't overflow for a reasonable number of courses
 		}
 		if len(currentCourse.OrCourses) != 0 {
-                        for p :=0; p < len(currentCourse.OrCourses); p++ {
-                                 for i := 0; i < len(currentCourse.OrCourses[p].Classes); i++ {
-                                        var tempCurrent Combo
-                                        tempCurrent.Classes = append(current.Classes, currentCourse.OrCourses[p].Classes[i])
-                                        GenerateCombos(courses, result, depth+1, tempCurrent)
-                                }
+			for p := 0; p < len(currentCourse.OrCourses); p++ {
+				for i := 0; i < len(currentCourse.OrCourses[p].Classes); i++ {
+					var tempCurrent Combo
+					tempCurrent.Classes = append(current.Classes, currentCourse.OrCourses[p].Classes[i])
+					GenerateCombos(courses, result, depth+1, tempCurrent)
+				}
 
-                        }
-                }
-	}
-}
-
-func DoesHaveOverlap(combo Combo) bool {
-	for i := 0; i < len(combo.Classes); i++ {
-		for j := i + 1; j < len(combo.Classes); j++ {
-			if DoesOverlap(combo.Classes[i].StartTime, combo.Classes[i].EndTime, combo.Classes[j].StartTime, combo.Classes[j].EndTime) {
-				return true
 			}
 		}
 	}
-	return false
+}
 
+func DoesHaveOverlap(combo Combo) (bool, int, int) {
+	for i := 0; i < len(combo.Classes); i++ {
+		for j := i + 1; j < len(combo.Classes); j++ {
+			if DoesOverlap(combo.Classes[i].StartTime, combo.Classes[i].EndTime, combo.Classes[j].StartTime, combo.Classes[j].EndTime) {
+				return true, i, j
+			}
+		}
+	}
+	return false, -1, -1
+
+}
+
+func GetCourse(id int) Course {
+	for i := range AllCourses {
+		if AllCourses[i].CourseId == id {
+			return AllCourses[i]
+		}
+	}
+	output := Course{}
+	return output
 }
 
 func OrderCombos(combos *[]Combo) {
