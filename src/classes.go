@@ -20,6 +20,7 @@ type Course struct { //ex 3960:401 Data Structures
         Priority  int //from 1 to 10
         Manditory bool
         Classes   []Class //initializing an empty slice
+	OrCourses []Course //allowes 'oring' of a large number of classes
 }
 
 type Combo struct {

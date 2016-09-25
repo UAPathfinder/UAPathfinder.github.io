@@ -108,19 +108,30 @@ func ScoreDays(combo Combo, criteria Criteria) int { //could use some refactorin
 	return output
 }
 
-func GenerateCombos(courses []Course, result *[]Combo, depth int, current Combo) {
+func GenerateCombos(courses []Course, result *[]Combo, depth int, current Combo) { //eventuially this should be modified to not add a class if that class isn't manditory and then also start the score of that combo slightly lowered since it dropped a class
 	if depth == len(courses) {
 		if !DoesHaveOverlap(current) {
 			*result = append(*result, current)
 		}
 
 	} else {
-		for i := 0; i < len(courses[depth].Classes); i++ {
+		currentCourse := courses[depth]
+		for i := 0; i < len(currentCourse.Classes); i++ {
 			var tempCurrent Combo
-			tempCurrent.Classes = append(current.Classes, courses[depth].Classes[i])
+			tempCurrent.Classes = append(current.Classes, currentCourse.Classes[i])
 			GenerateCombos(courses, result, depth+1, tempCurrent)
 			//yes, it's recursive.  it only goes [depth] layers deep before returning so the stack shouldn't overflow for a reasonable number of courses
 		}
+		if len(currentCourse.OrCourses) != 0 {
+                        for p :=0; p < len(currentCourse.OrCourses); p++ {
+                                 for i := 0; i < len(currentCourse.OrCourses[p].Classes); i++ {
+                                        var tempCurrent Combo
+                                        tempCurrent.Classes = append(current.Classes, currentCourse.OrCourses[p].Classes[i])
+                                        GenerateCombos(courses, result, depth+1, tempCurrent)
+                                }
+
+                        }
+                }
 	}
 }
 
