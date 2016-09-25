@@ -48,3 +48,8 @@ func (a ByScore) Len() int           { return len(a) }
 func (a ByScore) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
 func (a ByScore) Less(i, j int) bool { return a[i].Score < a[j].Score }
 
+type ByStartTime []Class
+func (a ByStartTime) Len() int           { return len(a) }
+func (a ByStartTime) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
+func (a ByStartTime) Less(i, j int) bool { return a[j].StartTime.After(a[i].StartTime) }
+
