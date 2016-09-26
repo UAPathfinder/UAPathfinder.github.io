@@ -16,10 +16,95 @@ var AllCourses []Course
 
 func main() {
 	fmt.Print("Welcome to CourseCorrect!  more information goes here! \n ")
-	AllCourses = TakeInput()
+	AllCourses = CourseHolder()
+	AllCriteria := CriteriaHolder()
+	_ = AllCriteria
 }
 
-func TakeInput() []Course {
+func CriteriaHolder() []Criteria {
+	var ynresponse string
+        reader := bufio.NewReader(os.Stdin)
+        output := make([]Criteria, 0)
+
+        output = append(output, InputCriteria())
+        fmt.Print("Would you like to enter another set of criteria? (y/n): ")
+        ynresponse, _ = reader.ReadString('\n')
+        if strings.Compare(ynresponse, "y\n") == 0 {
+                output = append(output, CriteriaHolder()...)
+        }
+        return output
+
+}
+
+func InputCriteria() Criteria {
+	fmt.Print("Enter Course \n")
+        var output Criteria
+        var ynresponse string
+        reader := bufio.NewReader(os.Stdin)
+
+        fmt.Print("Would you like to maxamize breaks between classes? (y to maxamize, n to minimize): ")
+        ynresponse, _ = reader.ReadString('\n')
+        if strings.Compare(ynresponse, "y\n") == 0 {
+                output.Breaks.Maximize = true
+        } else {
+                output.Breaks.Maximize = false
+        }
+
+	fmt.Print("Enter Break's Priority: ")
+        tempString, _ := reader.ReadString('\n')
+        output.Breaks.Weight, _ = strconv.Atoi(tempString)
+
+        fmt.Print("What would be the earliest acceptable start time for your earliest class?: ")
+        otherInput, _ := reader.ReadString('\n')
+        output.EarliestClass.Time = SimpleParse(otherInput + ":00")
+
+	fmt.Print("Is this manditory? (y/n): ")
+        ynresponse, _ = reader.ReadString('\n')
+        if strings.Compare(ynresponse, "y\n") == 0 {
+                output.EarliestClass.Manditory = true
+        } else {
+                output.EarliestClass.Manditory = false
+        }
+
+	fmt.Print("Enter Earliest Class's Priority: ")
+        tempString, _ = reader.ReadString('\n')
+        output.EarliestClass.Weight, _ = strconv.Atoi(tempString)
+
+        fmt.Print("What would be the latest acceptable end time for your latest class?: ")
+        otherInput, _ = reader.ReadString('\n')
+        output.LatestClass.Time = SimpleParse(otherInput + ":00")
+
+        fmt.Print("Is this manditory? (y/n): ")
+        ynresponse, _ = reader.ReadString('\n')
+        if strings.Compare(ynresponse, "y\n") == 0 {
+                output.LatestClass.Manditory = true
+        } else {
+                output.LatestClass.Manditory = false
+        }
+
+	fmt.Print("Enter Latest Class's Priority: ")
+        tempString, _ = reader.ReadString('\n')
+        output.LatestClass.Weight, _ = strconv.Atoi(tempString)
+
+	fmt.Print("What days would you prefer not to have any classes? (if none, leave blank): ")
+        output.Days.Other, _ = reader.ReadString('\n')
+
+	fmt.Print("Is this manditory? (y/n): ")
+        ynresponse, _ = reader.ReadString('\n')
+        if strings.Compare(ynresponse, "y\n") == 0 {
+                output.Days.Manditory = true
+        } else {
+                output.Days.Manditory = false
+        }
+
+        fmt.Print("Enter Day's Priority: ")
+        tempString, _ = reader.ReadString('\n')
+        output.Days.Weight, _ = strconv.Atoi(tempString)
+
+        return output	
+}
+
+func CourseHolder() []Course {
 	var ynresponse string
         reader := bufio.NewReader(os.Stdin)
 	output := make([]Course, 0)
@@ -28,7 +113,7 @@ func TakeInput() []Course {
 	fmt.Print("Would you like to enter another course? (y/n): ")
         ynresponse, _ = reader.ReadString('\n')
         if strings.Compare(ynresponse, "y\n") == 0 {
-                output = append(output, TakeInput()...)
+                output = append(output, CourseHolder()...)
         }
 	return output
 	
@@ -90,7 +175,6 @@ func GnenericInputCourse() Course {
                 output.Manditory = false
         }
 
-        fmt.Print("Enter Classes")
         output.Classes = ClassHolder(output.CourseId)
 	return output
 }
@@ -125,11 +209,11 @@ func GenericInputClass(id int) Class {
 
         fmt.Print("Enter Start Time: ")
         otherInput, _ = reader.ReadString('\n')
-        output.StartTime = SimpleParse(otherInput)
+        output.StartTime = SimpleParse(otherInput + ":00")
 
         fmt.Print("Enter End Time: ")
         otherInput, _ = reader.ReadString('\n')
-        output.EndTime = SimpleParse(otherInput)
+        output.EndTime = SimpleParse(otherInput + ":00")
 
         fmt.Print("Enter Meeting Days: ")
         output.MeetingDays, _ = reader.ReadString('\n')
