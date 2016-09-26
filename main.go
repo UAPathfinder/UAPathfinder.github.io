@@ -1,13 +1,13 @@
 package main
 
 import (
-	"bufio"
+	//"bufio"
 	"fmt"
 	"sort"
 	"time"
-	"strings"
-	"os"
-	"strconv"
+	//"strings"
+	//"os"
+	//"strconv"
 	//mysql --local-infile -uroot -pyourpwd yourdbname/"database/sql" //non-functional MySQL imports
 	// _ "/mysql"
 )
@@ -21,6 +21,8 @@ func main() {
 	_ = AllCriteria
 }
 
+
+/*
 func CriteriaHolder() []Criteria {
 	var ynresponse string
         reader := bufio.NewReader(os.Stdin)
@@ -219,7 +221,7 @@ func GenericInputClass(id int) Class {
         output.MeetingDays, _ = reader.ReadString('\n')
         return output
 }
-
+*/
 
 func NumCombos(courses []Course) int { //total possiable combos, includes ones with class confilicts
 	var total int = 1
