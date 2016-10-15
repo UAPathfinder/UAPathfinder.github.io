@@ -5,13 +5,6 @@ import (
 	"time"
 )
 
-func FullTest() {
-	// result := GenerateCombos(MockCourses)
-	// for i := range result {
-	// 	PrintCombo(result[i])
-	// }
-}
-
 // Total possible combos, includes ones with class confilicts
 func NumCombos(courses []Course) int {
 	total := 1
