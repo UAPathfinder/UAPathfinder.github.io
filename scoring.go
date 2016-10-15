@@ -1,35 +1,9 @@
 package main
 
 import (
-<<<<<<< HEAD
-//"bufio"
-//"fmt"
-//"sort"
-//"time"
-//"strings"
-//"os"
-//"strconv"
-//mysql --local-infile -uroot -pyourpwd yourdbname/"database/sql" //non-functional MySQL imports
-// _ "/mysql"
-=======
-	"fmt"
 	"sort"
 	"time"
->>>>>>> 0850cf763d6222cd09bd7d75284f0a871c408757
 )
-
-var AllCourses []Course
-
-func main() {
-<<<<<<< HEAD
-	/*fmt.Print("Welcome to CourseCorrect!  more information goes here! \n ")
-	AllCourses = CourseHolder()
-	AllCriteria := CriteriaHolder()
-=======
-	fmt.Println("Welcome to CourseCorrect! More information goes here!")
-	AllCourses = CourseHolder()
-	AllCriteria := CriteriaHolder()
-}
 
 // Total possiable combos, includes ones with class confilicts
 func NumCombos(courses []Course) int {
@@ -171,17 +145,48 @@ func GenerateCombos(courses []Course, result *[]Combo, depth int, current Combo)
 					tempCurrent.Classes = append(current.Classes, currentCourse.OrCourses[p].Classes[i])
 					GenerateCombos(courses, result, depth+1, tempCurrent)
 				}
->>>>>>> 0850cf763d6222cd09bd7d75284f0a871c408757
 
-	for i := range AllCourses {
-		PrintCourse(AllCourses[i])
+			}
+		}
 	}
-	_ = AllCriteria*/
-
-	//RunFullTest()
 }
-<<<<<<< HEAD
-=======
+
+func DoesHaveOverlap(combo Combo) (bool, int, int) {
+	for i := 0; i < len(combo.Classes); i++ {
+		for j := i + 1; j < len(combo.Classes); j++ {
+			if DoesOverlap(combo.Classes[i].StartTime, combo.Classes[i].EndTime, combo.Classes[j].StartTime, combo.Classes[j].EndTime) {
+				return true, i, j
+			}
+		}
+	}
+	return false, -1, -1
+
+}
+
+func GetCourse(id int) Course {
+	for i := range AllCourses {
+		if AllCourses[i].CourseId == id {
+			return AllCourses[i]
+		}
+	}
+	output := Course{}
+	return output
+}
+
+func OrderCombos(combos *[]Combo) {
+	sort.Reverse(ByScore(*combos))
+}
+
+func OrderClasses(combo *Combo) {
+	sort.Sort(ByStartTime(combo.Classes))
+}
+
+func FillCourses(courses map[int]int) { //has to wait for sql stuff
+	for i := range courses {
+		courses[i]++
+	}
+
+}
 
 func MinuteDiff(first, second time.Time) int {
 	diff := first.Sub(second)
@@ -200,8 +205,9 @@ func DoesOverlap(Class1Start, Class1End, Class2Start, Class2End time.Time) bool 
 	return !(Class2Start.After(Class1End) || Class1Start.After(Class2End))
 }
 
+/*
 func SimpleParse(input string) time.Time {
 	output, _ := time.Parse("15:04:05", input)
 	return output
 }
->>>>>>> 0850cf763d6222cd09bd7d75284f0a871c408757
+*/

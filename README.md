@@ -1,2 +1,2 @@
 # CourseCorrect
-An intelligent class schedule optimizer
+An intelligent class scheduling assistant.

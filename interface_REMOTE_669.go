@@ -6,44 +6,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
-<<<<<<< HEAD
-	"text/tabwriter"
-=======
->>>>>>> 0850cf763d6222cd09bd7d75284f0a871c408757
 )
-
-func PrintCombo(combo Combo) {
-	for i := range combo.Classes {
-		PrintClass(combo.Classes[i])
-	}
-}
-
-func PrintCourse(course Course) {
-	w := new(tabwriter.Writer)
-
-	w.Init(os.Stdout, 10, 0, 1, ' ', tabwriter.AlignRight|tabwriter.Debug)
-	fmt.Fprintln(w, "Name\tCourse-Id\tPriority\tManditory\t")
-	fmt.Fprintln(w, ""+course.Name+"\t"+strconv.Itoa(course.CourseId)+"\t"+strconv.Itoa(course.Priority)+"\t"+strconv.FormatBool(course.Manditory)+"\t")
-	fmt.Fprintln(w)
-	w.Flush()
-
-	for j := range course.Classes {
-		PrintClass(course.Classes[j])
-	}
-
-	for i := range course.OrCourses {
-		PrintCourse(course.OrCourses[i])
-	}
-}
-
-func PrintClass(class Class) {
-	w := new(tabwriter.Writer)
-	w.Init(os.Stdout, 10, 0, 1, ' ', tabwriter.AlignRight)
-	fmt.Fprintln(w, "     Start Time\tEnd Time\tDays\t")
-	fmt.Fprintln(w, "     "+class.StartTime.Format("15:04")+"\t"+class.EndTime.Format("15:04")+"\t"+class.MeetingDays+"\t")
-	fmt.Fprintln(w)
-	w.Flush()
-}
 
 func CriteriaHolder() []Criteria {
 	var ynresponse string
@@ -181,15 +144,6 @@ func GnenericInputCourse() Course {
 	reader := bufio.NewReader(os.Stdin)
 
 	fmt.Print("Enter Course Id: ")
-<<<<<<< HEAD
-	_, _ = fmt.Scanf("%d", output.CourseId)
-
-	//fmt.Print("Enter Course Name: ")
-	//output.Name, _ = reader.ReadString('\n\n')
-
-	fmt.Print("Enter Course Priority: ")
-	tempString, _ := reader.ReadString('\n')
-=======
 	tempString, _ := reader.ReadString('\n')
 	output.CourseId, _ = strconv.Atoi(tempString)
 
@@ -198,7 +152,6 @@ func GnenericInputCourse() Course {
 
 	fmt.Print("Enter Course Priority: ")
 	tempString, _ = reader.ReadString('\n')
->>>>>>> 0850cf763d6222cd09bd7d75284f0a871c408757
 	output.Priority, _ = strconv.Atoi(tempString)
 
 	fmt.Print("Is this course manditory? (y/n): ")
