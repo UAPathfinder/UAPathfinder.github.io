@@ -120,7 +120,7 @@ func GenerateCombos(courses []Course) []Combo {
 	return result
 }
 
-// TODO: should be modified to not add a class if that class isn't manditory and then also start the score of that combo slightly lowered since it dropped a class
+
 func RecursiveGenerateCombos(courses []Course, result *[]Combo, depth int, current Combo) {
 	if depth == len(courses) {
 		hasOverlap, issue1, issue2 := DoesHaveOverlap(current)
