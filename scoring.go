@@ -3,6 +3,7 @@ package main
 import (
 	"sort"
 	"time"
+	//"fmt"
 )
 
 func FullTest(){
@@ -29,9 +30,14 @@ func FullTest(){
 	statsArr := []Class{statsClass1, statsClass2}
         statsCourse := Course{CourseId: 5, Priority: 9, Manditory: true, Classes: statsArr}
 
+	
+
 	courses := []Course{iosCourse, dataCourse, oopCourse, webCourse, statsCourse}
 	result := make([]Combo, 0)
 	var current Combo
+	//fmt.Print("test")
+	//fmt.Print("result length: %d", len(result))
+	_ = "breakpoint"
 	GenerateCombos(courses, &result, 0, current)
 	for i := range result {
 		PrintCombo(result[i])
@@ -152,7 +158,9 @@ func GenerateCombos(courses []Course, result *[]Combo, depth int, current Combo)
 					current.Classes = append(current.Classes[:issue2], current.Classes[issue2+1:]...)
 					current.Score -= course2.Priority
 					GenerateCombos(courses, result, depth, current) //kicks it back with the same depth to check for overlaps again
-				} //otherwise don't append
+				} else{
+					_ = "breakpoint"
+				}
 			} else if course1.Manditory {
 				current.Classes = append(current.Classes[:issue2], current.Classes[issue2+1:]...)
 				current.Score -= course2.Priority
@@ -188,7 +196,7 @@ func GenerateCombos(courses []Course, result *[]Combo, depth int, current Combo)
 func DoesHaveOverlap(combo Combo) (bool, int, int) {
 	for i := 0; i < len(combo.Classes); i++ {
 		for j := i + 1; j < len(combo.Classes); j++ {
-			if DoesOverlap(combo.Classes[i].StartTime, combo.Classes[i].EndTime, combo.Classes[j].StartTime, combo.Classes[j].EndTime) {
+			if DoesOverlap(combo.Classes[i], combo.Classes[j]) {
 				return true, i, j
 			}
 		}
@@ -235,6 +243,17 @@ func GetCourses() map[int]int { //has to wait for sql stuff
 	return output
 }
 
-func DoesOverlap(Class1Start, Class1End, Class2Start, Class2End time.Time) bool {
-	return !(Class2Start.After(Class1End) || Class1Start.After(Class2End))
+func DoesOverlap(Class1, Class2 Class) bool {
+	counter := 0
+	for i := range Class1.MeetingDays {
+		for j := range Class2.MeetingDays {
+			if Class1.MeetingDays[i] == Class2.MeetingDays[j] {
+				counter += 1
+			}
+		}
+        }
+	if counter <= 0 {
+		return false
+	}
+	return !(Class2.StartTime.After(Class1.EndTime) || Class1.StartTime.After(Class2.EndTime))
 }
