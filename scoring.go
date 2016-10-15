@@ -216,11 +216,10 @@ func OrderClasses(combo *Combo) {
 }
 
 func MinuteDiff(first, second time.Time) int {
-        diff := first.Sub(second)
-        var minutes = diff.Minutes()
-        return int(minutes)
+	diff := first.Sub(second)
+	var minutes = diff.Minutes()
+	return int(minutes)
 }
-
 
 func FillCourses(courses map[int]int) { //has to wait for sql stuff
 	for i := range courses {
@@ -228,8 +227,6 @@ func FillCourses(courses map[int]int) { //has to wait for sql stuff
 	}
 
 }
-
-
 
 func GetCourses() map[int]int { //has to wait for sql stuff
 	//retrives list of course id's with priorities
@@ -241,10 +238,3 @@ func GetCourses() map[int]int { //has to wait for sql stuff
 func DoesOverlap(Class1Start, Class1End, Class2Start, Class2End time.Time) bool {
 	return !(Class2Start.After(Class1End) || Class1Start.After(Class2End))
 }
-
-/*
-func SimpleParse(input string) time.Time {
-	output, _ := time.Parse("15:04:05", input)
-	return output
-}
-*/

@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"strings"
 	"text/tabwriter"
+	"time"
 )
 
 func PrintCombo(combo Combo) {
@@ -77,7 +78,7 @@ func InputCriteria() Criteria {
 
 	fmt.Print("What would be the earliest acceptable start time for your earliest class?: ")
 	otherInput, _ := reader.ReadString('\n')
-	output.EarliestClass.Time = SimpleParse(otherInput + ":00")
+	output.EarliestClass.Time = MustParse(otherInput + ":00")
 
 	fmt.Print("Is this manditory? (y/n): ")
 	ynresponse, _ = reader.ReadString('\n')
@@ -93,7 +94,7 @@ func InputCriteria() Criteria {
 
 	fmt.Print("What would be the latest acceptable end time for your latest class?: ")
 	otherInput, _ = reader.ReadString('\n')
-	output.LatestClass.Time = SimpleParse(otherInput + ":00")
+	output.LatestClass.Time = MustParse(otherInput + ":00")
 
 	fmt.Print("Is this manditory? (y/n): ")
 	ynresponse, _ = reader.ReadString('\n')
@@ -236,13 +237,21 @@ func GenericInputClass(id int) Class {
 
 	fmt.Print("Enter Start Time: ")
 	otherInput, _ = reader.ReadString('\n')
-	output.StartTime = SimpleParse(otherInput + ":00")
+	output.StartTime = MustParse(otherInput + ":00")
 
 	fmt.Print("Enter End Time: ")
 	otherInput, _ = reader.ReadString('\n')
-	output.EndTime = SimpleParse(otherInput + ":00")
+	output.EndTime = MustParse(otherInput + ":00")
 
 	fmt.Print("Enter Meeting Days: ")
 	output.MeetingDays, _ = reader.ReadString('\n')
+	return output
+}
+
+func MustParse(input string) time.Time {
+	output, err := time.Parse("15:04:05", input)
+	if err != nil {
+		panic(err)
+	}
 	return output
 }
