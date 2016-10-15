@@ -181,6 +181,13 @@ func OrderClasses(combo *Combo) {
 	sort.Sort(ByStartTime(combo.Classes))
 }
 
+func MinuteDiff(first, second time.Time) int {
+        diff := first.Sub(second)
+        var minutes = diff.Minutes()
+        return int(minutes)
+}
+
+
 func FillCourses(courses map[int]int) { //has to wait for sql stuff
 	for i := range courses {
 		courses[i]++
@@ -188,11 +195,7 @@ func FillCourses(courses map[int]int) { //has to wait for sql stuff
 
 }
 
-func MinuteDiff(first, second time.Time) int {
-	diff := first.Sub(second)
-	var minutes = diff.Minutes()
-	return int(minutes)
-}
+
 
 func GetCourses() map[int]int { //has to wait for sql stuff
 	//retrives list of course id's with priorities

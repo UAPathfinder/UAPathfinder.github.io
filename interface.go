@@ -6,10 +6,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
-<<<<<<< HEAD
 	"text/tabwriter"
-=======
->>>>>>> 0850cf763d6222cd09bd7d75284f0a871c408757
 )
 
 func PrintCombo(combo Combo) {
@@ -181,7 +178,6 @@ func GnenericInputCourse() Course {
 	reader := bufio.NewReader(os.Stdin)
 
 	fmt.Print("Enter Course Id: ")
-<<<<<<< HEAD
 	_, _ = fmt.Scanf("%d", output.CourseId)
 
 	//fmt.Print("Enter Course Name: ")
@@ -189,8 +185,7 @@ func GnenericInputCourse() Course {
 
 	fmt.Print("Enter Course Priority: ")
 	tempString, _ := reader.ReadString('\n')
-=======
-	tempString, _ := reader.ReadString('\n')
+	fmt.Print("Enter Course Id: ")
 	output.CourseId, _ = strconv.Atoi(tempString)
 
 	fmt.Print("Enter Course Name: ")
@@ -198,7 +193,6 @@ func GnenericInputCourse() Course {
 
 	fmt.Print("Enter Course Priority: ")
 	tempString, _ = reader.ReadString('\n')
->>>>>>> 0850cf763d6222cd09bd7d75284f0a871c408757
 	output.Priority, _ = strconv.Atoi(tempString)
 
 	fmt.Print("Is this course manditory? (y/n): ")
