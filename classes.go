@@ -4,8 +4,10 @@ import (
 	"time"
 )
 
-type Class struct { //A single class
-	//ex Data Structures starting at 3 PM in room 301 with professor x
+// A singular class. A class is something you could attend. There are often
+// many classes for each course.
+// Example: Data Structures starting at 3 PM in room 301 with professor x
+type Class struct {
 	ClassId         int
 	CourseId        int
 	StartTime       time.Time
@@ -15,11 +17,12 @@ type Class struct { //A single class
 	MeetingLocation string
 }
 
+// A group of classes which share some common characteristics.
 type Course struct { //ex 3960:401 Data Structures
 	CourseId  int
-	Priority  int //from 1 to 10
+	Priority  int // from 1 to 10
 	Manditory bool
-	Name string
+	Name      string
 	Classes   []Class  //initializing an empty slice
 	OrCourses []Course //allowes 'oring' of a large number of classes
 }
@@ -45,11 +48,14 @@ type Criterion struct { //singular of Criteria, basically an advanced key/value 
 	Other     string    //mostly for days
 }
 
-type ByScore []Combo                 //implements sort.Interface for []Combo based on Score
+// Implements `sort.Interface` for []Combo based on Score
+type ByScore []Combo
+
 func (a ByScore) Len() int           { return len(a) }
 func (a ByScore) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
 func (a ByScore) Less(i, j int) bool { return a[i].Score < a[j].Score }
 
+// Implements `sort.Interface` for []Combo based on StartTime
 type ByStartTime []Class
 
 func (a ByStartTime) Len() int           { return len(a) }

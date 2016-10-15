@@ -1,29 +1,22 @@
 package main
 
 import (
-	//"bufio"
 	"fmt"
 	"sort"
 	"time"
-	//"strings"
-	//"os"
-	//"strconv"
-	//mysql --local-infile -uroot -pyourpwd yourdbname/"database/sql" //non-functional MySQL imports
-	// _ "/mysql"
 )
 
 var AllCourses []Course
 
 func main() {
-	fmt.Print("Welcome to CourseCorrect!  more information goes here! \n ")
+	fmt.Println("Welcome to CourseCorrect! More information goes here!")
 	AllCourses = CourseHolder()
 	AllCriteria := CriteriaHolder()
-	_ = AllCriteria
 }
 
-
-func NumCombos(courses []Course) int { //total possiable combos, includes ones with class confilicts
-	var total int = 1
+// Total possiable combos, includes ones with class confilicts
+func NumCombos(courses []Course) int {
+	total := 1
 	for i := range courses {
 		total *= len(courses[i].Classes)
 	}
@@ -209,12 +202,6 @@ func MinuteDiff(first, second time.Time) int {
 	var minutes = diff.Minutes()
 	return int(minutes)
 }
-func MySQLQuery(input string) string {
-	//this will return the MySQL query string, right now it doesn't
-	//con, err := sql.Open("mysql", store.user+":"+store.password+"@/"+store.database)
-	//defer con.Close()
-	return "not initialized"
-}
 
 func GetCourses() map[int]int { //has to wait for sql stuff
 	//retrives list of course id's with priorities
@@ -228,7 +215,6 @@ func DoesOverlap(Class1Start, Class1End, Class2Start, Class2End time.Time) bool 
 }
 
 func SimpleParse(input string) time.Time {
-        output, _ := time.Parse("15:04:05", input)
-        return output
+	output, _ := time.Parse("15:04:05", input)
+	return output
 }
-
