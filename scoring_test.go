@@ -2,8 +2,6 @@ package main
 
 import (
 	"testing"
-	"time"
-	//"fmt"
 )
 
 func TestGetCourses(t *testing.T) {
@@ -27,13 +25,13 @@ func TestFillCourses(t *testing.T) {
 }
 
 func TestNumCombos(t *testing.T) {
-	class1 := Class{ClassId: 1, CourseId: 1, StartTime: SimpleParse("09:00:00"), EndTime: SimpleParse("10:00:00"), MeetingDays: "MWF", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
+	class1 := Class{ClassId: 1, CourseId: 1, StartTime: MustParse("09:00:00"), EndTime: MustParse("10:00:00"), MeetingDays: "MWF", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
 	//The sample data is all the same prof and location because we're not testing those portions right now
-	class2 := Class{ClassId: 2, CourseId: 1, StartTime: SimpleParse("11:30:00"), EndTime: SimpleParse("13:00:00"), MeetingDays: "TH", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
-	class3 := Class{ClassId: 3, CourseId: 1, StartTime: SimpleParse("05:05:00"), EndTime: SimpleParse("06:15:00"), MeetingDays: "MW", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
-	class4 := Class{ClassId: 4, CourseId: 2, StartTime: SimpleParse("09:25:00"), EndTime: SimpleParse("10:45:00"), MeetingDays: "THF", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
-	class5 := Class{ClassId: 5, CourseId: 2, StartTime: SimpleParse("07:45:00"), EndTime: SimpleParse("10:00:00"), MeetingDays: "MW", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
-	class6 := Class{ClassId: 6, CourseId: 2, StartTime: SimpleParse("18:00:00"), EndTime: SimpleParse("19:45:00"), MeetingDays: "TH", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
+	class2 := Class{ClassId: 2, CourseId: 1, StartTime: MustParse("11:30:00"), EndTime: MustParse("13:00:00"), MeetingDays: "TH", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
+	class3 := Class{ClassId: 3, CourseId: 1, StartTime: MustParse("05:05:00"), EndTime: MustParse("06:15:00"), MeetingDays: "MW", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
+	class4 := Class{ClassId: 4, CourseId: 2, StartTime: MustParse("09:25:00"), EndTime: MustParse("10:45:00"), MeetingDays: "THF", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
+	class5 := Class{ClassId: 5, CourseId: 2, StartTime: MustParse("07:45:00"), EndTime: MustParse("10:00:00"), MeetingDays: "MW", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
+	class6 := Class{ClassId: 6, CourseId: 2, StartTime: MustParse("18:00:00"), EndTime: MustParse("19:45:00"), MeetingDays: "TH", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
 
 	var arr1 = []Class{class1, class2, class3}
 	var arr2 = []Class{class4, class5, class6}
@@ -49,11 +47,11 @@ func TestNumCombos(t *testing.T) {
 }
 
 func TestOrderCombos(t *testing.T) {
-	class1 := Class{ClassId: 1, CourseId: 1, StartTime: SimpleParse("09:00:00"), EndTime: SimpleParse("10:00:00"), MeetingDays: "MWF", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
+	class1 := Class{ClassId: 1, CourseId: 1, StartTime: MustParse("09:00:00"), EndTime: MustParse("10:00:00"), MeetingDays: "MWF", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
 	//The sample data is all the same prof and location because we're not testing those portions right now
-	class3 := Class{ClassId: 3, CourseId: 1, StartTime: SimpleParse("05:05:00"), EndTime: SimpleParse("06:15:00"), MeetingDays: "MW", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
-	class4 := Class{ClassId: 4, CourseId: 2, StartTime: SimpleParse("09:25:00"), EndTime: SimpleParse("10:45:00"), MeetingDays: "THF", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
-	class5 := Class{ClassId: 5, CourseId: 2, StartTime: SimpleParse("07:45:00"), EndTime: SimpleParse("10:00:00"), MeetingDays: "MW", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
+	class3 := Class{ClassId: 3, CourseId: 1, StartTime: MustParse("05:05:00"), EndTime: MustParse("06:15:00"), MeetingDays: "MW", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
+	class4 := Class{ClassId: 4, CourseId: 2, StartTime: MustParse("09:25:00"), EndTime: MustParse("10:45:00"), MeetingDays: "THF", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
+	class5 := Class{ClassId: 5, CourseId: 2, StartTime: MustParse("07:45:00"), EndTime: MustParse("10:00:00"), MeetingDays: "MW", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
 
 	var arr1 = []Class{class1, class5}
 	var arr2 = []Class{class3, class4}
@@ -79,12 +77,12 @@ func TestOrderCombos(t *testing.T) {
 }
 
 func TestOrderClasses(t *testing.T) {
-	class1 := Class{ClassId: 1, CourseId: 1, StartTime: SimpleParse("09:00:00"), EndTime: SimpleParse("10:00:00"), MeetingDays: "MWF", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
-	class2 := Class{ClassId: 2, CourseId: 1, StartTime: SimpleParse("11:30:00"), EndTime: SimpleParse("13:00:00"), MeetingDays: "TH", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
+	class1 := Class{ClassId: 1, CourseId: 1, StartTime: MustParse("09:00:00"), EndTime: MustParse("10:00:00"), MeetingDays: "MWF", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
+	class2 := Class{ClassId: 2, CourseId: 1, StartTime: MustParse("11:30:00"), EndTime: MustParse("13:00:00"), MeetingDays: "TH", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
 	//The sample data is all the same prof and location because we're not testing those portions right now
-	class3 := Class{ClassId: 3, CourseId: 1, StartTime: SimpleParse("10:05:00"), EndTime: SimpleParse("11:15:00"), MeetingDays: "MW", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
-	class4 := Class{ClassId: 4, CourseId: 2, StartTime: SimpleParse("11:25:00"), EndTime: SimpleParse("12:45:00"), MeetingDays: "THF", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
-	class5 := Class{ClassId: 5, CourseId: 2, StartTime: SimpleParse("13:45:00"), EndTime: SimpleParse("14:00:00"), MeetingDays: "MW", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
+	class3 := Class{ClassId: 3, CourseId: 1, StartTime: MustParse("10:05:00"), EndTime: MustParse("11:15:00"), MeetingDays: "MW", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
+	class4 := Class{ClassId: 4, CourseId: 2, StartTime: MustParse("11:25:00"), EndTime: MustParse("12:45:00"), MeetingDays: "THF", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
+	class5 := Class{ClassId: 5, CourseId: 2, StartTime: MustParse("13:45:00"), EndTime: MustParse("14:00:00"), MeetingDays: "MW", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
 
 	classes := []Class{class1, class2, class3, class5, class4}
 	combo := Combo{Classes: classes}
@@ -99,11 +97,11 @@ func TestOrderClasses(t *testing.T) {
 }
 
 func TestDoesHaveOverlap(t *testing.T) {
-	class1 := Class{ClassId: 1, CourseId: 1, StartTime: SimpleParse("09:00:00"), EndTime: SimpleParse("10:00:00"), MeetingDays: "MWF", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
+	class1 := Class{ClassId: 1, CourseId: 1, StartTime: MustParse("09:00:00"), EndTime: MustParse("10:00:00"), MeetingDays: "MWF", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
 	//The sample data is all the same prof and location because we're not testing those portions right now
-	//class3 := Class{ClassId: 3, CourseId: 1, StartTime: SimpleParse("05:05:00"), EndTime: SimpleParse("06:15:00"), MeetingDays: "MW", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
-	class4 := Class{ClassId: 4, CourseId: 2, StartTime: SimpleParse("09:25:00"), EndTime: SimpleParse("10:45:00"), MeetingDays: "THF", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
-	class5 := Class{ClassId: 5, CourseId: 2, StartTime: SimpleParse("10:45:00"), EndTime: SimpleParse("11:00:00"), MeetingDays: "MW", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
+	//class3 := Class{ClassId: 3, CourseId: 1, StartTime: MustParse("05:05:00"), EndTime: MustParse("06:15:00"), MeetingDays: "MW", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
+	class4 := Class{ClassId: 4, CourseId: 2, StartTime: MustParse("09:25:00"), EndTime: MustParse("10:45:00"), MeetingDays: "THF", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
+	class5 := Class{ClassId: 5, CourseId: 2, StartTime: MustParse("10:45:00"), EndTime: MustParse("11:00:00"), MeetingDays: "MW", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
 
 	var noOverlap = []Class{class1, class5}
 	//var arr2 = []Class{class3, class4}
@@ -127,11 +125,11 @@ func TestDoesHaveOverlap(t *testing.T) {
 }
 
 func TestDoesOverlap(t *testing.T) {
-	Class1Start := SimpleParse("09:00:00")
-	Class1End := SimpleParse("10:00:00")
-	Class2Start := SimpleParse("09:30:00")
-	Class2End := SimpleParse("10:30:00")
-	//Class3End := SimpleParse("11:30:00")
+	Class1Start := MustParse("09:00:00")
+	Class1End := MustParse("10:00:00")
+	Class2Start := MustParse("09:30:00")
+	Class2End := MustParse("10:30:00")
+	//Class3End := MustParse("11:30:00")
 	//output := DoesOverlap(Class1Start, Class1End, Class1End, Class3End)
 	//t.Fatalf("for same class: %t", output)
 	if !DoesOverlap(Class1Start, Class1End, Class2Start, Class2End) {
@@ -144,13 +142,13 @@ func TestDoesOverlap(t *testing.T) {
 }
 
 func TestGenerateCombos(t *testing.T) {
-	class1 := Class{ClassId: 1, CourseId: 1, StartTime: SimpleParse("09:00:00"), EndTime: SimpleParse("10:00:00"), MeetingDays: "MWF", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
+	class1 := Class{ClassId: 1, CourseId: 1, StartTime: MustParse("09:00:00"), EndTime: MustParse("10:00:00"), MeetingDays: "MWF", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
 	//The sample data is all the same prof and location because we're not testing those portions right now
-	class2 := Class{ClassId: 2, CourseId: 1, StartTime: SimpleParse("11:30:00"), EndTime: SimpleParse("13:00:00"), MeetingDays: "TH", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
-	class3 := Class{ClassId: 3, CourseId: 1, StartTime: SimpleParse("05:05:00"), EndTime: SimpleParse("06:15:00"), MeetingDays: "MW", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
-	class4 := Class{ClassId: 4, CourseId: 2, StartTime: SimpleParse("10:25:00"), EndTime: SimpleParse("11:45:00"), MeetingDays: "THF", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
-	class5 := Class{ClassId: 5, CourseId: 2, StartTime: SimpleParse("07:45:00"), EndTime: SimpleParse("10:00:00"), MeetingDays: "MW", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
-	class6 := Class{ClassId: 6, CourseId: 2, StartTime: SimpleParse("18:00:00"), EndTime: SimpleParse("19:45:00"), MeetingDays: "TH", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
+	class2 := Class{ClassId: 2, CourseId: 1, StartTime: MustParse("11:30:00"), EndTime: MustParse("13:00:00"), MeetingDays: "TH", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
+	class3 := Class{ClassId: 3, CourseId: 1, StartTime: MustParse("05:05:00"), EndTime: MustParse("06:15:00"), MeetingDays: "MW", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
+	class4 := Class{ClassId: 4, CourseId: 2, StartTime: MustParse("10:25:00"), EndTime: MustParse("11:45:00"), MeetingDays: "THF", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
+	class5 := Class{ClassId: 5, CourseId: 2, StartTime: MustParse("07:45:00"), EndTime: MustParse("10:00:00"), MeetingDays: "MW", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
+	class6 := Class{ClassId: 6, CourseId: 2, StartTime: MustParse("18:00:00"), EndTime: MustParse("19:45:00"), MeetingDays: "TH", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
 
 	var arr1 = []Class{class1, class2, class3}
 	var arr2 = []Class{class4, class5, class6}
@@ -184,16 +182,16 @@ func TestGenerateCombos(t *testing.T) {
 }
 
 func TestGenerateCombos2(t *testing.T) {
-	class1 := Class{ClassId: 1, CourseId: 1, StartTime: SimpleParse("09:00:00"), EndTime: SimpleParse("10:00:00"), MeetingDays: "MWF", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
+	class1 := Class{ClassId: 1, CourseId: 1, StartTime: MustParse("09:00:00"), EndTime: MustParse("10:00:00"), MeetingDays: "MWF", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
 	//The sample data is all the same prof and location because we're not testing those portions right now
-	class2 := Class{ClassId: 2, CourseId: 1, StartTime: SimpleParse("11:30:00"), EndTime: SimpleParse("13:00:00"), MeetingDays: "TH", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
-	class3 := Class{ClassId: 3, CourseId: 1, StartTime: SimpleParse("05:05:00"), EndTime: SimpleParse("06:15:00"), MeetingDays: "MW", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
-	class4 := Class{ClassId: 4, CourseId: 2, StartTime: SimpleParse("10:25:00"), EndTime: SimpleParse("11:45:00"), MeetingDays: "THF", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
-	class5 := Class{ClassId: 5, CourseId: 2, StartTime: SimpleParse("07:45:00"), EndTime: SimpleParse("10:00:00"), MeetingDays: "MW", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
-	class6 := Class{ClassId: 6, CourseId: 2, StartTime: SimpleParse("18:00:00"), EndTime: SimpleParse("19:45:00"), MeetingDays: "TH", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
-	class7 := Class{ClassId: 7, CourseId: 3, StartTime: SimpleParse("20:25:00"), EndTime: SimpleParse("21:45:00"), MeetingDays: "THF", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
-	class8 := Class{ClassId: 8, CourseId: 3, StartTime: SimpleParse("20:45:00"), EndTime: SimpleParse("21:00:00"), MeetingDays: "MW", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
-	class9 := Class{ClassId: 9, CourseId: 3, StartTime: SimpleParse("20:00:00"), EndTime: SimpleParse("21:45:00"), MeetingDays: "TH", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
+	class2 := Class{ClassId: 2, CourseId: 1, StartTime: MustParse("11:30:00"), EndTime: MustParse("13:00:00"), MeetingDays: "TH", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
+	class3 := Class{ClassId: 3, CourseId: 1, StartTime: MustParse("05:05:00"), EndTime: MustParse("06:15:00"), MeetingDays: "MW", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
+	class4 := Class{ClassId: 4, CourseId: 2, StartTime: MustParse("10:25:00"), EndTime: MustParse("11:45:00"), MeetingDays: "THF", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
+	class5 := Class{ClassId: 5, CourseId: 2, StartTime: MustParse("07:45:00"), EndTime: MustParse("10:00:00"), MeetingDays: "MW", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
+	class6 := Class{ClassId: 6, CourseId: 2, StartTime: MustParse("18:00:00"), EndTime: MustParse("19:45:00"), MeetingDays: "TH", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
+	class7 := Class{ClassId: 7, CourseId: 3, StartTime: MustParse("20:25:00"), EndTime: MustParse("21:45:00"), MeetingDays: "THF", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
+	class8 := Class{ClassId: 8, CourseId: 3, StartTime: MustParse("20:45:00"), EndTime: MustParse("21:00:00"), MeetingDays: "MW", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
+	class9 := Class{ClassId: 9, CourseId: 3, StartTime: MustParse("20:00:00"), EndTime: MustParse("21:45:00"), MeetingDays: "TH", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
 
 	var arr1 = []Class{class1, class2, class3}
 	var arr2 = []Class{class4, class5, class6}
@@ -231,6 +229,7 @@ func TestGenerateCombos2(t *testing.T) {
 
 }
 
+
 func CompareCombos(input1, input2 Combo) bool {
 	for i := range input1.Classes {
 		if input1.Classes[i] != input2.Classes[i] {
@@ -240,13 +239,8 @@ func CompareCombos(input1, input2 Combo) bool {
 	return true
 }
 
-func SimpleParse(input string) time.Time {
-	output, _ := time.Parse("15:04:05", input)
-	return output
-}
-
 func TestTime(t *testing.T) {
-	test := SimpleParse("10:00:00")
+	test := MustParse("10:00:00")
 	if test.After(test) {
 		t.Fatalf("no")
 	}
