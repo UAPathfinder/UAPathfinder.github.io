@@ -11,7 +11,9 @@ import (
 )
 
 func PrintCombo(combo Combo) {
+	fmt.Print("Schedule -----------------------------------\n")
 	for i := range combo.Classes {
+		//fmt.Print("Schedule %d -----------------------------------", i)
 		PrintClass(combo.Classes[i])
 	}
 }
@@ -37,8 +39,8 @@ func PrintCourse(course Course) {
 func PrintClass(class Class) {
 	w := new(tabwriter.Writer)
 	w.Init(os.Stdout, 10, 0, 1, ' ', tabwriter.AlignRight)
-	fmt.Fprintln(w, "     Start Time\tEnd Time\tDays\t")
-	fmt.Fprintln(w, "     "+class.StartTime.Format("15:04")+"\t"+class.EndTime.Format("15:04")+"\t"+class.MeetingDays+"\t")
+	fmt.Fprintln(w, "     CourseId\tStart Time\tEnd Time\tDays\t")
+	fmt.Fprintln(w, "    "+strconv.Itoa(class.CourseId)+" \t"+class.StartTime.Format("15:04")+"\t"+class.EndTime.Format("15:04")+"\t"+class.MeetingDays+"\t")
 	fmt.Fprintln(w)
 	w.Flush()
 }

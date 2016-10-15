@@ -9,5 +9,6 @@ import (
 var AllCourses []Course
 
 func main() {
+	FullTest()
 }
 

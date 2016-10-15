@@ -129,14 +129,17 @@ func TestDoesOverlap(t *testing.T) {
 	Class1End := MustParse("10:00:00")
 	Class2Start := MustParse("09:30:00")
 	Class2End := MustParse("10:30:00")
+	iosClass1 := Class{ClassId: 1, CourseId: 1, StartTime: Class1Start, EndTime: Class1End, MeetingDays: "MWF", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
+	iosClass2 := Class{ClassId: 2, CourseId: 1, StartTime: Class2Start, EndTime: Class2End, MeetingDays: "TH", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
+	iosClass3 := Class{ClassId: 2, CourseId: 1, StartTime: Class2Start, EndTime: Class2End, MeetingDays: "MWF", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
 	//Class3End := MustParse("11:30:00")
 	//output := DoesOverlap(Class1Start, Class1End, Class1End, Class3End)
 	//t.Fatalf("for same class: %t", output)
-	if !DoesOverlap(Class1Start, Class1End, Class2Start, Class2End) {
+	if DoesOverlap(iosClass1, iosClass2) {
 		t.Fatalf("DoesOverlap Failed")
 	}
-	if DoesOverlap(Class1Start, Class2Start, Class1End, Class2End) {
-		t.Fatalf("DoesOverlap Failed")
+	if !DoesOverlap(iosClass1, iosClass3) {
+		t.Fatalf("DoesOverlap Failed2")
 	}
 
 }
