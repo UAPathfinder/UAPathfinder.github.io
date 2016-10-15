@@ -5,6 +5,40 @@ import (
 	"time"
 )
 
+func FullTest(){
+	 iosClass1 := Class{ClassId: 1, CourseId: 1, StartTime: SimpleParse("13:10:00"), EndTime: SimpleParse("14:00:00"), MeetingDays: "MWF", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
+	iosArr := []Class{iosClass1}
+	iosCourse := Course{CourseId: 1, Priority: 9, Manditory: true, Classes: iosArr}
+
+	dataClass1 := Class{ClassId: 2, CourseId: 2, StartTime: SimpleParse("14:15:00"), EndTime: SimpleParse("15:05:00"), MeetingDays: "MWF", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
+	dataClass2 := Class{ClassId: 3, CourseId: 2, StartTime: SimpleParse("17:10:00"), EndTime: SimpleParse("18:25:00"), MeetingDays: "MW", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
+	dataArr := []Class{dataClass1, dataClass2}
+        dataCourse := Course{CourseId: 2, Priority: 9, Manditory: true, Classes: dataArr}
+
+	oopClass1 := Class{ClassId: 4, CourseId: 3, StartTime: SimpleParse("15:15:00"), EndTime: SimpleParse("16:30:00"), MeetingDays: "TH", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
+	oopArr := []Class{oopClass1}
+	oopCourse := Course{CourseId: 3, Priority: 9, Manditory: true, Classes: oopArr}
+
+	webClass1 := Class{ClassId: 5, CourseId: 4, StartTime: SimpleParse("13:45:00"), EndTime: SimpleParse("15:00:00"), MeetingDays: "TH", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
+	webClass2 := Class{ClassId: 6, CourseId: 4, StartTime: SimpleParse("17:10:00"), EndTime: SimpleParse("18:25:00"), MeetingDays: "TH", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
+	webArr := []Class{webClass1, webClass2}
+        webCourse := Course{CourseId: 4, Priority: 9, Manditory: true, Classes: webArr}
+
+	statsClass1 := Class{ClassId: 7, CourseId: 5, StartTime: SimpleParse("14:05:00"), EndTime: SimpleParse("15:05:00"), MeetingDays: "MTWHF", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
+	statsClass2 := Class{ClassId: 8, CourseId: 5, StartTime: SimpleParse("18:05:00"), EndTime: SimpleParse("19:45:00"), MeetingDays: "TH", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
+	statsArr := []Class{statsClass1, statsClass2}
+        statsCourse := Course{CourseId: 5, Priority: 9, Manditory: true, Classes: statsArr}
+
+	courses := []Course{iosCourse, dataCourse, oopCourse, webCourse, statsCourse}
+	result := make([]Combo, 0)
+	var current Combo
+	GenerateCombos(courses, &result, 0, current)
+	for i := range result {
+		PrintCombo[i]
+	}
+
+}
+
 // Total possiable combos, includes ones with class confilicts
 func NumCombos(courses []Course) int {
 	total := 1
