@@ -1,11 +1,13 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"log"
 	"net/http"
 
 	"github.com/GeertJohan/go.rice"
+	"github.com/mibzman/CourseCorrect/scheduling"
 )
 
 var (
@@ -20,7 +22,13 @@ func main() {
 	mux.Handle("/", http.FileServer(staticFiles))
 
 	mux.HandleFunc("/api/courses", func(rw http.ResponseWriter, r *http.Request) {
-		// TODO: Implement Course Serialization
+		encoder := json.NewEncoder(rw)
+		err := encoder.Encode(scheduling.MockCourses)
+		if err != nil {
+			log.Println("Failed to encode json:", err)
+			rw.WriteHeader(http.StatusInternalServerError)
+			return
+		}
 	})
 
 	mux.HandleFunc("/api/combos", func(rw http.ResponseWriter, r *http.Request) {

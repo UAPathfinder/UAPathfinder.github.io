@@ -16,6 +16,7 @@ var MockIOSCourse = Course{CourseId: 1,
 	Priority:  9,
 	Manditory: true,
 	Classes:   MockIOSClasses,
+	Name:      "iOS Application Development: From Zero to Hero",
 }
 
 var MockDataStructuresClasses = []Class{
@@ -43,6 +44,7 @@ var MockDataStructuresCourse = Course{CourseId: 2,
 	Priority:  9,
 	Manditory: true,
 	Classes:   MockDataStructuresClasses,
+	Name:      "An Introduction to Structuring Data",
 }
 
 var MockOOPClasses = []Class{
@@ -61,6 +63,7 @@ var MockOOPCourse = Course{
 	Priority:  9,
 	Manditory: true,
 	Classes:   MockOOPClasses,
+	Name:      "Object Oriented Programming Concepts I",
 }
 
 var MockWebClasses = []Class{
@@ -89,6 +92,7 @@ var MockWebCourse = Course{
 	Priority:  9,
 	Manditory: true,
 	Classes:   MockWebClasses,
+	Name:      "Introduction to HTTP, JavaScript and NPM",
 }
 
 var MockStastisticsClasses = []Class{
@@ -117,6 +121,7 @@ var MockStatisticsCourse = Course{
 	Priority:  9,
 	Manditory: true,
 	Classes:   MockStastisticsClasses,
+	Name:      "Probability and Statistics for Engineering",
 }
 
 var MockCourses = []Course{
