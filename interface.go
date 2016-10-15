@@ -7,10 +7,11 @@ import (
 	"strconv"
 	"strings"
 	"text/tabwriter"
-	"time"
+
+	"github.com/mibzman/CourseCorrect/scheduling"
 )
 
-func PrintCombo(combo Combo) {
+func PrintCombo(combo scheduling.Combo) {
 	fmt.Print("Schedule -----------------------------------\n")
 	for i := range combo.Classes {
 		//fmt.Print("Schedule %d -----------------------------------", i)
@@ -18,7 +19,7 @@ func PrintCombo(combo Combo) {
 	}
 }
 
-func PrintCourse(course Course) {
+func PrintCourse(course scheduling.Course) {
 	w := new(tabwriter.Writer)
 
 	w.Init(os.Stdout, 10, 0, 1, ' ', tabwriter.AlignRight|tabwriter.Debug)
@@ -36,7 +37,7 @@ func PrintCourse(course Course) {
 	}
 }
 
-func PrintClass(class Class) {
+func PrintClass(class scheduling.Class) {
 	w := new(tabwriter.Writer)
 	w.Init(os.Stdout, 10, 0, 1, ' ', tabwriter.AlignRight)
 	fmt.Fprintln(w, "     CourseId\tStart Time\tEnd Time\tDays\t")
@@ -45,10 +46,10 @@ func PrintClass(class Class) {
 	w.Flush()
 }
 
-func CriteriaHolder() []Criteria {
+func CriteriaHolder() []scheduling.Criteria {
 	var ynresponse string
 	reader := bufio.NewReader(os.Stdin)
-	output := make([]Criteria, 0)
+	output := make([]scheduling.Criteria, 0)
 
 	output = append(output, InputCriteria())
 	fmt.Print("Would you like to enter another set of criteria? (y/n): ")
@@ -60,9 +61,9 @@ func CriteriaHolder() []Criteria {
 
 }
 
-func InputCriteria() Criteria {
+func InputCriteria() scheduling.Criteria {
 	fmt.Print("Enter Course \n")
-	var output Criteria
+	var output scheduling.Criteria
 	var ynresponse string
 	reader := bufio.NewReader(os.Stdin)
 
@@ -80,7 +81,7 @@ func InputCriteria() Criteria {
 
 	fmt.Print("What would be the earliest acceptable start time for your earliest class?: ")
 	otherInput, _ := reader.ReadString('\n')
-	output.EarliestClass.Time = MustParse(otherInput + ":00")
+	output.EarliestClass.Time = scheduling.MustParseTime(otherInput + ":00")
 
 	fmt.Print("Is this manditory? (y/n): ")
 	ynresponse, _ = reader.ReadString('\n')
@@ -96,7 +97,7 @@ func InputCriteria() Criteria {
 
 	fmt.Print("What would be the latest acceptable end time for your latest class?: ")
 	otherInput, _ = reader.ReadString('\n')
-	output.LatestClass.Time = MustParse(otherInput + ":00")
+	output.LatestClass.Time = scheduling.MustParseTime(otherInput + ":00")
 
 	fmt.Print("Is this manditory? (y/n): ")
 	ynresponse, _ = reader.ReadString('\n')
@@ -128,10 +129,10 @@ func InputCriteria() Criteria {
 	return output
 }
 
-func CourseHolder() []Course {
+func CourseHolder() []scheduling.Course {
 	var ynresponse string
 	reader := bufio.NewReader(os.Stdin)
-	output := make([]Course, 0)
+	output := make([]scheduling.Course, 0)
 
 	output = append(output, InputCourse())
 	fmt.Print("Would you like to enter another course? (y/n): ")
@@ -143,8 +144,8 @@ func CourseHolder() []Course {
 
 }
 
-func InputCourse() Course {
-	var output Course
+func InputCourse() scheduling.Course {
+	var output scheduling.Course
 	var ynresponse string
 	reader := bufio.NewReader(os.Stdin)
 
@@ -159,8 +160,8 @@ func InputCourse() Course {
 
 }
 
-func OrCourseHolder() []Course {
-	output := make([]Course, 0)
+func OrCourseHolder() []scheduling.Course {
+	output := make([]scheduling.Course, 0)
 
 	var ynresponse string
 	reader := bufio.NewReader(os.Stdin)
@@ -174,9 +175,9 @@ func OrCourseHolder() []Course {
 	return output
 }
 
-func GnenericInputCourse() Course {
+func GnenericInputCourse() scheduling.Course {
 	fmt.Print("Enter Course \n")
-	var output Course
+	var output scheduling.Course
 	var ynresponse string
 	reader := bufio.NewReader(os.Stdin)
 
@@ -210,8 +211,8 @@ func GnenericInputCourse() Course {
 	return output
 }
 
-func ClassHolder(id int) []Class {
-	output := make([]Class, 0)
+func ClassHolder(id int) []scheduling.Class {
+	output := make([]scheduling.Class, 0)
 
 	var ynresponse string
 	reader := bufio.NewReader(os.Stdin)
@@ -226,10 +227,10 @@ func ClassHolder(id int) []Class {
 	return output
 }
 
-func GenericInputClass(id int) Class {
+func GenericInputClass(id int) scheduling.Class {
 	fmt.Print("Enter Class \n")
 	var otherInput string
-	var output Class
+	var output scheduling.Class
 	output.CourseId = id
 	reader := bufio.NewReader(os.Stdin)
 
@@ -239,21 +240,13 @@ func GenericInputClass(id int) Class {
 
 	fmt.Print("Enter Start Time: ")
 	otherInput, _ = reader.ReadString('\n')
-	output.StartTime = MustParse(otherInput + ":00")
+	output.StartTime = scheduling.MustParseTime(otherInput + ":00")
 
 	fmt.Print("Enter End Time: ")
 	otherInput, _ = reader.ReadString('\n')
-	output.EndTime = MustParse(otherInput + ":00")
+	output.EndTime = scheduling.MustParseTime(otherInput + ":00")
 
 	fmt.Print("Enter Meeting Days: ")
 	output.MeetingDays, _ = reader.ReadString('\n')
-	return output
-}
-
-func MustParse(input string) time.Time {
-	output, err := time.Parse("15:04:05", input)
-	if err != nil {
-		panic(err)
-	}
 	return output
 }

@@ -1,51 +1,18 @@
-package main
+package scheduling
 
 import (
 	"sort"
 	"time"
-	//"fmt"
 )
 
-func FullTest(){
-	 iosClass1 := Class{ClassId: 1, CourseId: 1, StartTime: MustParse("13:10:00"), EndTime: MustParse("14:00:00"), MeetingDays: "MWF", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
-	iosArr := []Class{iosClass1}
-	iosCourse := Course{CourseId: 1, Priority: 9, Manditory: true, Classes: iosArr}
-
-	dataClass1 := Class{ClassId: 2, CourseId: 2, StartTime: MustParse("14:15:00"), EndTime: MustParse("15:05:00"), MeetingDays: "MWF", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
-	dataClass2 := Class{ClassId: 3, CourseId: 2, StartTime: MustParse("17:10:00"), EndTime: MustParse("18:25:00"), MeetingDays: "MW", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
-	dataArr := []Class{dataClass1, dataClass2}
-        dataCourse := Course{CourseId: 2, Priority: 9, Manditory: true, Classes: dataArr}
-
-	oopClass1 := Class{ClassId: 4, CourseId: 3, StartTime: MustParse("15:15:00"), EndTime: MustParse("16:30:00"), MeetingDays: "TH", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
-	oopArr := []Class{oopClass1}
-	oopCourse := Course{CourseId: 3, Priority: 9, Manditory: true, Classes: oopArr}
-
-	webClass1 := Class{ClassId: 5, CourseId: 4, StartTime: MustParse("13:45:00"), EndTime: MustParse("15:00:00"), MeetingDays: "TH", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
-	webClass2 := Class{ClassId: 6, CourseId: 4, StartTime: MustParse("17:10:00"), EndTime: MustParse("18:25:00"), MeetingDays: "TH", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
-	webArr := []Class{webClass1, webClass2}
-        webCourse := Course{CourseId: 4, Priority: 9, Manditory: true, Classes: webArr}
-
-	statsClass1 := Class{ClassId: 7, CourseId: 5, StartTime: MustParse("14:05:00"), EndTime: MustParse("15:05:00"), MeetingDays: "MTWHF", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
-	statsClass2 := Class{ClassId: 8, CourseId: 5, StartTime: MustParse("18:05:00"), EndTime: MustParse("19:45:00"), MeetingDays: "TH", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
-	statsArr := []Class{statsClass1, statsClass2}
-        statsCourse := Course{CourseId: 5, Priority: 9, Manditory: true, Classes: statsArr}
-
-	
-
-	courses := []Course{iosCourse, dataCourse, oopCourse, webCourse, statsCourse}
-	result := make([]Combo, 0)
-	var current Combo
-	//fmt.Print("test")
-	//fmt.Print("result length: %d", len(result))
-	_ = "breakpoint"
-	GenerateCombos(courses, &result, 0, current)
-	for i := range result {
-		PrintCombo(result[i])
-	}
-
+func FullTest() {
+	// result := GenerateCombos(MockCourses)
+	// for i := range result {
+	// 	PrintCombo(result[i])
+	// }
 }
 
-// Total possiable combos, includes ones with class confilicts
+// Total possible combos, includes ones with class confilicts
 func NumCombos(courses []Course) int {
 	total := 1
 	for i := range courses {
@@ -54,12 +21,16 @@ func NumCombos(courses []Course) int {
 	return total
 }
 
-func ScoreCombo(combo Combo, criteria Criteria) int { //assumes OrderClasses has been called on the combo
-	return ScoreBreaks(combo, criteria) + ScoreProfs(combo, criteria) + ScoreEarliestClass(combo, criteria) + ScoreLatestClass(combo, criteria) + ScoreDays(combo, criteria)
+// Assumes OrderClasses has been called on the combo
+func ScoreCombo(combo Combo, criteria Criteria) int {
+	return ScoreBreaks(combo, criteria) +
+		ScoreProfs(combo, criteria) +
+		ScoreEarliestClass(combo, criteria) +
+		ScoreLatestClass(combo, criteria) +
+		ScoreDays(combo, criteria)
 }
 
 //note: I don't really know how to do these, so some of them may have some inherent bias
-
 func ScoreBreaks(combo Combo, criteria Criteria) int {
 	output := 0
 	minutes := 0
@@ -118,11 +89,12 @@ func ScoreLatestClass(combo Combo, criteria Criteria) int {
 			output -= int(minutes)
 		}
 	}
-	return output * criteria.EarliestClass.Weight
 
+	return output * criteria.EarliestClass.Weight
 }
 
-func ScoreDays(combo Combo, criteria Criteria) int { //could use some refactoring
+// TODO: Could use some refactoring
+func ScoreDays(combo Combo, criteria Criteria) int {
 	output := 100
 	for class := range combo.Classes {
 		for ClassDay := range combo.Classes[class].MeetingDays {
@@ -141,34 +113,42 @@ func ScoreDays(combo Combo, criteria Criteria) int { //could use some refactorin
 	return output
 }
 
-func GenerateCombos(courses []Course, result *[]Combo, depth int, current Combo) { //eventuially this should be modified to not add a class if that class isn't manditory and then also start the score of that combo slightly lowered since it dropped a class
+func GenerateCombos(courses []Course) []Combo {
+	var current Combo
+	result := make([]Combo, 0)
+	RecursiveGenerateCombos(courses, &result, 0, current)
+	return result
+}
+
+// TODO: should be modified to not add a class if that class isn't manditory and then also start the score of that combo slightly lowered since it dropped a class
+func RecursiveGenerateCombos(courses []Course, result *[]Combo, depth int, current Combo) {
 	if depth == len(courses) {
 		hasOverlap, issue1, issue2 := DoesHaveOverlap(current)
 		if !hasOverlap {
 			*result = append(*result, current)
 		} else {
-			course1 := GetCourse(current.Classes[issue1].CourseId)
-			course2 := GetCourse(current.Classes[issue2].CourseId)
+			course1 := GetCourse(courses, current.Classes[issue1].CourseId)
+			course2 := GetCourse(courses, current.Classes[issue2].CourseId)
 			if !course1.Manditory && !course2.Manditory {
 				if course1.Priority < course2.Priority {
 					current.Classes = append(current.Classes[:issue1], current.Classes[issue1+1:]...)
 					current.Score -= course1.Priority
-					GenerateCombos(courses, result, depth, current) //kicks it back with the same depth to check for overlaps again
+					RecursiveGenerateCombos(courses, result, depth, current) //kicks it back with the same depth to check for overlaps again
 				} else if course1.Priority > course2.Priority {
 					current.Classes = append(current.Classes[:issue2], current.Classes[issue2+1:]...)
 					current.Score -= course2.Priority
-					GenerateCombos(courses, result, depth, current) //kicks it back with the same depth to check for overlaps again
-				} else{
+					RecursiveGenerateCombos(courses, result, depth, current) //kicks it back with the same depth to check for overlaps again
+				} else {
 					_ = "breakpoint"
 				}
 			} else if course1.Manditory {
 				current.Classes = append(current.Classes[:issue2], current.Classes[issue2+1:]...)
 				current.Score -= course2.Priority
-				GenerateCombos(courses, result, depth, current) //kicks it back with the same depth to check for overlaps again
+				RecursiveGenerateCombos(courses, result, depth, current) //kicks it back with the same depth to check for overlaps again
 			} else if course2.Manditory {
 				current.Classes = append(current.Classes[:issue1], current.Classes[issue1+1:]...)
 				current.Score -= course2.Priority
-				GenerateCombos(courses, result, depth, current) //kicks it back with the same depth to check for overlaps again
+				RecursiveGenerateCombos(courses, result, depth, current) //kicks it back with the same depth to check for overlaps again
 			} //otherwise don't append
 		}
 
@@ -177,7 +157,7 @@ func GenerateCombos(courses []Course, result *[]Combo, depth int, current Combo)
 		for i := 0; i < len(currentCourse.Classes); i++ {
 			var tempCurrent Combo
 			tempCurrent.Classes = append(current.Classes, currentCourse.Classes[i])
-			GenerateCombos(courses, result, depth+1, tempCurrent)
+			RecursiveGenerateCombos(courses, result, depth+1, tempCurrent)
 			//yes, it's recursive.  it only goes [depth] layers deep before returning so the stack shouldn't overflow for a reasonable number of courses
 		}
 		if len(currentCourse.OrCourses) != 0 {
@@ -185,7 +165,7 @@ func GenerateCombos(courses []Course, result *[]Combo, depth int, current Combo)
 				for i := 0; i < len(currentCourse.OrCourses[p].Classes); i++ {
 					var tempCurrent Combo
 					tempCurrent.Classes = append(current.Classes, currentCourse.OrCourses[p].Classes[i])
-					GenerateCombos(courses, result, depth+1, tempCurrent)
+					RecursiveGenerateCombos(courses, result, depth+1, tempCurrent)
 				}
 
 			}
@@ -205,12 +185,13 @@ func DoesHaveOverlap(combo Combo) (bool, int, int) {
 
 }
 
-func GetCourse(id int) Course {
-	for i := range AllCourses {
-		if AllCourses[i].CourseId == id {
-			return AllCourses[i]
+func GetCourse(courses []Course, id int) Course {
+	for _, course := range courses {
+		if course.CourseId == id {
+			return course
 		}
 	}
+
 	output := Course{}
 	return output
 }
@@ -229,20 +210,6 @@ func MinuteDiff(first, second time.Time) int {
 	return int(minutes)
 }
 
-func FillCourses(courses map[int]int) { //has to wait for sql stuff
-	for i := range courses {
-		courses[i]++
-	}
-
-}
-
-func GetCourses() map[int]int { //has to wait for sql stuff
-	//retrives list of course id's with priorities
-	output := make(map[int]int)
-	output[1] = 2 //tempoary output for testing
-	return output
-}
-
 func DoesOverlap(Class1, Class2 Class) bool {
 	counter := 0
 	for i := range Class1.MeetingDays {
@@ -251,7 +218,7 @@ func DoesOverlap(Class1, Class2 Class) bool {
 				counter += 1
 			}
 		}
-        }
+	}
 	if counter <= 0 {
 		return false
 	}
