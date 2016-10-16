@@ -1,5 +1,5 @@
 <div class="page-header">
-  <h1>Course Connect</h1>
+  <h1>Course Correct</h1>
 </div>
 
 <div class="form-group">
@@ -9,51 +9,137 @@
          class="form-control" />
 </div>
 
-<table class="table">
-  <thead>
-    <tr>
-      <th>ID</th>
-      <th>Name</th>
-    </tr>
-  </thead>
-  <tbody>
-    <!-- TODO: Use Filter -->
-    <tr *ngFor='let course of courses'>
-      <td>{{ course.id }}</td>
-      <td>{{ course.name }}</td>
-    </tr>
-  </tbody>
-</table>
-
-<div class="page-header">
-  <h2>Best Combinations</h2>
-</div>
-
-<!-- TODO: Show combinations here -->
 <div class="row">
-  <div class='col-md-3'>
-    <ul class='nav nav-pills nav-stacked'>
-      <li *ngFor='let combo of combos; let i = index'><a>{{ i }}</a></li>
-    </ul>
-  </div>
-
-  <div class='col-md-9'>
+  <!-- Searching -->
+  <div class="col-md-6">
     <table class="table">
       <thead>
         <tr>
-          <th>Class ID<th>
-          <th>Course<th>
-          <th>Start Time</th>
-          <th>End Time</th>
+          <th>?</th>
+          <th>Name</th>
+        </tr>
       </thead>
       <tbody>
-        <tr *ngFor='let class of currentCombo.classes'>
-          <td>{{ class.id }}</td>
-          <td>{{ class.course.name }}</td>
-          <td>{{ class.startTime }}</td>
-          <td>{{ class.endTime }}</td>
+        <!-- TODO: Use Filter -->
+        <tr *ngFor='let course of courses' [title]="course.CourseId">
+          <td>
+            <input
+              type="checkbox"
+              (change)='updateSelected(course, $event)' />
+          </td>
+          <td>{{ course.Name }}</td>
         </tr>
       </tbody>
     </table>
+  </div>
+
+  <!-- Selected Courses -->
+  <div class="col-md-6" *ngIf='selectedCourses'>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Mandatory</th>
+          <th>Name</th>
+        </tr>
+      </thead>
+
+      <tbody [sortablejs]='selectedCourses'>
+        <tr *ngFor='let course of selectedCourses'>
+          <td><input type="checkbox" [(ngModel)]='course.Manditory' /></td>
+          <td>{{ course.Name }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="panel panel-default">
+  <div class="panel-heading">Options</div>
+  <div class="panel-body">
+    <div>
+        <!-- Start Time -->
+        <div class='form-group col-md-2'>
+          <label for='startTime' class='control-label'>Start Time</label>
+          <input
+            type='time'
+            class='form-control'
+            id='startTime'
+            [(ngModel)]='startTime' />
+        </div>
+    
+        <!-- End Time -->
+        <div class='form-group col-md-2'>
+          <label for='endTime' class='control-label'>End Time</label>
+          <input
+            type='time'
+            class='form-control'
+            id='endTime'
+            [(ngModel)]='endTime' />
+        </div>
+
+        <div class='form-group col-md-4'>
+          <label>Days Off</label>
+          <!-- TODO: Remove this magic margin -->
+          <div style='margin-top: 0.4em'>
+            <round-button
+              *ngFor='let weekday of weekdays'
+              [name]='weekday.name'
+              [(selected)]='weekday.active'></round-button>
+          </div>
+      </div>
+
+      <button
+        type="submit"
+        class="btn btn-primary pull-right"
+        (click)='onSubmit()'>
+          Calculate Combinations
+      </button>
+    </div>
+  </div>
+</div>
+
+<div *ngIf='combinations'>
+  <div class="page-header">
+    <h2>Combinations</h2>
+  </div>
+  
+  <!-- TODO: Show combinations here -->
+  <div class="row">
+    <div class='col-md-1'>
+      <ul class='nav nav-pills nav-stacked'>
+        <li
+          *ngFor='let combo of combinations; let i = index'
+          [ngClass]="{'active': i == this.currentCombo}">
+          <a
+            href='javascript: false'
+            (click)='this.currentCombo = i'
+            style='text-align: center'>
+              {{ i + 1 }}
+          </a>
+        </li>
+      </ul>
+    </div>
+  
+    <div class='col-md-11'>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Class ID</th>
+            <th>Course</th>
+            <th>Meeting Days</th>
+            <th>Start Time</th>
+            <th>End Time</th>
+        </thead>
+        <tbody *ngIf='combinations[this.currentCombo]'>
+          <tr *ngFor='let class of combinations[this.currentCombo].Classes'>
+            <td>{{ class.ClassId }}</td>
+            <td>{{ getCourse(class.CourseId).Name }}</td>
+            <td>{{ class.MeetingDays }}</td>
+            <td>{{ class.StartTime | date:"shortTime" }}</td>
+            <td>{{ class.EndTime | date:"shortTime" }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>

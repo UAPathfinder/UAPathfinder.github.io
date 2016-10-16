@@ -5,6 +5,7 @@ import (
 	"flag"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/GeertJohan/go.rice"
 	"github.com/mibzman/CourseCorrect/scheduling"
@@ -32,7 +33,47 @@ func main() {
 	})
 
 	mux.HandleFunc("/api/combos", func(rw http.ResponseWriter, r *http.Request) {
-		// TODO: Get a number of combos along with their scores.
+		if r.Method != http.MethodPost {
+			log.Println("Invalid to post endpoint:", r.Method)
+			rw.WriteHeader(http.StatusBadRequest)
+			return
+		}
+
+		// TODO: Close body?
+		decoder := json.NewDecoder(r.Body)
+
+		var constraints CombinationsRequest
+		err := decoder.Decode(&constraints)
+		if err != nil {
+			log.Println("Failed to decode json:", err)
+			rw.WriteHeader(http.StatusBadRequest)
+			return
+		}
+
+		criteria := scheduling.Criteria{
+			EarliestClass: scheduling.Criterion{
+				Time: *constraints.StartTime,
+			},
+			LatestClass: scheduling.Criterion{
+				Time: *constraints.EndTime,
+			},
+			Days: scheduling.Criterion{
+				Other: constraints.Days,
+			},
+		}
+
+		combos := scheduling.GenerateCombos(constraints.Courses)
+		for _, combo := range combos {
+			scheduling.OrderClasses(&combo)
+			scheduling.ScoreCombo(combo, criteria)
+		}
+
+		encoder := json.NewEncoder(rw)
+		err = encoder.Encode(combos)
+		if err != nil {
+			log.Println("Failed to encode json:", err)
+			rw.WriteHeader(http.StatusInternalServerError)
+		}
 	})
 
 	server := &http.Server{
@@ -42,4 +83,11 @@ func main() {
 
 	log.Printf("Starting server on %s\n", *listen)
 	log.Fatalln(server.ListenAndServe())
+}
+
+type CombinationsRequest struct {
+	Courses   []scheduling.Course
+	StartTime *time.Time
+	EndTime   *time.Time
+	Days      string
 }
