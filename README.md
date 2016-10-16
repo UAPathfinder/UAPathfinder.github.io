@@ -6,7 +6,7 @@ An intelligent class scheduling assistant.
 Installing and Running
 ----------------------
 
-    go get https://github.com/mibzman/CourseCorrect
+    go get github.com/mibzman/CourseCorrect
     cd CourseCorrect/frontend
     npm install
     npm start
