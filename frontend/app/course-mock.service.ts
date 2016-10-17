@@ -9,8 +9,15 @@ export class MockCourseService {
 	getCourses(): Observable<Course[]> {
 		return Observable.create((observer) => {
 			observer.next([
-				{CourseId: "MATH-1620", Name: "Calculus II"},
-				{CourseId: "CHEM-1010", Name: "Introduction to Inorganic Chemistry"},
+				{
+					CourseId: "MATH-1620",
+					Name: "Calculus II",
+				},
+				{
+					CourseId: "CHEM-1010",
+					Name: "Introduction to Inorganic Chemistry",
+				},
+			]);
 		});
 	}
 }
