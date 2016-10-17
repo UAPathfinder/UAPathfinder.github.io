@@ -9,7 +9,7 @@ Installing and Running
     go get github.com/mibzman/CourseCorrect
     cd CourseCorrect/frontend
     npm install
-    npm start
+    npm run tsc
     cd ..
     go build && ./CourseConnect
 
