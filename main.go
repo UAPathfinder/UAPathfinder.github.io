@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/GeertJohan/go.rice"
+	"github.com/mibzman/CourseCorrect/mock"
 	"github.com/mibzman/CourseCorrect/scheduling"
 )
 
@@ -24,7 +25,7 @@ func main() {
 
 	mux.HandleFunc("/api/courses", func(rw http.ResponseWriter, r *http.Request) {
 		encoder := json.NewEncoder(rw)
-		err := encoder.Encode(scheduling.MockCourses)
+		err := encoder.Encode(mock.Courses)
 		if err != nil {
 			log.Println("Failed to encode json:", err)
 			rw.WriteHeader(http.StatusInternalServerError)
