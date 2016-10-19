@@ -30,6 +30,7 @@
 
       'angular-sortablejs': 'node_modules/angular-sortablejs',
       'sortablejs': 'node_modules/sortablejs/Sortable.js',
+      'moment': 'node_modules/moment/min'
     },
     // packages tells the System loader how to load when no filename and/or no extension
     packages: {
@@ -48,6 +49,10 @@
         main: 'index.js',
         defaultExtension: 'js'
       },
+      'moment': {
+        main: 'moment.min.js',
+        defaultExtension: 'js'
+      }
     }
   });
 })(this);

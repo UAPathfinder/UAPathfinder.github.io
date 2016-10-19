@@ -135,8 +135,8 @@
             <td>{{ class.ClassId }}</td>
             <td>{{ getCourse(class.CourseId).Name }}</td>
             <td>{{ class.MeetingDays }}</td>
-            <td>{{ class.StartTime | date:"shortTime" }}</td>
-            <td>{{ class.EndTime | date:"shortTime" }}</td>
+            <td>{{ class.StartTime | time:"hh:mm A" }}</td>
+            <td>{{ class.EndTime | time:"hh:mm A" }}</td>
           </tr>
         </tbody>
       </table>

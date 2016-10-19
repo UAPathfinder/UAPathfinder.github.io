@@ -7,11 +7,13 @@ import { SortablejsModule } from 'angular-sortablejs';
 
 import { AppComponent }  from './app.component';
 import { RoundButtonComponent }  from './round-button.component';
+
 import { CourseService } from './course.service';
+import { TimePipe } from './time.pipe';
 
 @NgModule({
   imports: [ BrowserModule, FormsModule, HttpModule, SortablejsModule ],
-  declarations: [ AppComponent, RoundButtonComponent ],
+  declarations: [ AppComponent, RoundButtonComponent, TimePipe ],
   bootstrap: [ AppComponent ],
   providers: [ CourseService ],
 })

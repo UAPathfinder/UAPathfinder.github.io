@@ -5,6 +5,8 @@ import { Course } from './models/course';
 import { Combination } from './models/combination';
 import { WEEKDAYS, Weekday } from './models/weekday';
 
+import * as moment from 'moment';
+
 import './rxjs-operators';
 
 @Component({
@@ -72,12 +74,12 @@ export class AppComponent {
 	}
 }
 
-// Parses time from input elements into a Date Object
-function parseTime(input: string): Date {
-	let parts = input.split(":")
-		.map((num) => Number.parseInt(num))
-
-	// Year, Month, Day, Hour, Minute, Second, ms
-	return new Date(0, 0, 0, parts[0], parts[1])
+// Parses time from input elements into a json format.
+function parseTime(input: string): string {
+	return moment.utc(input, "HH:mm")
+		.set({'year': 0, 'month': 0, 'day': 0})
+		// Bug in moment or go which puts a wired prefix when using year 0
+		.toJSON()
+		.replace(/^\+00/, '');
 }
 
