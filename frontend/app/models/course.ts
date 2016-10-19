@@ -7,9 +7,9 @@ export class Course {
 
 	// A property of the view. This is true when the course is selected to be
 	// combined.
-	isSelected: boolean;
+	isSelected: boolean = false;
 
-	Priority: number;
+	Priority: number = 0;
 
 	// TODO: Rename this soon.
 	Manditory: boolean;
