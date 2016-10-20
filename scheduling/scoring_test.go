@@ -1,6 +1,7 @@
 package scheduling
 
 import (
+	"strconv"
 	"testing"
 )
 
@@ -165,8 +166,17 @@ func TestOrderCombos(t *testing.T) {
 		t.Fatalf("CompareCombos is broke")
 	}
 
-	if !(CompareCombos(comboArr[0], combo1) && CompareCombos(comboArr[1], combo2) && CompareCombos(comboArr[2], combo3)) {
+	if !(CompareCombos(comboArr[0], combo2) && CompareCombos(comboArr[1], combo4) && CompareCombos(comboArr[2], combo1)) {
+
+		t.Logf(strconv.Itoa(comboArr[0].Score))
+		t.Logf(strconv.Itoa(comboArr[1].Score))
+		t.Logf(strconv.Itoa(comboArr[2].Score))
+		t.Logf(strconv.Itoa(comboArr[3].Score))
 		t.Fatalf("OrderCombos Failed.")
+
+		//for _, combo := range comboArr {
+		//PrintCombo(combo)
+		//}
 	}
 
 }
@@ -557,6 +567,69 @@ func TestGenerateCombos2(t *testing.T) {
 	if len(result) != 18 {
 		t.Fatalf("is not right size.  is : %d", len(result))
 	}
+}
+
+func TestScoreDays(t *testing.T) {
+	class1 := Class{
+		ClassId:         1,
+		CourseId:        1,
+		StartTime:       MustParseTime("09:00:00"),
+		EndTime:         MustParseTime("10:00:00"),
+		MeetingDays:     "MWF",
+		ProfessorName:   "Bob Jones",
+		MeetingLocation: "Leigh Hall",
+	}
+	//The sample data is all the same prof and location because we're not testing those portions right now
+	class3 := Class{
+		ClassId:         3,
+		CourseId:        1,
+		StartTime:       MustParseTime("05:05:00"),
+		EndTime:         MustParseTime("06:15:00"),
+		MeetingDays:     "MW",
+		ProfessorName:   "Bob Jones",
+		MeetingLocation: "Leigh Hall",
+	}
+	class4 := Class{
+		ClassId:         4,
+		CourseId:        2,
+		StartTime:       MustParseTime("09:25:00"),
+		EndTime:         MustParseTime("10:45:00"),
+		MeetingDays:     "THF",
+		ProfessorName:   "Bob Jones",
+		MeetingLocation: "Leigh Hall",
+	}
+	class5 := Class{
+		ClassId:         5,
+		CourseId:        2,
+		StartTime:       MustParseTime("07:45:00"),
+		EndTime:         MustParseTime("10:00:00"),
+		MeetingDays:     "MW",
+		ProfessorName:   "Bob Jones",
+		MeetingLocation: "Leigh Hall",
+	}
+
+	var arr1 = []Class{class1, class5}
+	var arr2 = []Class{class3, class4}
+	var arr3 = []Class{class1, class4}
+	var arr4 = []Class{class3, class5}
+
+	combo1 := Combo{Classes: arr1}
+	combo2 := Combo{Classes: arr2, Score: 145}
+	combo3 := Combo{Classes: arr3, Score: 4}
+	combo4 := Combo{Classes: arr4, Score: 85}
+	var _ = []Combo{combo2, combo3, combo4}
+
+	criteria := Criteria{
+		Days: Criterion{
+			Other:     "SFS",
+			Manditory: true,
+			Weight:    10,
+		},
+	}
+	combo1.Score = ScoreCombo(combo1, criteria)
+	t.Logf(strconv.Itoa(combo1.Score))
+	t.Fatalf("Test ScoreDays")
+
 }
 
 func CompareCombos(input1, input2 Combo) bool {

@@ -88,11 +88,11 @@ func ScoreLatestClass(combo Combo, criteria Criteria) int {
 
 // TODO: Could use some refactoring
 func ScoreDays(combo Combo, criteria Criteria) int {
-	output := 100
-	for class := range combo.Classes {
-		for ClassDay := range combo.Classes[class].MeetingDays {
-			for CriteriaDay := range criteria.Days.Other {
-				if combo.Classes[class].MeetingDays[ClassDay] == criteria.Days.Other[CriteriaDay] {
+	output := 0
+	for _, class := range combo.Classes {
+		for _, ClassDay := range class.MeetingDays {
+			for _, CriteriaDay := range criteria.Days.Other {
+				if ClassDay == CriteriaDay {
 					if criteria.Days.Manditory {
 						output = -10000000
 					} else {
@@ -113,7 +113,7 @@ func GenerateCombos(courses []Course) []Combo {
 	return result
 }
 
-//the insperation for this algorithm comes from here: 
+//the insperation for this algorithm comes from here:
 //http://stackoverflow.com/questions/17192796/generate-all-combinations-from-multiple-lists
 //we need recursion because the number of courses is going to vary between users
 func RecursiveGenerateCombos(courses []Course, result *[]Combo, depth int, current Combo) {
@@ -138,8 +138,8 @@ func RecursiveGenerateCombos(courses []Course, result *[]Combo, depth int, curre
 					current.Classes = append(current.Classes[:issue2], current.Classes[issue2+1:]...)
 					current.Score -= course2.Priority
 					RecursiveGenerateCombos(courses, result, depth, current) //kicks it back with the same depth to check for overlaps again
-				} 
-			//the cases that one is manditory but the other isn't
+				}
+				//the cases that one is manditory but the other isn't
 			} else if course1.Manditory {
 				current.Classes = append(current.Classes[:issue2], current.Classes[issue2+1:]...)
 				current.Score -= course2.Priority
@@ -149,7 +149,7 @@ func RecursiveGenerateCombos(courses []Course, result *[]Combo, depth int, curre
 				current.Classes = append(current.Classes[:issue1], current.Classes[issue1+1:]...)
 				current.Score -= course2.Priority
 				//kicks it back with the same depth to check for overlaps again
-				RecursiveGenerateCombos(courses, result, depth, current) 
+				RecursiveGenerateCombos(courses, result, depth, current)
 			} //otherwise don't append because the whole combo does not fit the user's requirements
 		}
 
@@ -202,7 +202,7 @@ func GetCourse(courses []Course, id int) Course {
 }
 
 func OrderCombos(combos *[]Combo) {
-	sort.Reverse(ByScore(*combos))
+	sort.Sort(sort.Reverse(ByScore(*combos)))
 }
 
 func OrderClasses(combo *Combo) {

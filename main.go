@@ -53,22 +53,28 @@ func main() {
 
 		criteria := scheduling.Criteria{
 			EarliestClass: scheduling.Criterion{
-				Time: *constraints.StartTime,
+				Time:      *constraints.StartTime,
+				Manditory: true,
+				Weight:    10,
 			},
 			LatestClass: scheduling.Criterion{
-				Time: *constraints.EndTime,
+				Time:      *constraints.EndTime,
+				Manditory: true,
+				Weight:    10,
 			},
 			Days: scheduling.Criterion{
-				Other: constraints.Days,
+				Other:     constraints.Days,
+				Manditory: true,
+				Weight:    10,
 			},
 		}
 
 		combos := scheduling.GenerateCombos(constraints.Courses)
 		for _, combo := range combos {
 			scheduling.OrderClasses(&combo)
-			scheduling.ScoreCombo(combo, criteria)
+			combo.Score = scheduling.ScoreCombo(combo, criteria)
 		}
-
+		scheduling.OrderCombos(&combos)
 		encoder := json.NewEncoder(rw)
 		err = encoder.Encode(combos)
 		if err != nil {
