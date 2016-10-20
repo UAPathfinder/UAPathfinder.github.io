@@ -4,6 +4,7 @@ import (
 	"testing"
 )
 
+/*
 func TestGetCourses(t *testing.T) {
 	output := GetCourses()
 	value := output[1]
@@ -11,6 +12,7 @@ func TestGetCourses(t *testing.T) {
 		t.Fatalf("Get Courses is not returning the testing output: output[1] = 2")
 	}
 }
+
 
 func TestFillCourses(t *testing.T) {
 	input := map[int]int{
@@ -23,6 +25,7 @@ func TestFillCourses(t *testing.T) {
 		t.Fatalf("output is not correct.  output[1] = %d", input[1])
 	}
 }
+*/
 
 func TestNumCombos(t *testing.T) {
 	class1 := Class{ClassId: 1, CourseId: 1, StartTime: MustParseTime("09:00:00"), EndTime: MustParseTime("10:00:00"), MeetingDays: "MWF", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
@@ -84,7 +87,7 @@ func TestOrderClasses(t *testing.T) {
 	class4 := Class{ClassId: 4, CourseId: 2, StartTime: MustParseTime("11:25:00"), EndTime: MustParseTime("12:45:00"), MeetingDays: "THF", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
 	class5 := Class{ClassId: 5, CourseId: 2, StartTime: MustParseTime("13:45:00"), EndTime: MustParseTime("14:00:00"), MeetingDays: "MW", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
 
-	classes := []Class{class1, class2, class3, class5, class4}
+	classes := []Class{class4, class2, class3, class5, class1}
 	combo := Combo{Classes: classes}
 
 	OrderClasses(&combo)
