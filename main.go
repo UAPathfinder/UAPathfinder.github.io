@@ -5,6 +5,7 @@ import (
 	"flag"
 	"log"
 	"net/http"
+	"sort"
 	"time"
 
 	"github.com/GeertJohan/go.rice"
@@ -70,11 +71,13 @@ func main() {
 		}
 
 		combos := scheduling.GenerateCombos(constraints.Courses)
-		for _, combo := range combos {
-			scheduling.OrderClasses(&combo)
-			combo.Score = scheduling.ScoreCombo(combo, criteria)
+		for i := range combos {
+			combo := &combos[i]
+			sort.Sort(scheduling.ByStartTime(combo.Classes))
+			combo.Score = scheduling.ScoreCombo(*combo, criteria)
 		}
-		scheduling.OrderCombos(&combos)
+		sort.Sort(sort.Reverse(scheduling.ByScore(combos)))
+
 		encoder := json.NewEncoder(rw)
 		err = encoder.Encode(combos)
 		if err != nil {

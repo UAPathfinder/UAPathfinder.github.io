@@ -1,7 +1,6 @@
 package scheduling
 
 import (
-	"sort"
 	"time"
 )
 
@@ -201,13 +200,13 @@ func GetCourse(courses []Course, id int) Course {
 	return output
 }
 
-func OrderCombos(combos *[]Combo) {
-	sort.Sort(sort.Reverse(ByScore(*combos)))
-}
-
-func OrderClasses(combo *Combo) {
-	sort.Sort(ByStartTime(combo.Classes))
-}
+// func OrderCombos(combos *[]Combo) {
+// 	sort.Sort(sort.Reverse(ByScore(*combos)))
+// }
+//
+// func OrderClasses(combo *Combo) {
+// 	sort.Sort(ByStartTime(combo.Classes))
+// }
 
 func MinuteDiff(first, second time.Time) int {
 	diff := first.Sub(second)
