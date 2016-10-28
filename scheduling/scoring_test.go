@@ -3,6 +3,9 @@ package scheduling
 import (
 	"strconv"
 	"testing"
+	"sort"
+	"fmt"
+	//"github.com/mibzman/CourseCorrect/mock"
 )
 
 /*
@@ -553,6 +556,40 @@ func TestGenerateCombos2(t *testing.T) {
 	if len(result) != 18 {
 		t.Fatalf("is not right size.  is : %d", len(result))
 	}
+}
+
+func TestGenerateCombos3(t *testing.T){
+	 criteria := Criteria{
+                        EarliestClass: Criterion{
+                                Time:      MustParseTime("07:00:00"),
+                                Manditory: true,
+                                Weight:    10,
+                        },
+                        LatestClass: Criterion{
+                                Time:      MustParseTime("17:00:00"),
+                                Manditory: true,
+                                Weight:    10,
+                        },
+                        Days: Criterion{
+                                Other:     "SFS",
+                                Manditory: true,
+                                Weight:    10,
+                        },
+                }
+	combos := GenerateCombos(MockCourses)
+	for i := range combos {
+                combo := &combos[i]
+		sort.Sort( ByStartTime(combo.Classes))
+		combo.Score =  ScoreCombo(*combo, criteria)
+        }
+        sort.Sort(ByScore(combos))
+	sort.Reverse(ByScore(combos))
+	for i := range combos {
+		fmt.Print(i)
+		fmt.Print(" ")
+		DiagnosticPrintCombo(combos[i])
+        } 
+
 }
 
 func TestScoreDays(t *testing.T) {
