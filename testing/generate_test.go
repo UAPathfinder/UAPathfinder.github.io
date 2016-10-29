@@ -1,12 +1,12 @@
 package testing
 
 import (
-	"testing"
-	"sort"
 	"fmt"
-	"github.com/mibzman/CourseCorrect/scheduling"
-	"github.com/mibzman/CourseCorrect/mock"
 	"github.com/mibzman/CourseCorrect/IO"
+	"github.com/mibzman/CourseCorrect/mock"
+	"github.com/mibzman/CourseCorrect/scheduling"
+	"sort"
+	"testing"
 )
 
 func TestGenerateCombos(t *testing.T) {
@@ -228,36 +228,36 @@ func TestGenerateCombos2(t *testing.T) {
 	}
 }
 
-func TestGenerateCombos3(t *testing.T){
-	 criteria := scheduling.Criteria{
-                        EarliestClass: scheduling.Criterion{
-                                Time:      scheduling.MustParseTime("07:00:00"),
-                                Manditory: true,
-                                Weight:    10,
-                        },
-                        LatestClass: scheduling.Criterion{
-                                Time:      scheduling.MustParseTime("17:00:00"),
-                                Manditory: true,
-                                Weight:    10,
-                        },
-                        Days: scheduling.Criterion{
-                                Other:     "SFS",
-                                Manditory: true,
-                                Weight:    10,
-                        },
-                }
+func TestGenerateCombos3(t *testing.T) {
+	criteria := scheduling.Criteria{
+		EarliestClass: scheduling.Criterion{
+			Time:      scheduling.MustParseTime("07:00:00"),
+			Manditory: true,
+			Weight:    10,
+		},
+		LatestClass: scheduling.Criterion{
+			Time:      scheduling.MustParseTime("17:00:00"),
+			Manditory: true,
+			Weight:    10,
+		},
+		Days: scheduling.Criterion{
+			Other:     "SFS",
+			Manditory: true,
+			Weight:    10,
+		},
+	}
 	combos := scheduling.GenerateCombos(mock.Courses)
 	for i := range combos {
-                combo := &combos[i]
+		combo := &combos[i]
 		sort.Sort(scheduling.ByStartTime(combo.Classes))
 		combo.Score = scheduling.ScoreCombo(*combo, criteria)
-        }
-        sort.Sort(scheduling.ByScore(combos))
+	}
+	sort.Sort(scheduling.ByScore(combos))
 	sort.Reverse(scheduling.ByScore(combos))
 	for i := range combos {
 		fmt.Print(i)
 		fmt.Print(" ")
 		IO.PrintCombo(combos[i])
-        } 
+	}
 
 }

@@ -41,7 +41,7 @@ func PrintClass(class scheduling.Class) {
 	w := new(tabwriter.Writer)
 	w.Init(os.Stdout, 10, 0, 1, ' ', tabwriter.AlignRight)
 	fmt.Fprintln(w, "     CourseId\tClassId\tStart Time\tEnd Time\tDays\t")
-	fmt.Fprintln(w, "    "+strconv.Itoa(class.CourseId)+"\t"+strconv.Itoa(class.ClassId)+ "\t" +class.StartTime.Format("15:04")+"\t"+class.EndTime.Format("15:04")+"\t"+class.MeetingDays+"\t")
+	fmt.Fprintln(w, "    "+strconv.Itoa(class.CourseId)+"\t"+strconv.Itoa(class.ClassId)+"\t"+class.StartTime.Format("15:04")+"\t"+class.EndTime.Format("15:04")+"\t"+class.MeetingDays+"\t")
 	fmt.Fprintln(w)
 	w.Flush()
 }

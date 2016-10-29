@@ -1,9 +1,9 @@
 package testing
 
 import (
+	"github.com/mibzman/CourseCorrect/scheduling"
 	"strconv"
 	"testing"
-	"github.com/mibzman/CourseCorrect/scheduling"
 )
 
 func TestNumCombos(t *testing.T) {
@@ -276,7 +276,6 @@ func TestDoesOverlap(t *testing.T) {
 	}
 
 }
-
 
 func CompareCombos(input1, input2 scheduling.Combo) bool {
 	for i := range input1.Classes {

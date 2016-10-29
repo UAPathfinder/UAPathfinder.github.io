@@ -1,9 +1,9 @@
 package testing
 
 import (
+	"github.com/mibzman/CourseCorrect/scheduling"
 	"strconv"
 	"testing"
-	"github.com/mibzman/CourseCorrect/scheduling"
 )
 
 //TODO: not only is this not implemented but this test is disabled

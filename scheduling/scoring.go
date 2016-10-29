@@ -91,4 +91,3 @@ func ScoreDays(combo Combo, criteria Criteria) int {
 	output *= criteria.Days.Weight
 	return output
 }
-

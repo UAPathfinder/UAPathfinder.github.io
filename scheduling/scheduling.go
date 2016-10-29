@@ -1,8 +1,8 @@
 package scheduling
 
 import (
-	"time"
 	"sort"
+	"time"
 )
 
 // Total possible combos, includes ones with class confilicts
@@ -37,13 +37,13 @@ func GetCourse(courses []Course, id int) Course {
 	return output
 }
 
- func OrderCombos(combos *[]Combo) {
- 	sort.Sort(sort.Reverse(ByScore(*combos)))
- }
+func OrderCombos(combos *[]Combo) {
+	sort.Sort(sort.Reverse(ByScore(*combos)))
+}
 
- func OrderClasses(combo *Combo) {
- 	sort.Sort(ByStartTime(combo.Classes))
- }
+func OrderClasses(combo *Combo) {
+	sort.Sort(ByStartTime(combo.Classes))
+}
 
 func MinuteDiff(first, second time.Time) int {
 	diff := first.Sub(second)
