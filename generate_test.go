@@ -1,12 +1,13 @@
-package testing
+package main
 
 import (
 	"fmt"
+	"sort"
+	"testing"
+
 	"github.com/mibzman/CourseCorrect/IO"
 	"github.com/mibzman/CourseCorrect/mock"
 	"github.com/mibzman/CourseCorrect/scheduling"
-	"sort"
-	"testing"
 )
 
 func TestGenerateCombos(t *testing.T) {

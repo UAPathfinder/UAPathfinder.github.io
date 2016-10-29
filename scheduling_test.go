@@ -1,4 +1,4 @@
-package testing
+package main
 
 import (
 	"github.com/mibzman/CourseCorrect/scheduling"
