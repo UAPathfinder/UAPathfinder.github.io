@@ -22,6 +22,7 @@ func RecursiveGenerateCombos(courses []Course, result *[]Combo, depth int, curre
 		} else {
 			//get the course objects so we can get the manditory and priority members
 			//later this will be a database call
+
 			course1 := GetCourse(courses, current.Classes[issue1].CourseId)
 			course2 := GetCourse(courses, current.Classes[issue2].CourseId)
 			//if neither conflicting courses are manditory
@@ -37,12 +38,12 @@ func RecursiveGenerateCombos(courses []Course, result *[]Combo, depth int, curre
 					RecursiveGenerateCombos(courses, result, depth, current) //kicks it back with the same depth to check for overlaps again
 				}
 				//the cases that one is manditory but the other isn't
-			} else if course1.Manditory {
+			} else if !course2.Manditory {
 				current.Classes = append(current.Classes[:issue2], current.Classes[issue2+1:]...)
 				current.Score -= course2.Priority
 				//kicks it back with the same depth to check for overlaps again
 				RecursiveGenerateCombos(courses, result, depth, current)
-			} else if course2.Manditory {
+			} else if !course1.Manditory {
 				current.Classes = append(current.Classes[:issue1], current.Classes[issue1+1:]...)
 				current.Score -= course2.Priority
 				//kicks it back with the same depth to check for overlaps again
@@ -61,7 +62,7 @@ func RecursiveGenerateCombos(courses []Course, result *[]Combo, depth int, curre
 			//yes, it's recursive.  it only goes [depth] layers deep before returning so the stack shouldn't overflow for a reasonable number of courses
 		}
 		//this loop goes through all the 'ored' courses within the 'root' course
-		if len(currentCourse.OrCourses) != 0 {
+		if len(currentCourse.OrCourses) > 0 {
 			for p := 0; p < len(currentCourse.OrCourses); p++ {
 				for i := 0; i < len(currentCourse.OrCourses[p].Classes); i++ {
 					//the exact same loop as above but for the 'ored' course

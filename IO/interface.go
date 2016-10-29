@@ -13,7 +13,7 @@ import (
 
 func PrintCombos(combos []scheduling.Combo) {
 	for i := range combos {
-		fmt.Print(i)
+		fmt.Print(i + 1)
 		fmt.Print(" ")
 		PrintCombo(combos[i])
 	}

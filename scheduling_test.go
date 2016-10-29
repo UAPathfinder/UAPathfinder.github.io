@@ -90,10 +90,14 @@ func TestOrderCombos(t *testing.T) {
 	scheduling.OrderCombos(&comboArr)
 
 	if !scheduling.CompareCombos(combo1, combo1) {
-		t.Fatalf("scheduling.CompareCombos is broke")
+		t.Fatalf("scheduling.CompareCombos: combo1 != combo1")
 	}
 
-	if !(scheduling.CompareCombos(comboArr[0], combo2) && scheduling.CompareCombos(comboArr[1], combo4) && scheduling.CompareCombos(comboArr[2], combo1)) {
+	if scheduling.CompareCombos(combo1, combo2) {
+		t.Fatalf("scheduling.CompareCombos: combo1 == combo2")
+	}
+
+	if !scheduling.CompareCombos(comboArr[0], combo2) && scheduling.CompareCombos(comboArr[1], combo4) && scheduling.CompareCombos(comboArr[2], combo1) {
 
 		t.Logf(strconv.Itoa(comboArr[0].Score))
 		t.Logf(strconv.Itoa(comboArr[1].Score))

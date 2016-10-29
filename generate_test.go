@@ -228,7 +228,7 @@ func TestGenerateCombos2(t *testing.T) {
 	}
 }
 
-func TestGenerateCombos3(t *testing.T) {
+func TestGenerateDuplicateCombos(t *testing.T) {
 	criteria := scheduling.Criteria{
 		EarliestClass: scheduling.Criterion{
 			Time:      scheduling.MustParseTime("07:00:00"),
@@ -241,19 +241,75 @@ func TestGenerateCombos3(t *testing.T) {
 			Weight:    10,
 		},
 		Days: scheduling.Criterion{
-			Other:     "SFS",
+			Other:     "SS",
 			Manditory: true,
 			Weight:    10,
 		},
 	}
+	_ = criteria
+
 	combos := scheduling.GenerateCombos(mock.S4Courses)
+
 	for i := range combos {
 		combo := &combos[i]
 		sort.Sort(scheduling.ByStartTime(combo.Classes))
 		combo.Score = scheduling.ScoreCombo(*combo, criteria)
 	}
-	sort.Sort(scheduling.ByScore(combos))
+	sort.Sort(sort.Reverse(scheduling.ByScore(combos)))
 	sort.Reverse(scheduling.ByScore(combos))
-	IO.PrintCombos(combos)
+
+	HasDuplicate, first, second := scheduling.FindDuplicateCombos(combos)
+	if HasDuplicate {
+		t.Logf("first: %v, second: %v", first, second)
+		IO.PrintCombo(combos[first])
+		IO.PrintCombo(combos[second])
+		t.Fatalf("Duplicate Combo detected")
+	}
+	//IO.PrintCombos(combos)
+
+}
+
+//looks for dropped manditory combos
+func TestDroppedCombos(t *testing.T) {
+	criteria := scheduling.Criteria{
+		EarliestClass: scheduling.Criterion{
+			Time:      scheduling.MustParseTime("07:00:00"),
+			Manditory: true,
+			Weight:    10,
+		},
+		LatestClass: scheduling.Criterion{
+			Time:      scheduling.MustParseTime("17:00:00"),
+			Manditory: true,
+			Weight:    10,
+		},
+		Days: scheduling.Criterion{
+			Other:     "SS",
+			Manditory: true,
+			Weight:    10,
+		},
+	}
+
+	//test data has only manditory classes, so we'll just count
+	combos := scheduling.GenerateCombos(mock.S4Courses)
+
+	for i := range combos {
+		combo := &combos[i]
+		sort.Sort(scheduling.ByStartTime(combo.Classes))
+		combo.Score = scheduling.ScoreCombo(*combo, criteria)
+	}
+	sort.Sort(sort.Reverse(scheduling.ByScore(combos)))
+	sort.Reverse(scheduling.ByScore(combos))
+
+	counter := 0
+	for _, combo := range combos {
+		if len(combo.Classes) != 5 {
+			counter += 1
+		}
+	}
+	if counter != 0 {
+		t.Logf("%v combos have less than 5 classes", counter)
+		t.Fatalf("Dropped Combo detected")
+	}
+	//IO.PrintCombos(combos)
 
 }
