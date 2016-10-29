@@ -1,4 +1,5 @@
 language: go
 go: 
   - 1.7.1
-
+notifications:
+  slack: coursecorrectproject:w2qQwP7Q7M562Eci6p92ocMQ
