@@ -246,7 +246,7 @@ func TestGenerateCombos3(t *testing.T) {
 			Weight:    10,
 		},
 	}
-	combos := scheduling.GenerateCombos(mock.Courses)
+	combos := scheduling.GenerateCombos(mock.S3Courses)
 	for i := range combos {
 		combo := &combos[i]
 		sort.Sort(scheduling.ByStartTime(combo.Classes))
