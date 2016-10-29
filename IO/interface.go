@@ -11,6 +11,14 @@ import (
 	"github.com/mibzman/CourseCorrect/scheduling"
 )
 
+func PrintCombos(combos []scheduling.Combo) {
+	for i := range combos {
+		fmt.Print(i)
+		fmt.Print(" ")
+		PrintCombo(combos[i])
+	}
+}
+
 func PrintCombo(combo scheduling.Combo) {
 	fmt.Printf("Schedule ------------------------Score: %v \n", combo.Score)
 	for i := range combo.Classes {

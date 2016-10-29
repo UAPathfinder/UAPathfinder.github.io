@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"sort"
 	"testing"
 
@@ -247,7 +246,7 @@ func TestGenerateCombos3(t *testing.T) {
 			Weight:    10,
 		},
 	}
-	combos := scheduling.GenerateCombos(mock.S3Courses)
+	combos := scheduling.GenerateCombos(mock.S4Courses)
 	for i := range combos {
 		combo := &combos[i]
 		sort.Sort(scheduling.ByStartTime(combo.Classes))
@@ -255,10 +254,6 @@ func TestGenerateCombos3(t *testing.T) {
 	}
 	sort.Sort(scheduling.ByScore(combos))
 	sort.Reverse(scheduling.ByScore(combos))
-	for i := range combos {
-		fmt.Print(i)
-		fmt.Print(" ")
-		IO.PrintCombo(combos[i])
-	}
+	IO.PrintCombos(combos)
 
 }
