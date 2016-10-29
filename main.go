@@ -26,7 +26,7 @@ func main() {
 
 	mux.HandleFunc("/api/courses", func(rw http.ResponseWriter, r *http.Request) {
 		encoder := json.NewEncoder(rw)
-		err := encoder.Encode(mock.Courses)
+		err := encoder.Encode(mock.S4Courses)
 		if err != nil {
 			log.Println("Failed to encode json:", err)
 			rw.WriteHeader(http.StatusInternalServerError)
