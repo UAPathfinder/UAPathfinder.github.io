@@ -2,11 +2,12 @@ package testing
 
 import (
 	"fmt"
+	"sort"
+	"testing"
+
 	"github.com/mibzman/CourseCorrect/IO"
 	"github.com/mibzman/CourseCorrect/mock"
 	"github.com/mibzman/CourseCorrect/scheduling"
-	"sort"
-	"testing"
 )
 
 func TestGenerateCombos(t *testing.T) {
@@ -246,7 +247,8 @@ func TestGenerateCombos3(t *testing.T) {
 			Weight:    10,
 		},
 	}
-	combos := scheduling.GenerateCombos(mock.Courses)
+
+	combos := scheduling.GenerateCombos(mock.S4Courses)
 	for i := range combos {
 		combo := &combos[i]
 		sort.Sort(scheduling.ByStartTime(combo.Classes))
