@@ -89,11 +89,11 @@ func TestOrderCombos(t *testing.T) {
 	var comboArr = []scheduling.Combo{combo1, combo2, combo3, combo4}
 	scheduling.OrderCombos(&comboArr)
 
-	if !CompareCombos(combo1, combo1) {
-		t.Fatalf("CompareCombos is broke")
+	if !scheduling.CompareCombos(combo1, combo1) {
+		t.Fatalf("scheduling.CompareCombos is broke")
 	}
 
-	if !(CompareCombos(comboArr[0], combo2) && CompareCombos(comboArr[1], combo4) && CompareCombos(comboArr[2], combo1)) {
+	if !(scheduling.CompareCombos(comboArr[0], combo2) && scheduling.CompareCombos(comboArr[1], combo4) && scheduling.CompareCombos(comboArr[2], combo1)) {
 
 		t.Logf(strconv.Itoa(comboArr[0].Score))
 		t.Logf(strconv.Itoa(comboArr[1].Score))
@@ -277,14 +277,15 @@ func TestDoesOverlap(t *testing.T) {
 
 }
 
-func CompareCombos(input1, input2 scheduling.Combo) bool {
+/*
+func scheduling.CompareCombos(input1, input2 scheduling.Combo) bool {
 	for i := range input1.Classes {
 		if input1.Classes[i] != input2.Classes[i] {
 			return false
 		}
 	}
 	return true
-}
+}*/
 
 func TestTime(t *testing.T) {
 	test := scheduling.MustParseTime("10:00:00")

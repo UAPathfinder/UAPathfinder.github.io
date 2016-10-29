@@ -13,3 +13,12 @@ func MustParseTime(input string) time.Time {
 
 	return output
 }
+
+func CompareCombos(input1, input2 Combo) bool {
+	for i := range input1.Classes {
+		if input1.Classes[i] != input2.Classes[i] {
+			return false
+		}
+	}
+	return true
+}
