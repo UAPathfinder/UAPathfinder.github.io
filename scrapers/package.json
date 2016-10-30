@@ -1,0 +1,9 @@
+{
+  "name": "scrapers",
+  "version": "1.0.0",
+  "description": "A collection of scrapers for collecting data about when classes are and what courses are offered from colleges.",
+  "main": "index.js",
+  "dependencies": {
+    "selenium-webdriver": "^3.0.0-beta-3"
+  }
+}
