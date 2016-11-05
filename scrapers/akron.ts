@@ -39,8 +39,17 @@ async function getMetadata() {
 	await driver.get(url2)
 
 	const departmentSelector = await driver.findElement(By.css("select[id^=SSR_CLSRCH_WRK_SUBJECT_]"));
+	const departments = (await departmentSelector.findElements(By.css('option'))).length;
 
-	let i = 30;
+	for (let i = 2; i < departments; i++) {
+		await handleDepartment(i);
+		await driver.get(url2)
+	}
+}
+
+async function handleDepartment(i: number) {
+	const departmentSelector = await driver.findElement(By.css("select[id^=SSR_CLSRCH_WRK_SUBJECT_]"));
+
 	var department = await departmentSelector.findElement(By.css(`option:nth-child(${i})`))
 		.then(option => option.getAttribute('value'));
 
@@ -63,6 +72,9 @@ async function getMetadata() {
 	await driver.findElement(By.id('processing'))
 		.then(processing => driver.wait(until.elementIsNotVisible(processing)))
 
+	// TODO: Handle "Over 200 elements dialog" See Applied Music Dept for
+	// example.
+
 	// Extract Data
 	// Get Courses
 	var courses = await driver.findElements(By.css(coursesSelector))
@@ -78,12 +90,12 @@ async function getMetadata() {
 		var sections = await course.findElements(By.css(sectionsSelector));
 		for (let section of sections) {
 			// Class Number
-			section.findElement(By.css('a[id^=MTG_CLASS_NBR]'))
+			var numberPromise = section.findElement(By.css('a[id^=MTG_CLASS_NBR]'))
 				.then(numberNode => numberNode.getText())
 				.then(numberText => console.log(`Class Number: ${numberText}`));
 
 			// Section Name
-			section.findElement(By.css('a[id^=MTG_CLASSNAME]'))
+			var sectionNamePromise = section.findElement(By.css('a[id^=MTG_CLASSNAME]'))
 				.then(sectionNode => sectionNode.getText())
 				.then(section => console.log(`Section: ${section.replace('\n', ' ')}`))
 
@@ -95,31 +107,34 @@ async function getMetadata() {
 			// - MoWeFr 8:50AM - 12:30PM
 			//
 			// TODO: Parse
-			section.findElement(By.css('[id^=MTG_DAYTIME]'))
+			var daytimePromise = section.findElement(By.css('[id^=MTG_DAYTIME]'))
 				.then(timeNode => timeNode.getText())
 				.then(timeText => console.log(`Times: ${timeText}`));
 
 			// Room
-			section.findElement(By.css('[id^=MTG_ROOM]'))
+			var roomPromise = section.findElement(By.css('[id^=MTG_ROOM]'))
 				.then(locNode => locNode.getText())
 				.then(location => console.log(`Room: ${location}`));
 
 			// Instructor
-			section.findElement(By.css('[id^=MTG_INSTR]'))
+			var instructorPromise = section.findElement(By.css('[id^=MTG_INSTR]'))
 				.then(instructorNode => instructorNode.getText())
 				.then(instructor => console.log(`Instructor: ${instructor}`));
 
 			// Units
-			section.findElement(By.css('[id^=UA_DERIVED_SRCH_DESCR2'))
+			var unitsPromise = section.findElement(By.css('[id^=UA_DERIVED_SRCH_DESCR2'))
 				.then(unitsNode => unitsNode.getText())
 				.then(units => console.log(`Units: ${units}`));
 
 			// Enrolled
-			section.findElement(By.css('[id^=UA_DERIVED_SRCH_DESCR3'))
+			var enrolledPromise = section.findElement(By.css('[id^=UA_DERIVED_SRCH_DESCR3'))
 				.then(enrolledNode => enrolledNode.getText())
 				.then(enrolled => console.log(`Enrolled: ${enrolled}`))
 				.then(_ => console.log("\n"));
 
+			await Promise.all([numberPromise, sectionNamePromise, daytimePromise, roomPromise, instructorPromise, unitsPromise, enrolledPromise]);
+
+			// TODO: Meeting Days
 			// TODO: Textbook
 			// When the textbook link is clicked, javascript submits a form
 			// which responds with some html. The html is inlined and script
@@ -134,4 +149,3 @@ async function getMetadata() {
 		}
 	}
 }
-
