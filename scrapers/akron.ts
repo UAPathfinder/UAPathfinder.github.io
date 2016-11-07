@@ -28,7 +28,8 @@ const sectionsSelector = [
 ].join(' > ');
 
 var driver = new Builder()
-	.usingServer('http://192.168.1.217:4444/wd/hub')
+	// .usingServer('http://devbook.lan:4444/wd/hub')
+	.usingServer('http://drone.lan:4444/wd/hub')
     .forBrowser('firefox')
     .build();
 
@@ -49,9 +50,12 @@ async function getMetadata() {
 
 async function handleDepartment(i: number) {
 	const departmentSelector = await driver.findElement(By.css("select[id^=SSR_CLSRCH_WRK_SUBJECT_]"));
+	const departmentOption = await departmentSelector.findElement(By.css(`option:nth-child(${i})`))
+	const departmentName = await departmentOption.getText();
 
-	var department = await departmentSelector.findElement(By.css(`option:nth-child(${i})`))
-		.then(option => option.getAttribute('value'));
+	console.log(departmentName);
+
+	const department = await departmentOption.getAttribute('value');
 
 	// Select Department
 	await driver.executeScript((selector, value) => {
@@ -59,45 +63,50 @@ async function handleDepartment(i: number) {
 		selector.onchange();
 	}, departmentSelector, department);
 
-	// TODO: Possibly store #processing
 	// Wait for Processing
-	await driver.findElement(By.id('processing'))
-		.then(processing => driver.wait(until.elementIsNotVisible(processing)));
+	const processing = await driver.findElement(By.id('processing'));
+	await driver.wait(until.elementIsNotVisible(processing));
 
 	// Press Search Button
 	await driver.findElement(By.id('CLASS_SRCH_WRK2_SSR_PB_CLASS_SRCH'))
 		.then(searchButton => searchButton.click())
 
 	// Wait for Processing
-	await driver.findElement(By.id('processing'))
-		.then(processing => driver.wait(until.elementIsNotVisible(processing)))
+	await driver.wait(until.elementIsNotVisible(processing));
 
-	// TODO: Handle "Over 200 elements dialog" See Applied Music Dept for
-	// example.
+	// Handle "Over 200 elements dialog" See Applied Music Dept. for example.
+	await driver.findElements(By.id('#ICSave'))
+		.then(elements => {
+			let confirmButton = elements[0];
+			if (confirmButton)
+				return confirmButton.click()
+		});
+
+	await driver.wait(until.elementIsNotVisible(processing));
 
 	// Extract Data
 	// Get Courses
 	var courses = await driver.findElements(By.css(coursesSelector))
+	var sectionPromises = [];
 
-	// TODO: Run this concurrently instead of sequentually.
 	for (let course of courses) {
 		// Course Title
-		course.findElement(By.css('.PAGROUPBOXLABELLEVEL1'))
+		const coursePromise = course.findElement(By.css('.PAGROUPBOXLABELLEVEL1'))
 			.then(title => title.getText())
-			.then(titleText => console.log(titleText.trim()));
+			.then(titleText => titleText.trim());
 
 		// Course Sections
 		var sections = await course.findElements(By.css(sectionsSelector));
+
 		for (let section of sections) {
 			// Class Number
 			var numberPromise = section.findElement(By.css('a[id^=MTG_CLASS_NBR]'))
-				.then(numberNode => numberNode.getText())
-				.then(numberText => console.log(`Class Number: ${numberText}`));
+				.then(numberNode => numberNode.getText());
 
 			// Section Name
 			var sectionNamePromise = section.findElement(By.css('a[id^=MTG_CLASSNAME]'))
 				.then(sectionNode => sectionNode.getText())
-				.then(section => console.log(`Section: ${section.replace('\n', ' ')}`))
+				.then(section => section.replace('\n', ' '));
 
 			// Class Time + Date
 			// Examples:
@@ -108,31 +117,44 @@ async function handleDepartment(i: number) {
 			//
 			// TODO: Parse
 			var daytimePromise = section.findElement(By.css('[id^=MTG_DAYTIME]'))
-				.then(timeNode => timeNode.getText())
-				.then(timeText => console.log(`Times: ${timeText}`));
+				.then(timeNode => timeNode.getText());
 
 			// Room
 			var roomPromise = section.findElement(By.css('[id^=MTG_ROOM]'))
-				.then(locNode => locNode.getText())
-				.then(location => console.log(`Room: ${location}`));
+				.then(locNode => locNode.getText());
 
+			// TODO: Possible newlines splitting instructors.
 			// Instructor
 			var instructorPromise = section.findElement(By.css('[id^=MTG_INSTR]'))
-				.then(instructorNode => instructorNode.getText())
-				.then(instructor => console.log(`Instructor: ${instructor}`));
+				.then(instructorNode => instructorNode.getText());
 
 			// Units
 			var unitsPromise = section.findElement(By.css('[id^=UA_DERIVED_SRCH_DESCR2'))
-				.then(unitsNode => unitsNode.getText())
-				.then(units => console.log(`Units: ${units}`));
+				.then(unitsNode => unitsNode.getText());
 
 			// Enrolled
 			var enrolledPromise = section.findElement(By.css('[id^=UA_DERIVED_SRCH_DESCR3'))
-				.then(enrolledNode => enrolledNode.getText())
-				.then(enrolled => console.log(`Enrolled: ${enrolled}`))
-				.then(_ => console.log("\n"));
+				.then(enrolledNode => enrolledNode.getText());
 
-			await Promise.all([numberPromise, sectionNamePromise, daytimePromise, roomPromise, instructorPromise, unitsPromise, enrolledPromise]);
+			var sectionPromise = Promise.all([
+				coursePromise, numberPromise, sectionNamePromise, daytimePromise,
+				roomPromise, instructorPromise, unitsPromise, enrolledPromise
+			]).then(resolved => {
+				let [course, sectionNumber, sectionName, daytime, room, instructor,
+					units, enrolled] = resolved;
+
+				return {
+					id: sectionNumber,
+					course: course,
+					daytime: daytime, // TODO: Parse
+					location: room,
+					instructor: instructor,
+					units: units,
+					enrolled: enrolled,
+				};
+			})
+
+			sectionPromises.push(sectionPromise);
 
 			// TODO: Meeting Days
 			// TODO: Textbook
@@ -146,6 +168,15 @@ async function handleDepartment(i: number) {
 			// green. They can't be registered for. Maybe this is for prereqs?
 
 			// TODO: Commit to Rethink
+
+			// TODO: After 103 minutes of running, the page refreshes
+			// spontaneously and the script breaks. Element references fail to
+			// resolve and the script crashes. I believe the scraper got kicked
+			// due to in-activity on the page (15 minutes?). Section after
+			// writing.
 		}
 	}
+
+	var sections = await Promise.all(sectionPromises)
+	console.log(sections);
 }
