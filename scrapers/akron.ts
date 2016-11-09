@@ -44,27 +44,45 @@ const dbPromise = createConnection({
 var driver = new Builder()
 	// .usingServer('http://devbook.lan:4444/wd/hub')
 	.usingServer('http://drone.lan:4444/wd/hub')
-    .forBrowser('firefox')
-    .build();
+	.forBrowser('firefox')
+	.build();
 
 getMetadata();
 
 async function getMetadata() {
+	db = await dbPromise;
 	await driver.get(url1)
 	await driver.get(url2)
 
+	// Initialize Page
 	const departmentSelector = await driver.findElement(By.id("SSR_CLSRCH_WRK_SUBJECT_SRCH$2"));
 	const departments = (await departmentSelector.findElements(By.css('option'))).length;
-	db = await dbPromise;
+
+	// Disable Timeout
+	await driver.executeScript(_ => {
+		// Patch Timeout Code
+		window.getLastAccessTime = function() {
+			return -1;
+		};
+	});
+
+	const processing = await driver.findElement(By.id('processing'));
 
 	for (let i = 2; i < departments; i++) {
 		console.log(`Progress: ${i}/${departments}`);
-		await handleDepartment(i);
-		await driver.get(url2)
+		await handleDepartment(i, processing);
+
+		// Start New Search
+		await driver.findElement(By.id("CLASS_SRCH_WRK2_SSR_PB_NEW_SEARCH"))
+			.then(button => button.click());
+
+		// TODO: Handle Empty Department
+
+		await driver.wait(until.elementIsNotVisible(processing));
 	}
 }
 
-async function handleDepartment(i: number) {
+async function handleDepartment(i: number, processing: any) {
 	const departmentSelector = await driver.findElement(By.id("SSR_CLSRCH_WRK_SUBJECT_SRCH$2"));
 	const departmentOption = await departmentSelector.findElement(By.css(`option:nth-child(${i})`))
 	const departmentName = await departmentOption.getText()
@@ -73,10 +91,9 @@ async function handleDepartment(i: number) {
 		//     Divorce Mediation    (1800)
 		//     ->
 		//     Divorce Mediation
+	console.log(departmentName);
 
 	const department = await departmentOption.getAttribute('value');
-
-	console.log(departmentName);
 
 	let deptModel = new Department();
 	deptModel.title = departmentName;
@@ -91,7 +108,6 @@ async function handleDepartment(i: number) {
 	}, departmentSelector, department);
 
 	// Wait for Processing
-	const processing = await driver.findElement(By.id('processing'));
 	await driver.wait(until.elementIsNotVisible(processing));
 
 	// Press Search Button
@@ -104,7 +120,7 @@ async function handleDepartment(i: number) {
 	// Handle "Over 200 elements dialog" See Applied Music Dept. for example.
 	await driver.findElements(By.id('#ICSave'))
 		.then(elements => {
-			let confirmButton = elements[0];
+			let [confirmButton] = elements;
 			if (confirmButton)
 				return confirmButton.click()
 		});
@@ -121,34 +137,51 @@ async function handleDepartment(i: number) {
 	);
 
 	var sectionPromises = [];
+	var coursePromises = [];
 
 	for (let course of courses) {
+		// Course Sections
+		var sections = await course.findElements(By.css('[id^=trSSR_CLSRCH_MTG1]'));
+
+		// Units
+		var unitsPromise;
+		if (sections.length == 0) {
+			// Can't determine units.
+			unitsPromise = Promise.resolve(null);
+		} else {
+			unitsPromise = sections[0].findElements(By.css('[id^=UA_DERIVED_SRCH_DESCR2]'))
+				.then(nodes => {
+					let [unitsNode] = nodes;
+					if (unitsNode)
+						return unitsNode.getText();
+				});
+		}
+
 		// Course Title
 		// Example:
 		//     " 7400 123 - Fundamentals of Construction " ->
 		//     ["7400 123", "Fundamentals of Construction"]
-
-		// TODO: Batch these.
-		const coursePromise = course.findElement(By.css('.PAGROUPBOXLABELLEVEL1'))
+		const courseTextPromise = course.findElement(By.css('.PAGROUPBOXLABELLEVEL1'))
 			.then(title => title.getText())
-			.then(titleText => titleText.trim().replace(/\s+/g, ' ').split(' - '))
-			// Persist
-			.then(async information => {
-				await deptModelPromise;
-				let [identifier, title] = information;
+			.then(titleText => titleText.trim().replace(/\s+/g, ' ').split(' - '));
+
+		const coursePromise = Promise.all([courseTextPromise, unitsPromise])
+			.then(courseInformation => {
+				let [[identifier, title], units] = courseInformation;
+
 				let course = new Course();
 				course.department = department;
 				course.identifier = identifier;
 				course.title = title;
-				// TODO: Description
-				// TODO: Units
+				course.units = units;
 
-				db.entityManager.persist(course);
-				return information;
+				// TODO: Description. The massive JSON file might have some
+				// information.
+				// https://www.uakron.edu/academics_majors/class-search/data/courses.json
+				return course;
 			});
 
-		// Course Sections
-		var sections = await course.findElements(By.css('[id^=trSSR_CLSRCH_MTG1]'));
+		coursePromises.push(coursePromise);
 
 		for (let section of sections) {
 			// Class Number
@@ -220,14 +253,26 @@ async function handleDepartment(i: number) {
 			var roomPromise = section.findElement(By.css('[id^=MTG_ROOM]'))
 				.then(locNode => locNode.getText());
 
-			// TODO: Possible newlines splitting instructors.
 			// Instructor
 			var instructorPromise = section.findElement(By.css('[id^=MTG_INSTR]'))
-				.then(instructorNode => instructorNode.getText());
+				.then(instructorNode => instructorNode.getText())
+				.then(text => text.replace(/\s+/g, ' '));
 
-			// Units
-			var unitsPromise = section.findElement(By.css('[id^=UA_DERIVED_SRCH_DESCR2]'))
-				.then(unitsNode => unitsNode.getText());
+			var datesPromise = section.findElement(By.css('[id^=MTG_TOPIC]'))
+				.then(elem => elem.getText())
+				.then(dateText => {
+					if (dateText == "TBA")
+						return null;
+
+					// Example: 08/29/2016 - 12/11/2016
+					return dateText.split(' - ')
+						.map(date => {
+							let [month, day, year] = date.split('/');
+							return (new Date(
+								parseInt(year), parseInt(month) + 1, parseInt(day)
+							)).valueOf();
+						});
+				});
 
 			// Enrolled
 			var enrolledPromise = section.findElement(By.css('[id^=UA_DERIVED_SRCH_DESCR3]'))
@@ -235,20 +280,22 @@ async function handleDepartment(i: number) {
 
 			var sectionPromise = Promise.all([
 				coursePromise, numberPromise, sectionNamePromise, daytimePromise,
-				roomPromise, instructorPromise, unitsPromise, enrolledPromise
+				roomPromise, instructorPromise, datesPromise, enrolledPromise,
 			]).then(resolved => {
-				let [[courseIdentifier, courseTitle], sectionNumber, sectionName,
-					daysTimes, room, instructor, units, enrolled] = resolved;
-
-				// TODO: Move units to course.
+				let [course, sectionNumber, sectionName, daysTimes, room,
+					instructor, dates, enrolled] = resolved;
 
 				let klass = new Class();
 				klass.identifier = sectionNumber;
-				klass.course = courseIdentifier;
+				klass.course = course.identifier;
 				klass.location = room;
 				// TODO: professor -> instructor?
 				klass.professor = instructor;
 				klass.registered = enrolled;
+
+				if (dates) {
+					[klass.start_date, klass.end_date] = dates;
+				}
 
 				if (daysTimes) {
 					let [days, times] = daysTimes;
@@ -262,7 +309,6 @@ async function handleDepartment(i: number) {
 					Object.assign(klass, days);
 				}
 
-				// TODO: start_date, end_date
 				return klass;
 			});
 
@@ -284,9 +330,14 @@ async function handleDepartment(i: number) {
 		}
 	}
 
-	var classes = await Promise.all(sectionPromises)
-	if (classes.length != 0)
-		db.entityManager.persist(classes);
+	await deptModelPromise;
+	var courses = await Promise.all(coursePromises);
+	console.log(courses);
+	if (courses.length > 0)
+		db.entityManager.persist(courses);
 
+	var classes = await Promise.all(sectionPromises)
 	console.log(classes);
+	if (classes.length > 0)
+		db.entityManager.persist(classes);
 }
