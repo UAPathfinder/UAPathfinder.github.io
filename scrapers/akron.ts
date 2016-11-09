@@ -24,24 +24,6 @@ const url2 = "https://campusss.uakron.edu/psc/csprodss/EMPLOYEE/CS/c/COMMUNITY_A
 	"&PortalHostNode=" + "EMPL" +
 	"&NoCrumbs=" + "yes";
 
-const coursesSelector = [
-	"table#ACE_SSR_CLSRSLT_WRK_GROUPBOX1.PSGROUPBOX", "tbody", "tr:last-child",
-	"td:last-child", "div", "table.PABACKGROUNDINVISIBLEWBO", "tbody", "tr",
-	"td", "table", "tbody", "tr:not(:first-child)"
-].join(' > ');
-
-// const coursesSelector = [
-// 	'#ACE_$ICField$12$$0'.replace('$', '\\$'),
-// 	'tbody', 'tr:not(:first-child)'
-// ].join(' > ');
-
-// TODO: Optimize Selectors
-const sectionsSelector = [
-	"[id^=ACE_SSR_CLSRSLT_WRK_GROUPBOX2]", "tbody", "tr:nth-child(2)",
-	"td:last-child", "div", "table", "tbody", "tr", "td", "table", "tbody",
-	"tr:nth-child(even)"
-].join(' > ');
-
 var db;
 const dbPromise = createConnection({
 	driver: {
@@ -71,19 +53,19 @@ async function getMetadata() {
 	await driver.get(url1)
 	await driver.get(url2)
 
-	const departmentSelector = await driver.findElement(By.css("select[id^=SSR_CLSRCH_WRK_SUBJECT_]"));
+	const departmentSelector = await driver.findElement(By.id("SSR_CLSRCH_WRK_SUBJECT_SRCH$2"));
 	const departments = (await departmentSelector.findElements(By.css('option'))).length;
 	db = await dbPromise;
 
 	for (let i = 2; i < departments; i++) {
-		console.log(`Progress ${i}/${departments}`);
+		console.log(`Progress: ${i}/${departments}`);
 		await handleDepartment(i);
 		await driver.get(url2)
 	}
 }
 
 async function handleDepartment(i: number) {
-	const departmentSelector = await driver.findElement(By.css("select[id^=SSR_CLSRCH_WRK_SUBJECT_]"));
+	const departmentSelector = await driver.findElement(By.id("SSR_CLSRCH_WRK_SUBJECT_SRCH$2"));
 	const departmentOption = await departmentSelector.findElement(By.css(`option:nth-child(${i})`))
 	const departmentName = await departmentOption.getText()
 		.then(text => text.split(/\s{4}/)[0])
@@ -131,7 +113,13 @@ async function handleDepartment(i: number) {
 
 	// Extract Data
 	// Get Courses
-	var courses = await driver.findElements(By.css(coursesSelector))
+	var courses = await driver.findElements(
+		By.css([
+			'#ACE_$ICField$12$$0'.replace(/\$/g, '\\$'),
+			'tbody', 'tr:not(:first-child)'
+		].join(' > '))
+	);
+
 	var sectionPromises = [];
 
 	for (let course of courses) {
@@ -160,15 +148,15 @@ async function handleDepartment(i: number) {
 			});
 
 		// Course Sections
-		var sections = await course.findElements(By.css(sectionsSelector));
+		var sections = await course.findElements(By.css('[id^=trSSR_CLSRCH_MTG1]'));
 
 		for (let section of sections) {
 			// Class Number
-			var numberPromise = section.findElement(By.css('a[id^=MTG_CLASS_NBR]'))
+			var numberPromise = section.findElement(By.css('[id^=MTG_CLASS_NBR]'))
 				.then(numberNode => numberNode.getText());
 
 			// Section Name
-			var sectionNamePromise = section.findElement(By.css('a[id^=MTG_CLASSNAME]'))
+			var sectionNamePromise = section.findElement(By.css('[id^=MTG_CLASSNAME]'))
 				.then(sectionNode => sectionNode.getText())
 				.then(section => section.replace('\n', ' '));
 
@@ -238,11 +226,11 @@ async function handleDepartment(i: number) {
 				.then(instructorNode => instructorNode.getText());
 
 			// Units
-			var unitsPromise = section.findElement(By.css('[id^=UA_DERIVED_SRCH_DESCR2'))
+			var unitsPromise = section.findElement(By.css('[id^=UA_DERIVED_SRCH_DESCR2]'))
 				.then(unitsNode => unitsNode.getText());
 
 			// Enrolled
-			var enrolledPromise = section.findElement(By.css('[id^=UA_DERIVED_SRCH_DESCR3'))
+			var enrolledPromise = section.findElement(By.css('[id^=UA_DERIVED_SRCH_DESCR3]'))
 				.then(enrolledNode => enrolledNode.getText());
 
 			var sectionPromise = Promise.all([
