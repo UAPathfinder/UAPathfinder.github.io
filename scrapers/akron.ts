@@ -70,27 +70,28 @@ async function getMetadata() {
 
 	for (let i = 2; i < departments; i++) {
 		console.log(`Progress: ${i}/${departments}`);
-		await handleDepartment(i, processing);
 
-		// Start New Search
-		await driver.findElement(By.id("CLASS_SRCH_WRK2_SSR_PB_NEW_SEARCH"))
-			.then(button => button.click());
+		var navigated: boolean = await handleDepartment(i, processing);
+		if (navigated) {
+			// Start New Search
+			await driver.findElement(By.id("CLASS_SRCH_WRK2_SSR_PB_NEW_SEARCH"))
+				.then(button => button.click());
 
-		// TODO: Handle Empty Department
-
-		await driver.wait(until.elementIsNotVisible(processing));
+			// Wait For Processing
+			await driver.wait(until.elementIsNotVisible(processing));
+		}
 	}
 }
 
-async function handleDepartment(i: number, processing: any) {
+async function handleDepartment(i: number, processing: any): Promise<boolean> {
 	const departmentSelector = await driver.findElement(By.id("SSR_CLSRCH_WRK_SUBJECT_SRCH$2"));
 	const departmentOption = await departmentSelector.findElement(By.css(`option:nth-child(${i})`))
 	const departmentName = await departmentOption.getText()
-		.then(text => text.split(/\s{4}/)[0])
 		// Example:
 		//     Divorce Mediation    (1800)
 		//     ->
 		//     Divorce Mediation
+		.then(text => text.split(/\s{4}/)[0])
 	console.log(departmentName);
 
 	const department = await departmentOption.getAttribute('value');
@@ -340,4 +341,6 @@ async function handleDepartment(i: number, processing: any) {
 	console.log(classes);
 	if (classes.length > 0)
 		db.entityManager.persist(classes);
+
+	return courses.length != 0; // return whether navigation occured.
 }
