@@ -1,0 +1,7 @@
+{
+  "name": "scrapers",
+  "dependencies": {},
+  "globalDependencies": {
+    "selenium-webdriver": "registry:dt/selenium-webdriver#2.53.1+20160914235635"
+  }
+}
