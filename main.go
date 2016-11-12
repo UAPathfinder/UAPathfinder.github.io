@@ -17,13 +17,6 @@ var (
 	listen = flag.String("listen", ":8080", "The adress this service will be available on.")
 )
 
-type test struct {
-	blaa        string
-	blaa2       string
-	bsasdla4    string
-	fdknenawekn string
-}
-
 func main() {
 	flag.Parse()
 	mux := http.NewServeMux()
