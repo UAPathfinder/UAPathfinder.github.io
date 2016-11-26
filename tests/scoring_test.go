@@ -1,7 +1,8 @@
-package main
+package tests
 
 import (
 	"github.com/mibzman/CourseCorrect/scheduling"
+
 	"strconv"
 	"testing"
 )
