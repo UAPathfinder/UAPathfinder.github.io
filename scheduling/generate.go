@@ -1,77 +1,143 @@
 package scheduling
 
-//strictly speaking this doesn't need to be its own file, but its big and important and will likely get bigger.
-//plus the testing should be seperated
+import (
+	"fmt"
+)
 
-func GenerateCombos(courses []Course) []Combo {
-	var current Combo
-	result := make([]Combo, 0)
-	RecursiveGenerateCombos(courses, &result, 0, current)
+// An interface to get classes for FindSchedules. Mockable for testing the
+// algorithm against custom data.
+type Accessor interface {
+	// Given a course identifier, returns a list of classes. Called once for
+	// each course for each execution of FindSchedules.
+	GetClasses(courseIdentifier string) []Class
+
+	GetCourse(courseIdentifier string) Course
+}
+
+type Schedule struct {
+	*Calendar
+	Classes []Class
+	Score   int
+}
+
+type BySchedule []Schedule
+
+func (s BySchedule) Len() int           { return len(s) }
+func (s BySchedule) Swap(i, j int)      { s[i], s[j] = s[j], s[i] }
+func (s BySchedule) Less(i, j int) bool { return s[i].Score < s[j].Score }
+
+// Given a list of Courses, returns the best combination of classes.
+// Requiments:
+// - Many Soft Constraints:
+//   - Slight Overlaps Not Rejected
+// - Search Space (Akron: 88*55*45*45*41*33*27*26 @ 1 op/ns = 2.6 hours)
+// Solutions:
+// - Genetic Algorithm
+// - Simulated Annealing
+func FindSchedules(courses []string, props map[string]EventProperties, accessor Accessor) []Schedule {
+	result := []Schedule{}
+	RecursiveFindSchedules(courses, props, accessor, &result, 0, &Schedule{})
 	return result
 }
 
-//the insperation for this algorithm comes from here:
-//http://stackoverflow.com/questions/17192796/generate-all-combinations-from-multiple-lists
-//we need recursion because the number of courses is going to vary between users
-func RecursiveGenerateCombos(courses []Course, result *[]Combo, depth int, current Combo) {
+// http://stackoverflow.com/questions/17192796/generate-all-combinations-from-multiple-lists
+func RecursiveFindSchedules(courses []string, props map[string]EventProperties, accessor Accessor, result *[]Schedule, depth int, current *Schedule) {
 	if depth == len(courses) {
-		hasOverlap, issue1, issue2 := DoesHaveOverlap(current)
-		if !hasOverlap {
-			//horray, no overlaps!  apend the current combo to the result
-			*result = append(*result, current)
-		} else {
-			//get the course objects so we can get the manditory and priority members
-			//later this will be a database call
+		// Deepest Case, Called After Builder Cases for 0..(depth - 1)
+		*result = append(*result, *current)
+		return
+	}
 
-			course1 := GetCourse(courses, current.Classes[issue1].CourseId)
-			course2 := GetCourse(courses, current.Classes[issue2].CourseId)
-			//if neither conflicting courses are manditory
-			if !course1.Manditory && !course2.Manditory {
-				//we drop the one that has a lower priority
-				if course1.Priority < course2.Priority {
-					current.Classes = append(current.Classes[:issue1], current.Classes[issue1+1:]...)
-					current.Score -= course1.Priority
-					RecursiveGenerateCombos(courses, result, depth, current) //kicks it back with the same depth to check for overlaps again
+	// Builder Case
+	course := courses[depth]
+
+	// Get Classes for Course
+	classes := accessor.GetClasses(course)
+
+	// Get parameters for the course. If does not exist, returns zero value of
+	// CourseParam.
+	courseProps := props[course]
+
+classesLoop:
+	for _, class := range classes {
+
+		// Try Adding Classes From course to Schedule
+		events := class.Events(&courseProps)
+
+		// Container to hold potential deletions.
+		var pendingDeletions []Event
+
+		cost := 0
+
+		for _, event := range events {
+			conflictingEvent := current.Calendar.DoesConflict(event)
+
+			if conflictingEvent != nil {
+				// Found A Conflict. Fail If Possible.
+				conflictingProps := conflictingEvent.Properties()
+
+				if !conflictingProps.Optional && !courseProps.Optional {
+					// Both Required
+					continue classesLoop
+				} else if conflictingProps.Optional && !courseProps.Optional {
+					// Ours Required
+					// Pend Deletion of Other, Keep Ours
+					pendingDeletions = append(pendingDeletions, conflictingEvent)
+					cost += conflictingProps.Weight
+				} else if !conflictingProps.Optional && courseProps.Optional {
+					// Other Required, Ours Optional
+					cost += courseProps.Weight
+					// TODO: WTF?
 				} else {
-					current.Classes = append(current.Classes[:issue2], current.Classes[issue2+1:]...)
-					current.Score -= course2.Priority
-					RecursiveGenerateCombos(courses, result, depth, current) //kicks it back with the same depth to check for overlaps again
+					// Both Optional, Skip Lower Priority
+					if conflictingProps.Weight < courseProps.Weight {
+						cost += conflictingProps.Weight
+						pendingDeletions = append(pendingDeletions, conflictingEvent)
+					} else {
+						cost += courseProps.Weight
+					}
 				}
-				//the cases that one is manditory but the other isn't
-			} else if !course2.Manditory {
-				current.Classes = append(current.Classes[:issue2], current.Classes[issue2+1:]...)
-				current.Score -= course2.Priority
-				//kicks it back with the same depth to check for overlaps again
-				RecursiveGenerateCombos(courses, result, depth, current)
-			} else if !course1.Manditory {
-				current.Classes = append(current.Classes[:issue1], current.Classes[issue1+1:]...)
-				current.Score -= course2.Priority
-				//kicks it back with the same depth to check for overlaps again
-				RecursiveGenerateCombos(courses, result, depth, current)
-			} //otherwise don't append because the whole combo does not fit the user's requirements
-		}
-
-	} else {
-		//this loop handles the 'root course'
-		currentCourse := courses[depth]
-		for i := 0; i < len(currentCourse.Classes); i++ {
-			var tempCurrent Combo
-			//append the first class in the current course to the current combo, then fires GenerateCombos again
-			tempCurrent.Classes = append(current.Classes, currentCourse.Classes[i])
-			RecursiveGenerateCombos(courses, result, depth+1, tempCurrent)
-			//yes, it's recursive.  it only goes [depth] layers deep before returning so the stack shouldn't overflow for a reasonable number of courses
-		}
-		//this loop goes through all the 'ored' courses within the 'root' course
-		if len(currentCourse.OrCourses) > 0 {
-			for p := 0; p < len(currentCourse.OrCourses); p++ {
-				for i := 0; i < len(currentCourse.OrCourses[p].Classes); i++ {
-					//the exact same loop as above but for the 'ored' course
-					var tempCurrent Combo
-					tempCurrent.Classes = append(current.Classes, currentCourse.OrCourses[p].Classes[i])
-					RecursiveGenerateCombos(courses, result, depth+1, tempCurrent)
-				}
-
 			}
 		}
+
+		// Incur Cost
+		current.Score -= cost
+
+		for _, deletion := range pendingDeletions {
+			switch deletion := deletion.(type) {
+			case ClassEvent:
+				// Remove All Elements of This Class
+				j := 0
+				for _, event := range current.Calendar.Events {
+					event, ok := event.(ClassEvent)
+					if !ok {
+						continue
+					}
+
+					if event.Class.Identifier != deletion.Class.Identifier {
+						current.Calendar.Events[j] = event
+						fmt.Println(event)
+						j++
+					}
+				}
+				current.Calendar.Events = current.Calendar.Events[:j]
+			}
+		}
+
+		for _, event := range events {
+			current.Calendar.Add(event)
+		}
+
+		RecursiveFindSchedules(courses, props, accessor, result, depth+1, current)
+
+		//     Add Class to Schedule
+		//     Calculate Score of Schedule
+		//     Descide Whether Sub-Tree Is Viable
+		//     Continue Building By Recursion (depth + 1)
+
+		// If Hard Constraint Violated, Discard All Sub-Schedules
+		//     Return
+		// Else, Continue Recursing:
+		//     RecursiveFindSchedules(courses, result, depth + 1, current)
 	}
 }

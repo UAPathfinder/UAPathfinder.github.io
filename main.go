@@ -6,27 +6,45 @@ import (
 	"log"
 	"net/http"
 	"sort"
-	"time"
 
 	"github.com/GeertJohan/go.rice"
-	"github.com/mibzman/CourseCorrect/mock"
+
+	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/sqlite"
+
 	"github.com/mibzman/CourseCorrect/scheduling"
 )
 
 var (
 	listen = flag.String("listen", ":8080", "The adress this service will be available on.")
+	dbPath = flag.String("path", "", "The path at which the database containing class scheduling information")
 )
 
 func main() {
 	flag.Parse()
+
+	// Initalize Database
+	db, err := gorm.Open("sqlite3", *dbPath)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	accessor := &DatabaseAccessor{db}
+
 	mux := http.NewServeMux()
 
 	staticFiles := rice.MustFindBox("frontend").HTTPBox()
 	mux.Handle("/", http.FileServer(staticFiles))
 
-	mux.HandleFunc("/api/courses", func(rw http.ResponseWriter, r *http.Request) {
+	// TODO: Restify this API!
+	mux.HandleFunc("/api/v0/courses", func(rw http.ResponseWriter, r *http.Request) {
+		// Query Database
+		var courses []scheduling.Course
+		db.Find(&courses)
+
+		// Send Response
 		encoder := json.NewEncoder(rw)
-		err := encoder.Encode(mock.S4Courses)
+		err := encoder.Encode(courses)
 		if err != nil {
 			log.Println("Failed to encode json:", err)
 			rw.WriteHeader(http.StatusInternalServerError)
@@ -34,15 +52,15 @@ func main() {
 		}
 	})
 
-	mux.HandleFunc("/api/combos", func(rw http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/api/v0/schedules", func(rw http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodPost {
-			log.Println("Invalid to post endpoint:", r.Method)
+			log.Println("Invalid method to post endpoint:", r.Method)
 			rw.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
-		// TODO: Close body?
 		decoder := json.NewDecoder(r.Body)
+		defer r.Body.Close()
 
 		var constraints CombinationsRequest
 		err := decoder.Decode(&constraints)
@@ -52,34 +70,18 @@ func main() {
 			return
 		}
 
-		criteria := scheduling.Criteria{
-			EarliestClass: scheduling.Criterion{
-				Time:      *constraints.StartTime,
-				Manditory: true,
-				Weight:    10,
-			},
-			LatestClass: scheduling.Criterion{
-				Time:      *constraints.EndTime,
-				Manditory: true,
-				Weight:    10,
-			},
-			Days: scheduling.Criterion{
-				Other:     constraints.Days,
-				Manditory: true,
-				Weight:    10,
-			},
+		var courses []string
+		props := make(map[string]scheduling.EventProperties)
+		for _, course := range constraints.Courses {
+			courses = append(courses, course.Course)
+			props[course.Course] = course.EventProperties
 		}
 
-		combos := scheduling.GenerateCombos(constraints.Courses)
-		for i := range combos {
-			combo := &combos[i]
-			sort.Sort(scheduling.ByStartTime(combo.Classes))
-			combo.Score = scheduling.ScoreCombo(*combo, criteria)
-		}
-		sort.Sort(sort.Reverse(scheduling.ByScore(combos)))
+		schedules := scheduling.FindSchedules(courses, props, accessor)
+		sort.Sort(sort.Reverse(scheduling.BySchedule(schedules)))
 
 		encoder := json.NewEncoder(rw)
-		err = encoder.Encode(combos)
+		err = encoder.Encode(schedules)
 		if err != nil {
 			log.Println("Failed to encode json:", err)
 			rw.WriteHeader(http.StatusInternalServerError)
@@ -96,8 +98,27 @@ func main() {
 }
 
 type CombinationsRequest struct {
-	Courses   []scheduling.Course
-	StartTime *time.Time
-	EndTime   *time.Time
-	Days      string
+	Courses []CoursesRequest
+	// TODO: Some pre-existing calendar state
+}
+
+type CoursesRequest struct {
+	Course string
+	scheduling.EventProperties
+}
+
+type DatabaseAccessor struct {
+	*gorm.DB
+}
+
+func (accessor *DatabaseAccessor) GetClasses(courseIdentifier string) []scheduling.Class {
+	classes := []scheduling.Class{}
+	accessor.DB.Where(&scheduling.Class{Course: courseIdentifier}).Find(&classes)
+	return classes
+}
+
+func (accessor *DatabaseAccessor) GetCourse(courseIdentifier string) scheduling.Course {
+	course := scheduling.Course{}
+	accessor.DB.Where(&scheduling.Course{Identifier: courseIdentifier}).First(&course)
+	return course
 }
