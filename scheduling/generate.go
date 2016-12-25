@@ -1,9 +1,5 @@
 package scheduling
 
-import (
-	"fmt"
-)
-
 // An interface to get classes for FindSchedules. Used for mocking.
 type Accessor interface {
 	// Given a course identifier, returns a list of classes. Called once for
@@ -33,10 +29,8 @@ func (s BySchedule) Less(i, j int) bool { return s[i].Score < s[j].Score }
 // - Genetic Algorithm
 // - Simulated Annealing
 func FindSchedules(courses []string, props map[string]EventProperties, accessor Accessor) []Schedule {
-	fmt.Println("Starting algo")
 	result := []Schedule{}
 	RecursiveFindSchedules(courses, props, accessor, &result, 0, nil)
-	fmt.Println("Ending algo")
 	return result
 }
 

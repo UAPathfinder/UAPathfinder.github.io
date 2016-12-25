@@ -9,8 +9,8 @@ import { CombinationsRequest } from './models/combinations-request'
 
 @Injectable()
 export class CourseService {
-	private courseEndpoint = '/api/courses';
-	private combosEndpoint = '/api/combos';
+	private courseEndpoint = '/api/v0/courses';
+	private combosEndpoint = '/api/v0/schedules';
 
 	constructor(private http: Http) {}
 
@@ -20,7 +20,7 @@ export class CourseService {
 			// TODO: Handle Error
 	}
 
-	getCombos(request: CombinationsRequest): Observable<Combination[]> {
+	getSchedules(request: CombinationsRequest): Observable<Combination[]> {
 		return this.http.post(this.combosEndpoint, request)
 			.map((res: Response) => res.json());
 			// TODO: Handle Error

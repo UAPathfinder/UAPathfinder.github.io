@@ -1,7 +1,6 @@
 package scheduling
 
 import (
-	"database/sql"
 	"time"
 )
 
@@ -16,10 +15,10 @@ type Class struct {
 	Course string
 
 	// TODO: Omit Information About Validity In JSON
-	Capicity   sql.NullInt64
-	Registered sql.NullInt64
-	Professor  sql.NullString
-	Location   sql.NullString
+	Capacity   int64 `gorm:"column:capicity"`
+	Registered int64
+	Professor  string
+	Location   string
 
 	Times
 }
@@ -126,7 +125,6 @@ func (evt ClassEvent) EndTime() time.Time {
 }
 
 type Times struct {
-	// TODO: How are null values handled without nullable?
 	Sunday    bool
 	Monday    bool
 	Tuesday   bool
@@ -145,15 +143,15 @@ type Course struct {
 	Department string
 	Identifier string
 
-	Title       sql.NullString
-	Description sql.NullString
-	Units       sql.NullInt64
+	Title       string
+	Description string
+	Units       int64 // TODO: This can be a decimal.
 }
 
 type Department struct {
 	Identifier  string
-	Title       sql.NullString
-	Description sql.NullString
+	Title       string
+	Description string
 }
 
 // Input to FindSchedules

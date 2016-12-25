@@ -16,8 +16,9 @@ import (
 )
 
 var (
-	listen = flag.String("listen", ":8080", "The adress this service will be available on.")
-	dbPath = flag.String("path", "", "The path at which the database containing class scheduling information")
+	listen    = flag.String("listen", ":8080", "The adress this service will be available on.")
+	dbPath    = flag.String("path", "", "The path of the database containing class scheduling information")
+	dbLogging = flag.Bool("db-logging", false, "When true, enables logging of sql queries")
 )
 
 func main() {
@@ -28,6 +29,8 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	db.LogMode(*dbLogging)
 
 	accessor := &DatabaseAccessor{db}
 
@@ -103,6 +106,7 @@ type CombinationsRequest struct {
 }
 
 type CoursesRequest struct {
+	// TODO: Fail if this is empty.
 	Course string
 	scheduling.EventProperties
 }

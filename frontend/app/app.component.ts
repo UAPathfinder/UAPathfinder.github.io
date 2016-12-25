@@ -48,17 +48,8 @@ export class AppComponent {
 
 	// TODO: Proper form handling
 	onSubmit() {
-		this.selectedCourses.forEach((course, idx) => {
-			course.Priority = idx;
-		});
-
-		this.courseService.getCombos({
-			StartTime: parseTime(this.startTime),
-			EndTime: parseTime(this.endTime),
-			Days: this.weekdays.filter((weekday) => weekday.active)
-				.map((weekday) => weekday.name)
-				.join(''),
-			Courses: this.selectedCourses,
+		this.courseService.getSchedules({
+            Courses: this.selectedCourses.map(course => ({Course: course.Identifier})),
 		})
 			.subscribe(
 				combos => this.combinations = combos,
@@ -68,10 +59,10 @@ export class AppComponent {
 	}
 
 	// Helper method to get a course given a course id.
-	getCourse(id: number): Course {
-		return this.courses
-			.find((course) => course.CourseId == id)
-	}
+	// getCourse(id: number): Course {
+	// 	return this.courses
+	// 		.find((course) => course.CourseId == id)
+	// }
 }
 
 // Parses time from input elements into a json format.

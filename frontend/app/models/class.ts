@@ -1,12 +1,22 @@
-import * as moment from 'moment';
+// See scheduling/classes.go
+export interface Class {
+	Identifier: string;
+	Course: string;
 
-export class Class {
-	ClassId: number;
-	CourseId: number;
-	StartTime: moment.Moment;
-	EndTime: moment.Moment;
-	MeetingDays: string;
-	ProfessorName: string;
-	MeetingLocation: string;
+    Sunday: boolean;
+	Monday: boolean;
+	Tuesday: boolean;
+	Wednesday: boolean;
+	Thursday: boolean;
+	Friday: boolean;
+	Saturday: boolean;
+
+	RawStartTime: number;
+	RawEndTime: number;
+
+    Capacity: number;
+    Registered: number;
+	Professor: string;
+	Location: string;
 }
 
