@@ -15,10 +15,6 @@ type EventProperties struct {
 	Optional bool
 }
 
-// type EventContainer interface {
-// 	Events() []Event
-// }
-
 // Holds information about which times are free and occupied. Only considers
 // days and times. It is not aware about the difference between two days on two
 // different weeks.

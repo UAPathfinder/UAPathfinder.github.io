@@ -4,8 +4,7 @@ import (
 	"fmt"
 )
 
-// An interface to get classes for FindSchedules. Mockable for testing the
-// algorithm against custom data.
+// An interface to get classes for FindSchedules. Used for mocking.
 type Accessor interface {
 	// Given a course identifier, returns a list of classes. Called once for
 	// each course for each execution of FindSchedules.
@@ -15,9 +14,8 @@ type Accessor interface {
 }
 
 type Schedule struct {
-	*Calendar
-	Classes []Class
-	Score   int
+	Calendar
+	Score int
 }
 
 type BySchedule []Schedule
@@ -35,8 +33,10 @@ func (s BySchedule) Less(i, j int) bool { return s[i].Score < s[j].Score }
 // - Genetic Algorithm
 // - Simulated Annealing
 func FindSchedules(courses []string, props map[string]EventProperties, accessor Accessor) []Schedule {
+	fmt.Println("Starting algo")
 	result := []Schedule{}
-	RecursiveFindSchedules(courses, props, accessor, &result, 0, &Schedule{})
+	RecursiveFindSchedules(courses, props, accessor, &result, 0, nil)
+	fmt.Println("Ending algo")
 	return result
 }
 
@@ -48,6 +48,15 @@ func RecursiveFindSchedules(courses []string, props map[string]EventProperties, 
 		return
 	}
 
+	if depth == 0 {
+		// First Builder Case
+		current = &Schedule{
+			Calendar: Calendar{
+				Events: make([]Event, 0),
+			},
+		}
+	}
+
 	// Builder Case
 	course := courses[depth]
 
@@ -55,7 +64,7 @@ func RecursiveFindSchedules(courses []string, props map[string]EventProperties, 
 	classes := accessor.GetClasses(course)
 
 	// Get parameters for the course. If does not exist, returns zero value of
-	// CourseParam.
+	// EventProperties.
 	courseProps := props[course]
 
 classesLoop:
@@ -68,6 +77,7 @@ classesLoop:
 		var pendingDeletions []Event
 
 		cost := 0
+		shouldntAdd := false
 
 		for _, event := range events {
 			conflictingEvent := current.Calendar.DoesConflict(event)
@@ -81,13 +91,13 @@ classesLoop:
 					continue classesLoop
 				} else if conflictingProps.Optional && !courseProps.Optional {
 					// Ours Required
-					// Pend Deletion of Other, Keep Ours
-					pendingDeletions = append(pendingDeletions, conflictingEvent)
+					// Pend Deletion of Other, Keep Ours.
 					cost += conflictingProps.Weight
 				} else if !conflictingProps.Optional && courseProps.Optional {
 					// Other Required, Ours Optional
+					// Leave Other in, Don't Add Ours
 					cost += courseProps.Weight
-					// TODO: WTF?
+					shouldntAdd = true
 				} else {
 					// Both Optional, Skip Lower Priority
 					if conflictingProps.Weight < courseProps.Weight {
@@ -95,6 +105,7 @@ classesLoop:
 						pendingDeletions = append(pendingDeletions, conflictingEvent)
 					} else {
 						cost += courseProps.Weight
+						shouldntAdd = true
 					}
 				}
 			}
@@ -108,27 +119,36 @@ classesLoop:
 			case ClassEvent:
 				// Remove All Elements of This Class
 				j := 0
+
+				// TODO: O(deletions * events)
 				for _, event := range current.Calendar.Events {
 					event, ok := event.(ClassEvent)
 					if !ok {
-						continue
+						// Not a class event. Not a conflicting class event,
+						// leave it be.
+						// TODO: Copy this through.
 					}
 
 					if event.Class.Identifier != deletion.Class.Identifier {
 						current.Calendar.Events[j] = event
-						fmt.Println(event)
 						j++
 					}
 				}
 				current.Calendar.Events = current.Calendar.Events[:j]
+
+				// TODO: Handle normal event deletion. Isn't an issue until we
+				// add events which aren't classes to schedules.
 			}
 		}
 
-		for _, event := range events {
-			current.Calendar.Add(event)
+		if !shouldntAdd {
+			for _, event := range events {
+				current.Calendar.Add(event)
+			}
 		}
 
-		RecursiveFindSchedules(courses, props, accessor, result, depth+1, current)
+		// Send Copy of Current Down
+		RecursiveFindSchedules(courses, props, accessor, result, depth+1, &(*current))
 
 		//     Add Class to Schedule
 		//     Calculate Score of Schedule

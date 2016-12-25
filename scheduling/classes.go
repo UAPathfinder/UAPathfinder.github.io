@@ -21,7 +21,7 @@ type Class struct {
 	Professor  sql.NullString
 	Location   sql.NullString
 
-	times
+	Times
 }
 
 func (class *Class) Events(props *EventProperties) []ClassEvent {
@@ -29,7 +29,7 @@ func (class *Class) Events(props *EventProperties) []ClassEvent {
 
 	// TODO: This isn't elegant. Find a way to dump this data into a map, use
 	// raw queries, or a different db schema.
-	if class.times.Sunday {
+	if class.Times.Sunday {
 		events = append(events, ClassEvent{
 			Day:             time.Sunday,
 			Class:           class,
@@ -37,7 +37,7 @@ func (class *Class) Events(props *EventProperties) []ClassEvent {
 		})
 	}
 
-	if class.times.Monday {
+	if class.Times.Monday {
 		events = append(events, ClassEvent{
 			Day:             time.Monday,
 			Class:           class,
@@ -45,7 +45,7 @@ func (class *Class) Events(props *EventProperties) []ClassEvent {
 		})
 	}
 
-	if class.times.Tuesday {
+	if class.Times.Tuesday {
 		events = append(events, ClassEvent{
 			Day:             time.Tuesday,
 			Class:           class,
@@ -53,7 +53,7 @@ func (class *Class) Events(props *EventProperties) []ClassEvent {
 		})
 	}
 
-	if class.times.Wednesday {
+	if class.Times.Wednesday {
 		events = append(events, ClassEvent{
 			Day:             time.Wednesday,
 			Class:           class,
@@ -61,7 +61,7 @@ func (class *Class) Events(props *EventProperties) []ClassEvent {
 		})
 	}
 
-	if class.times.Thursday {
+	if class.Times.Thursday {
 		events = append(events, ClassEvent{
 			Day:             time.Thursday,
 			Class:           class,
@@ -69,7 +69,7 @@ func (class *Class) Events(props *EventProperties) []ClassEvent {
 		})
 	}
 
-	if class.times.Friday {
+	if class.Times.Friday {
 		events = append(events, ClassEvent{
 			Day:             time.Friday,
 			Class:           class,
@@ -77,7 +77,7 @@ func (class *Class) Events(props *EventProperties) []ClassEvent {
 		})
 	}
 
-	if class.times.Saturday {
+	if class.Times.Saturday {
 		events = append(events, ClassEvent{
 			Day:             time.Saturday,
 			Class:           class,
@@ -99,8 +99,10 @@ func (evt ClassEvent) Properties() EventProperties {
 	return *evt.EventProperties
 }
 
-func (evt *ClassEvent) handleTime(rawTime sql.NullInt64) *time.Time {
-	if !rawTime.Valid {
+func (evt *ClassEvent) handleTime(rawTime int64) *time.Time {
+	if rawTime == 0 {
+		// TODO: This will cause a panic if the database doesn't have time
+		// information.
 		return nil
 	}
 
@@ -111,19 +113,19 @@ func (evt *ClassEvent) handleTime(rawTime sql.NullInt64) *time.Time {
 	t.AddDate(0, 0, diff)
 
 	// Add Raw Time
-	t.Add(time.Duration(rawTime.Int64) * time.Second)
+	t.Add(time.Duration(rawTime) * time.Second)
 	return &t
 }
 
 func (evt ClassEvent) StartTime() time.Time {
-	return *evt.handleTime(evt.Class.times.RawStartTime)
+	return *evt.handleTime(evt.Class.Times.RawStartTime)
 }
 
 func (evt ClassEvent) EndTime() time.Time {
-	return *evt.handleTime(evt.Class.times.RawEndTime)
+	return *evt.handleTime(evt.Class.Times.RawEndTime)
 }
 
-type times struct {
+type Times struct {
 	// TODO: How are null values handled without nullable?
 	Sunday    bool
 	Monday    bool
@@ -133,8 +135,8 @@ type times struct {
 	Friday    bool
 	Saturday  bool
 
-	RawStartTime sql.NullInt64 `gorm:"column:start_time"`
-	RawEndTime   sql.NullInt64 `gorm:"column:end_time"`
+	RawStartTime int64 `gorm:"column:start_time"`
+	RawEndTime   int64 `gorm:"column:end_time"`
 }
 
 // A group of classes which share some common characteristics. For example,
