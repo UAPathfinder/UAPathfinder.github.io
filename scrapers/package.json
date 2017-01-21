@@ -1,0 +1,20 @@
+{
+  "name": "scrapers",
+  "version": "1.0.0",
+  "description": "A collection of scrapers for collecting data about when classes are and what courses are offered from colleges.",
+  "main": "index.js",
+  "engines": {
+    "node": ">=0.7"
+  },
+  "scripts": {
+    "watch": "tsc --project . --watch"
+  },
+  "dependencies": {
+    "reflect-metadata": "^0.1.8",
+    "selenium-webdriver": "^3.0.0-beta-3",
+    "sqlite3": "^3.1.8",
+    "typeorm": "^0.0.2-alpha.69",
+    "typescript": "^2.0.7",
+    "typings": "^1.5.0"
+  }
+}
