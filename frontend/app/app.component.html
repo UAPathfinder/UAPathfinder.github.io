@@ -27,7 +27,7 @@
               type="checkbox"
               (change)='updateSelected(course, $event)' />
           </td>
-          <td>{{ course.Name }}</td>
+          <td>{{ course.Identifier }}: {{course.Title.String}}</td>
         </tr>
       </tbody>
     </table>
@@ -46,7 +46,7 @@
       <tbody [sortablejs]='selectedCourses'>
         <tr *ngFor='let course of selectedCourses'>
           <td><input type="checkbox" [(ngModel)]='course.Manditory' /></td>
-          <td>{{ course.Name }}</td>
+          <td>{{ course.Identifier }}: {{course.Title.String}}</td>
         </tr>
       </tbody>
     </table>
@@ -66,7 +66,7 @@
             id='startTime'
             [(ngModel)]='startTime' />
         </div>
-    
+
         <!-- End Time -->
         <div class='form-group col-md-2'>
           <label for='endTime' class='control-label'>End Time</label>
@@ -102,7 +102,7 @@
   <div class="page-header">
     <h2>Combinations</h2>
   </div>
-  
+
   <!-- TODO: Show combinations here -->
   <div class="row">
     <div class='col-md-1'>
@@ -119,7 +119,7 @@
         </li>
       </ul>
     </div>
-  
+
     <div class='col-md-11'>
       <table class="table">
         <thead>
