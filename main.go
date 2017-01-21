@@ -8,6 +8,7 @@ import (
 	"sort"
 
 	"github.com/GeertJohan/go.rice"
+	"github.com/gorilla/handlers"
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
@@ -24,9 +25,8 @@ func main() {
 	flag.Parse()
 
 	// Initalize Database
-	db, err := gorm.Open("sqlite3", *dbPath)
+	db, err := gorm.Open("sqlite3", "data/test")
 	if err != nil {
-		log.Fatal(err)
 	}
 
 	accessor := &DatabaseAccessor{db}
@@ -38,6 +38,7 @@ func main() {
 
 	// TODO: Restify this API!
 	mux.HandleFunc("/api/v0/courses", func(rw http.ResponseWriter, r *http.Request) {
+		rw.Header().Set("Access-Control-Allow-Origin", "*")
 		// Query Database
 		var courses []scheduling.Course
 		db.Find(&courses)
@@ -53,6 +54,7 @@ func main() {
 	})
 
 	mux.HandleFunc("/api/v0/schedules", func(rw http.ResponseWriter, r *http.Request) {
+		rw.Header().Set("Access-Control-Allow-Origin", "*")
 		if r.Method != http.MethodPost {
 			log.Println("Invalid method to post endpoint:", r.Method)
 			rw.WriteHeader(http.StatusBadRequest)
@@ -87,14 +89,15 @@ func main() {
 			rw.WriteHeader(http.StatusInternalServerError)
 		}
 	})
+	/*
+		server := &http.Server{
+			Addr:    *listen,
+			Handler: mux,
+		}*/
 
-	server := &http.Server{
-		Addr:    *listen,
-		Handler: mux,
-	}
-
-	log.Printf("Starting server on %s\n", *listen)
-	log.Fatalln(server.ListenAndServe())
+	http.ListenAndServe(":8080", handlers.CORS()(mux))
+	log.Printf("Started server on %s\n", *listen)
+	//log.Fatalln(server.ListenAndServe())
 }
 
 type CombinationsRequest struct {
