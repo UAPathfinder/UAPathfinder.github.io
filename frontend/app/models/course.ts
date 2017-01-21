@@ -3,7 +3,12 @@ export class Course {
 	CourseId: number;
 
 	// A descriptive title for the course.
-	Name: string;
+	Identifier: string;
+
+	Title: {
+		String: string;
+		Valid: boolean;
+	};
 
 	// A property of the view. This is true when the course is selected to be
 	// combined.
@@ -14,4 +19,3 @@ export class Course {
 	// TODO: Rename this soon.
 	Manditory: boolean;
 }
-
