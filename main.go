@@ -7,8 +7,8 @@ import (
 	"net/http"
 	"sort"
 
-	"github.com/GeertJohan/go.rice"
-	"github.com/gorilla/handlers"
+	//"github.com/GeertJohan/go.rice"
+	//"github.com/gorilla/handlers"
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
@@ -33,8 +33,16 @@ func main() {
 
 	mux := http.NewServeMux()
 
-	staticFiles := rice.MustFindBox("frontend").HTTPBox()
-	mux.Handle("/", http.FileServer(staticFiles))
+	//staticFiles := rice.MustFindBox("frontend").HTTPBox()
+	//mux.Handle("/", http.FileServer(staticFiles))
+
+	/*
+		mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+				log.Println("options hit")
+				w.Header().Set("Access-Control-Allow-Origin", "*")
+				return
+			}).Methods("OPTIONS")
+	*/
 
 	// TODO: Restify this API!
 	mux.HandleFunc("/api/v0/courses", func(rw http.ResponseWriter, r *http.Request) {
@@ -55,7 +63,14 @@ func main() {
 
 	mux.HandleFunc("/api/v0/schedules", func(rw http.ResponseWriter, r *http.Request) {
 		rw.Header().Set("Access-Control-Allow-Origin", "*")
+		rw.Header().Set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
+
+		if r.Method == "OPTIONS" {
+			return
+		}
+
 		if r.Method != http.MethodPost {
+
 			log.Println("Invalid method to post endpoint:", r.Method)
 			rw.WriteHeader(http.StatusBadRequest)
 			return
@@ -95,7 +110,7 @@ func main() {
 			Handler: mux,
 		}*/
 
-	http.ListenAndServe(":8080", handlers.CORS()(mux))
+	http.ListenAndServe(":8080", mux)
 	log.Printf("Started server on %s\n", *listen)
 	//log.Fatalln(server.ListenAndServe())
 }
