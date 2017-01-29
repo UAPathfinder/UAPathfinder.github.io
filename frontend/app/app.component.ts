@@ -2,7 +2,9 @@ import { Component } from '@angular/core';
 import { CourseService } from './course.service';
 
 import { Course } from './models/course';
-import { Combination } from './models/combination';
+import { Schedule } from './models/schedule';
+import { CombinationsRequest } from './models/combinations-request';
+import { CoursesRequest } from './models/combinations-request';
 import { WEEKDAYS, Weekday } from './models/weekday';
 
 import * as moment from 'moment';
@@ -21,8 +23,9 @@ export class AppComponent {
 	startTime: string = "07:00";
 	endTime: string = "17:00";
 	courses: Array<Course>;
-	combinations: Array<Combination>;
-	currentCombo: number = 0;
+	//combinations: Array<Combination>;
+  schedules: Array<Schedule>;
+	currentSchedule: number = 0;
 
 	ngOnInit() {
 		this.courseService.getCourses()
@@ -51,17 +54,20 @@ export class AppComponent {
 		this.selectedCourses.forEach((course, idx) => {
 			course.Priority = idx;
 		});
+    var requests = [];
+    this.selectedCourses.forEach(function(course){
+      requests.push({
+        Course: course.Identifier,
+        Weight: 10,
+        Optional: false,
+      })
+    })
 
-		this.courseService.getCombos({
-			StartTime: parseTime(this.startTime),
-			EndTime: parseTime(this.endTime),
-			Days: this.weekdays.filter((weekday) => weekday.active)
-				.map((weekday) => weekday.name)
-				.join(''),
-			Courses: this.selectedCourses,
+		this.courseService.getSchedules({
+			Courses: requests,
 		})
 			.subscribe(
-				combos => this.combinations = combos,
+				schedules => this.schedules = schedules,
 				// TODO: Handle Properly
 				err => console.error(err)
 			)
@@ -82,4 +88,3 @@ function parseTime(input: string): string {
 		.toJSON()
 		.replace(/^\+00/, '');
 }
-

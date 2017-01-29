@@ -4,7 +4,7 @@ import { Http, Response } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 
 import { Course } from './models/course';
-import { Combination } from './models/combination';
+import { Schedule } from './models/schedule';
 import { CombinationsRequest } from './models/combinations-request'
 
 @Injectable()
@@ -21,10 +21,18 @@ export class CourseService {
 			// TODO: Handle Error
 	}
 
-	getCombos(request: CombinationsRequest): Observable<Combination[]> {
+	// getCombos(request: CombinationsRequest): Observable<Combination[]> {
+	// 	console.log(request);
+	// 	return this.http.post(this.combosEndpoint, request)
+	// 		.map((res: Response) => res.json());
+	// 		// TODO: Handle Error
+	// }
+
+	getSchedules(request: CombinationsRequest): Observable<Schedule[]> {
 		console.log(request);
 		return this.http.post(this.combosEndpoint, request)
 			.map((res: Response) => res.json());
 			// TODO: Handle Error
 	}
+
 }

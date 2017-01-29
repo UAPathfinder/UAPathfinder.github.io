@@ -154,7 +154,7 @@ type Department struct {
 	Description sql.NullString
 }
 
-// Input to FindSchedules
+// Input to Finds
 type Criteria struct {
 	MinimizeBreaks bool
 	BreakWeight    int

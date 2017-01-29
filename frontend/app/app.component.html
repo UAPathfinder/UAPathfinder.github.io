@@ -108,11 +108,11 @@
     <div class='col-md-1'>
       <ul class='nav nav-pills nav-stacked'>
         <li
-          *ngFor='let combo of combinations; let i = index'
-          [ngClass]="{'active': i == this.currentCombo}">
+          *ngFor='let schedule of schedules; let i = index'
+          [ngClass]="{'active': i == this.currentSchedule}">
           <a
             href='javascript: false'
-            (click)='this.currentCombo = i'
+            (click)='this.currentSchedule = i'
             style='text-align: center'>
               {{ i + 1 }}
           </a>
@@ -131,7 +131,7 @@
             <th>End Time</th>
         </thead>
         <tbody *ngIf='combinations[this.currentCombo]'>
-          <tr *ngFor='let class of combinations[this.currentCombo].Classes'>
+          <tr *ngFor='let event of schedules[this.currentSchedule].Events'>
             <td>{{ class.ClassId }}</td>
             <td>{{ getCourse(class.CourseId).Name }}</td>
             <td>{{ class.MeetingDays }}</td>
