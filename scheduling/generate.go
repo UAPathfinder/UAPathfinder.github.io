@@ -37,40 +37,38 @@ func (s BySchedule) Less(i, j int) bool { return s[i].Score < s[j].Score }
 // - Simulated Annealing
 func FindSchedules(courses []string, props map[string]EventProperties, accessor Accessor) []Schedule {
 	result := []Schedule{}
-	RecursiveFindSchedules(courses, props, accessor, &result, 0, &Schedule{})
+	RecursiveFindSchedules(courses, props, accessor, &result, 0, Schedule{})
 	return result
 }
 
 // http://stackoverflow.com/questions/17192796/generate-all-combinations-from-multiple-lists
-func RecursiveFindSchedules(courses []string, props map[string]EventProperties, accessor Accessor, result *[]Schedule, depth int, current *Schedule) {
+func RecursiveFindSchedules(courses []string, props map[string]EventProperties, accessor Accessor, result *[]Schedule, depth int, current Schedule) {
 	//_ = "breakpoint"
-	log.Println("recurse, depth: ", depth)
-	log.Println(len(courses))
+	//log.Println("recurse, depth: ", depth)
+	//log.Println(len(courses))
 	if depth == len(courses) {
 		// Deepest Case, Called After Builder Cases for 0..(depth - 1)
-		*result = append(*result, *current)
+		*result = append(*result, current)
 		return
 	}
 
 	// Builder Case
 	course := courses[depth]
 
-	log.Println("course ident:", course)
+	//log.Println("course ident:", course)
 	// Get Classes for Course
 	classes := accessor.GetClasses(course)
 	_ = "breakpoint"
-	log.Println("GetClasses returns", len(classes), "classes")
+	//log.Println("GetClasses returns", len(classes), "classes")
 
 	// Get parameters for the course. If does not exist, returns zero value of
 	// CourseParam.
 	courseProps := props[course]
 
 classesLoop:
-	for index, class := range classes {
-		log.Println("classesloop")
-		if index == 5249 {
-			log.Println("It's every class")
-		}
+	for _, class := range classes {
+		//log.Println("classesloop")
+		workingCurrent := current
 
 		// Try Adding Classes From course to Schedule
 		events := class.Events(&courseProps)
@@ -83,8 +81,8 @@ classesLoop:
 		cost := 0
 
 		for _, event := range events {
-			log.Println("event loop.")
-			conflictingEvent := current.Calendar.DoesConflict(event)
+			//log.Println("event loop.")
+			conflictingEvent := workingCurrent.Calendar.DoesConflict(event)
 			//log.Println("got conflicts")
 
 			if conflictingEvent != nil {
@@ -116,36 +114,36 @@ classesLoop:
 		}
 
 		// Incur Cost
-		current.Score -= cost
+		workingCurrent.Score -= cost
 
 		for _, deletion := range pendingDeletions {
 			switch deletion := deletion.(type) {
 			case ClassEvent:
 				// Remove All Elements of This Class
 				j := 0
-				for _, event := range current.Calendar.Events {
+				for _, event := range workingCurrent.Calendar.Events {
 					event, ok := event.(ClassEvent)
 					if !ok {
 						continue
 					}
 
 					if event.Class.Identifier != deletion.Class.Identifier {
-						current.Calendar.Events[j] = event
+						workingCurrent.Calendar.Events[j] = event
 						fmt.Println(event)
 						j++
 					}
 				}
-				current.Calendar.Events = current.Calendar.Events[:j]
+				workingCurrent.Calendar.Events = workingCurrent.Calendar.Events[:j]
 			}
 		}
 
 		for _, event := range events {
-			current.Calendar.Add(event)
-			log.Println("added event: ", event)
+			workingCurrent.Calendar.Add(event)
+			//log.Println("added event: ", event)
 		}
-		log.Println("past event loop")
+		//log.Println("past event loop")
 
-		RecursiveFindSchedules(courses, props, accessor, result, depth+1, current)
+		RecursiveFindSchedules(courses, props, accessor, result, depth+1, workingCurrent)
 
 		//     Add Class to Schedule
 		//     Calculate Score of Schedule
@@ -158,3 +156,4 @@ classesLoop:
 		//     RecursiveFindSchedules(courses, result, depth + 1, current)
 	}
 }
+

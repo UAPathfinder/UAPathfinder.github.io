@@ -36,7 +36,7 @@ func (accessor *MockAccessor) GetClasses(courseIdentifier string) []Class {
 				String: "here",
 				Valid:  true,
 			},
-			times{
+			Times{
 				false,
 				true,
 				false,
@@ -75,7 +75,7 @@ func (accessor *MockAccessor) GetClasses(courseIdentifier string) []Class {
 				String: "there",
 				Valid:  true,
 			},
-			times{
+			Times{
 				false,
 				true,
 				false,
@@ -116,7 +116,7 @@ func (accessor *MockAccessor) GetClasses(courseIdentifier string) []Class {
 				String: "somewhere else",
 				Valid:  true,
 			},
-			times{
+			Times{
 				false,
 				false,
 				true,
@@ -174,7 +174,7 @@ func TestFindSchedulesFindsRealSchedules(t *testing.T) {
 	//_ = "breakpoint"
 	result := FindSchedules(courses, props, accessor)
 	assert.NotNil(t, result, "blarg")
-	log.Println("bork: ", result)
+	//log.Println("bork: ", result)
 }
 
 type DatabaseAccessor struct {
