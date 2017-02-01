@@ -2,6 +2,7 @@ package scheduling
 
 import (
 	"fmt"
+	"log"
 )
 
 // An interface to get classes for FindSchedules. Mockable for testing the
@@ -15,7 +16,7 @@ type Accessor interface {
 }
 
 type Schedule struct {
-	*Calendar
+	Calendar
 	Classes []Class
 	Score   int
 }
@@ -42,6 +43,9 @@ func FindSchedules(courses []string, props map[string]EventProperties, accessor 
 
 // http://stackoverflow.com/questions/17192796/generate-all-combinations-from-multiple-lists
 func RecursiveFindSchedules(courses []string, props map[string]EventProperties, accessor Accessor, result *[]Schedule, depth int, current *Schedule) {
+	//_ = "breakpoint"
+	log.Println("recurse, depth: ", depth)
+	log.Println(len(courses))
 	if depth == len(courses) {
 		// Deepest Case, Called After Builder Cases for 0..(depth - 1)
 		*result = append(*result, *current)
@@ -51,18 +55,27 @@ func RecursiveFindSchedules(courses []string, props map[string]EventProperties, 
 	// Builder Case
 	course := courses[depth]
 
+	log.Println("course ident:", course)
 	// Get Classes for Course
 	classes := accessor.GetClasses(course)
+	_ = "breakpoint"
+	log.Println("GetClasses returns", len(classes), "classes")
 
 	// Get parameters for the course. If does not exist, returns zero value of
 	// CourseParam.
 	courseProps := props[course]
 
 classesLoop:
-	for _, class := range classes {
+	for index, class := range classes {
+		log.Println("classesloop")
+		if index == 5249 {
+			log.Println("It's every class")
+		}
 
 		// Try Adding Classes From course to Schedule
 		events := class.Events(&courseProps)
+
+		//log.Println("events: ", events)
 
 		// Container to hold potential deletions.
 		var pendingDeletions []Event
@@ -70,10 +83,12 @@ classesLoop:
 		cost := 0
 
 		for _, event := range events {
+			log.Println("event loop.")
 			conflictingEvent := current.Calendar.DoesConflict(event)
+			//log.Println("got conflicts")
 
 			if conflictingEvent != nil {
-				// Found A Conflict. Fail If Possible.
+				log.Println("Found A Conflict. Fail If Possible.")
 				conflictingProps := conflictingEvent.Properties()
 
 				if !conflictingProps.Optional && !courseProps.Optional {
@@ -126,7 +141,9 @@ classesLoop:
 
 		for _, event := range events {
 			current.Calendar.Add(event)
+			log.Println("added event: ", event)
 		}
+		log.Println("past event loop")
 
 		RecursiveFindSchedules(courses, props, accessor, result, depth+1, current)
 

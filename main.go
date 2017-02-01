@@ -1,13 +1,13 @@
 package main
 
 import (
+	//"database/sql"
 	"encoding/json"
 	"flag"
+	"github.com/GeertJohan/go.rice"
 	"log"
 	"net/http"
 	"sort"
-
-	//"github.com/GeertJohan/go.rice"
 	//"github.com/gorilla/handlers"
 
 	"github.com/jinzhu/gorm"
@@ -23,18 +23,21 @@ var (
 
 func main() {
 	flag.Parse()
-
+	//_ = "breakpoint"
 	// Initalize Database
 	db, err := gorm.Open("sqlite3", "data/test")
 	if err != nil {
 	}
 
+	var DevelopmentMode = false
 	accessor := &DatabaseAccessor{db}
 
 	mux := http.NewServeMux()
 
-	//staticFiles := rice.MustFindBox("frontend").HTTPBox()
-	//mux.Handle("/", http.FileServer(staticFiles))
+	if !DevelopmentMode {
+		staticFiles := rice.MustFindBox("frontend").HTTPBox()
+		mux.Handle("/", http.FileServer(staticFiles))
+	}
 
 	/*
 		mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
@@ -50,6 +53,16 @@ func main() {
 		// Query Database
 		var courses []scheduling.Course
 		db.Find(&courses)
+		/*db.Where(&scheduling.Class{
+		times{
+			Sunday:    false,
+			Monday:    false,
+			Tuesday:   false,
+			Wednesday: false,
+			Thursday:  false,
+			Friday:    false,
+			Saturday:  false}}).Find(&courses)*/
+		//log.Println("looked up courses")
 
 		// Send Response
 		encoder := json.NewEncoder(rw)
@@ -90,13 +103,18 @@ func main() {
 		var courses []string
 		props := make(map[string]scheduling.EventProperties)
 		for _, course := range constraints.Courses {
+			//log.Println("looping through constraints")
 			courses = append(courses, course.Course)
 			props[course.Course] = course.EventProperties
 		}
-
+		//log.Println("loop finished")
+		log.Println("courses: ", courses)
+		log.Println("props: ", props)
 		schedules := scheduling.FindSchedules(courses, props, accessor)
+		//log.Println("findSchedules finished")
 		sort.Sort(sort.Reverse(scheduling.BySchedule(schedules)))
-
+		//log.Println("sorted")
+		log.Println("result: ", schedules)
 		encoder := json.NewEncoder(rw)
 		err = encoder.Encode(schedules)
 		if err != nil {
@@ -104,15 +122,17 @@ func main() {
 			rw.WriteHeader(http.StatusInternalServerError)
 		}
 	})
-	/*
+
+	log.Printf("starting Server")
+	if DevelopmentMode {
+		http.ListenAndServe(":8080", mux)
+	} else {
 		server := &http.Server{
 			Addr:    *listen,
 			Handler: mux,
-		}*/
-
-	http.ListenAndServe(":8080", mux)
-	log.Printf("Started server on %s\n", *listen)
-	//log.Fatalln(server.ListenAndServe())
+		}
+		log.Fatalln(server.ListenAndServe())
+	}
 }
 
 type CombinationsRequest struct {
@@ -131,6 +151,10 @@ type DatabaseAccessor struct {
 
 func (accessor *DatabaseAccessor) GetClasses(courseIdentifier string) []scheduling.Class {
 	classes := []scheduling.Class{}
+	if courseIdentifier == "" {
+		log.Println("identifier empty")
+		return classes
+	}
 	accessor.DB.Where(&scheduling.Class{Course: courseIdentifier}).Find(&classes)
 	return classes
 }

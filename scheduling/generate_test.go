@@ -2,10 +2,12 @@ package scheduling
 
 import (
 	"database/sql"
-	"testing"
-
+	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"log"
+	"testing"
 )
 
 type MockAccessor struct {
@@ -16,10 +18,10 @@ func (accessor *MockAccessor) GetClasses(courseIdentifier string) []Class {
 	var output []Class
 	if courseIdentifier == "3460 210" {
 		output1 := Class{
-			"70612",
+			"70613",
 			"3460 210",
 			sql.NullInt64{
-				Int64: 38,
+				Int64: 18,
 				Valid: true,
 			},
 			sql.NullInt64{
@@ -38,7 +40,7 @@ func (accessor *MockAccessor) GetClasses(courseIdentifier string) []Class {
 				false,
 				true,
 				false,
-				true,
+				false,
 				false,
 				false,
 				false,
@@ -55,10 +57,10 @@ func (accessor *MockAccessor) GetClasses(courseIdentifier string) []Class {
 		output = append(output, output1)
 
 		output2 := Class{
-			"70613",
+			"70612",
 			"3460 210",
 			sql.NullInt64{
-				Int64: 18,
+				Int64: 38,
 				Valid: true,
 			},
 			sql.NullInt64{
@@ -77,7 +79,7 @@ func (accessor *MockAccessor) GetClasses(courseIdentifier string) []Class {
 				false,
 				true,
 				false,
-				false,
+				true,
 				false,
 				false,
 				false,
@@ -153,8 +155,40 @@ func TestFindSchedulesFindsSchedules(t *testing.T) {
 	var testAccessor MockAccessor
 	courses := []string{"3460 210", "3460 455"}
 	props := map[string]EventProperties{"3460 210": {Weight: 10, Optional: false}, "3460 455": {Weight: 10, Optional: false}}
-	_ = "breakpoint"
-	_ = FindSchedules(courses, props, &testAccessor)
+	//_ = "breakpoint"
+	result := FindSchedules(courses, props, &testAccessor)
 	//assert.NotNil(t, result, "blarg")
-	//log.Println(result)
+	log.Println(result)
+}
+
+//this really doesn't belong here, it's technically an integration test
+
+func TestFindSchedulesFindsRealSchedules(t *testing.T) {
+	db, err := gorm.Open("sqlite3", "data/test")
+	if err != nil {
+	}
+	accessor := &DatabaseAccessor{db}
+
+	courses := []string{"3460 210", "3460 455"}
+	props := map[string]EventProperties{"3460 210": {Weight: 10, Optional: false}, "3460 455": {Weight: 10, Optional: false}}
+	//_ = "breakpoint"
+	result := FindSchedules(courses, props, accessor)
+	assert.NotNil(t, result, "blarg")
+	log.Println("bork: ", result)
+}
+
+type DatabaseAccessor struct {
+	*gorm.DB
+}
+
+func (accessor *DatabaseAccessor) GetClasses(courseIdentifier string) []Class {
+	classes := []Class{}
+	accessor.DB.Where(&Class{Course: courseIdentifier}).Find(&classes)
+	return classes
+}
+
+func (accessor *DatabaseAccessor) GetCourse(courseIdentifier string) Course {
+	course := Course{}
+	accessor.DB.Where(&Course{Identifier: courseIdentifier}).First(&course)
+	return course
 }
