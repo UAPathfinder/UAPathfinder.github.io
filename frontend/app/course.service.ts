@@ -30,7 +30,7 @@ export class CourseService {
 	// }
 
 	getSchedules(request: CombinationsRequest): Observable<Schedule[]> {
-		console.log(request);
+		//console.log(request);
 		return this.http.post(this.combosEndpoint, request)
 			.map((res: Response) => res.json());
 			// TODO: Handle Error

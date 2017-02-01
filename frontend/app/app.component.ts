@@ -30,7 +30,10 @@ export class AppComponent {
 	ngOnInit() {
 		this.courseService.getCourses()
 			.subscribe(
-				courses => this.courses = courses,
+				courses => {
+          this.courses = courses;
+          //getCourse("3460 210", this.courses);
+        },
 				// TODO: Handle Properly
 				err => console.error(err)
 			)
@@ -54,7 +57,7 @@ export class AppComponent {
 		this.selectedCourses.forEach((course, idx) => {
 			course.Priority = idx;
 		});
-    var requests = [];
+    var requests:any[] = [];
     this.selectedCourses.forEach(function(course){
       requests.push({
         Course: course.Identifier,
@@ -67,17 +70,57 @@ export class AppComponent {
 			Courses: requests,
 		})
 			.subscribe(
-				schedules => this.schedules = schedules,
+				response => {
+          this.schedules = response;
+          this.schedules = populateMeetingDays(this.schedules);
+          //console.log(this.courses);
+        },
 				// TODO: Handle Properly
 				err => console.error(err)
 			)
 	}
 
+
 	// Helper method to get a course given a course id.
-	getCourse(id: number): Course {
+	 getCourse(id: string, courses: Array<Course>):Course {
+    console.log("this is course :");
+    console.log(id)
+     console.log(courses
+	 	   .find((course) => course.Identifier == id));
 		return this.courses
-			.find((course) => course.CourseId == id)
+			.find((course) => course.Identifier == id);
 	}
+
+  function populateMeetingDays(borks: Array<Schedule>): Array<Schedule>{
+    //console.log(borks);
+    for (let schedule of borks){
+      for (event of schedule.Events){
+        event.MeetingDays = "";
+        if (event.Sunday){
+          event.MeetingDays += "S";
+        }
+        if (event.Monday){
+          event.MeetingDays += "M";
+        }
+        if (event.Tuesday){
+          event.MeetingDays += "T";
+        }
+        if (event.Wednesday){
+          event.MeetingDays += "W";
+        }
+        if (event.Thursday){
+          event.MeetingDays += "Th";
+        }
+        if (event.Friday){
+          event.MeetingDays += "F";
+        }
+        if (event.Saturday){
+          event.MeetingDays += "Su";
+        }
+      }
+    }
+    return borks;
+  }
 }
 
 // Parses time from input elements into a json format.
