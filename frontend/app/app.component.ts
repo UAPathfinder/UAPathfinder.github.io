@@ -91,6 +91,10 @@ export class AppComponent {
 			.find((course) => course.Identifier == id);
 	}
 
+  getTime(input: number): string {
+     return new Date(1000 * input).toISOString().substr(11, 8)
+ }
+
   function populateMeetingDays(borks: Array<Schedule>): Array<Schedule>{
     //console.log(borks);
     for (let schedule of borks){
@@ -125,9 +129,6 @@ export class AppComponent {
 
 // Parses time from input elements into a json format.
 function parseTime(input: string): string {
-	return moment.utc(input, "HH:mm")
-		.set({'year': 0, 'month': 0, 'day': 0})
-		// Bug in moment or go which puts a wired prefix when using year 0
-		.toJSON()
-		.replace(/^\+00/, '');
+  alert("test")
+alert(getTime(61800))
 }

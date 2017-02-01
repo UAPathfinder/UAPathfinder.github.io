@@ -136,8 +136,8 @@
 
              <td>{{ getCourse(event.Course, courses).Title.String}}</td>
 
-            <td>{{ event.MeetingDays }}</td>
-            <td>{{ event.RawStartTime.Int64 }}</td>
+            <td>{{ getCourse(event.MeetingDays) }}</td>
+            <td>{{ getTime(event.RawStartTime.Int64) }}</td>
             <td>{{ event.RawEndTime.Int64 }}</td>
           </tr>
         </tbody>
