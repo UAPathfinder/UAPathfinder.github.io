@@ -98,9 +98,9 @@
   </div>
 </div>
 
-<div *ngIf='combinations'>
+<div *ngIf='schedules'>
   <div class="page-header">
-    <h2>Combinations</h2>
+    <h2>Schedules</h2>
   </div>
 
   <!-- TODO: Show combinations here -->
@@ -130,13 +130,15 @@
             <th>Start Time</th>
             <th>End Time</th>
         </thead>
-        <tbody *ngIf='combinations[this.currentCombo]'>
-          <tr *ngFor='let event of schedules[this.currentSchedule].Events'>
-            <td>{{ class.ClassId }}</td>
-            <td>{{ getCourse(class.CourseId).Name }}</td>
-            <td>{{ class.MeetingDays }}</td>
-            <td>{{ class.StartTime | time:"hh:mm A" }}</td>
-            <td>{{ class.EndTime | time:"hh:mm A" }}</td>
+        <tbody *ngIf='schedules[currentSchedule]'>
+          <tr *ngFor='let event of schedules[currentSchedule].Events'>
+             <td>{{ event.Identifier }}</td>
+
+             <td>{{ getCourse(event.Course, courses).Title.String}}</td>
+
+            <td>{{ event.MeetingDays }}</td>
+            <td>{{ getTime(event.RawStartTime.Int64) }}</td>
+            <td>{{ getTime(event.RawEndTime.Int64) }}</td>
           </tr>
         </tbody>
       </table>
