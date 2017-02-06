@@ -187,7 +187,7 @@ func TestFindSchedulesReturnsNoRepeatClasses(t *testing.T) {
 	courses := []string{"3460 210", "3460 455"}
 	props := map[string]EventProperties{"3460 210": {Weight: 10, Optional: false}, "3460 455": {Weight: 10, Optional: false}}
 
-	_ = FindSchedules(courses, props, accessor)
+	result := FindSchedules(courses, props, accessor)
 	// for _, schedule := range result {
 	// 	log.Println(len(schedule.Events))
 	// 	for index, event1 := range schedule.Events {
@@ -197,6 +197,8 @@ func TestFindSchedulesReturnsNoRepeatClasses(t *testing.T) {
 	// 		}
 	// 	}
 	// }
+	assert.NotNil(t, result, "blarg")
+	//log.Println("bork: ", result)
 }
 
 type DatabaseAccessor struct {

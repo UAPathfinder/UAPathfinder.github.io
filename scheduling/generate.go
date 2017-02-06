@@ -38,7 +38,7 @@ func FindSchedules(courses []string, props map[string]EventProperties, accessor 
 
 // http://stackoverflow.com/questions/17192796/generate-all-combinations-from-multiple-lists
 func RecursiveFindSchedules(courses []string, props map[string]EventProperties, accessor Accessor, result *[]Schedule, depth int, current Schedule) {
-	_ = "breakpoint"
+	//_ = "breakpoint"
 	//log.Println("recurse, depth: ", depth)
 	//log.Println(len(courses))
 	if depth == len(courses) {
@@ -51,6 +51,10 @@ func RecursiveFindSchedules(courses []string, props map[string]EventProperties, 
 	course := courses[depth]
 	// Get Classes for Course
 	classes := accessor.GetClasses(course)
+
+	_ = "breakpoint"
+	//log.Println("GetClasses returns", len(classes), "classes")
+
 	// Get parameters for the course. If does not exist, returns zero value of
 	// CourseParam.
 	courseProps := props[course]
@@ -76,6 +80,7 @@ classesLoop:
 		cost := 0
 
 		for _, event := range events {
+			//log.Println("event loop.")
 			conflictingEvent := workingCurrent.Calendar.DoesConflict(event)
 
 			if conflictingEvent != nil {
@@ -121,7 +126,6 @@ classesLoop:
 
 					if event.Class.Identifier != deletion.Class.Identifier {
 						workingCurrent.Calendar.Events[j] = event
-						//fmt.Println(event)
 						j++
 					}
 				}

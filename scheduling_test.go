@@ -1,10 +1,12 @@
-package tests
+package main
 
 import (
-	"github.com/mibzman/CourseCorrect/scheduling"
-	"strconv"
-	"testing"
+//"github.com/mibzman/CourseCorrect/scheduling"
+//"strconv"
+//"testing"
 )
+
+/*
 
 func TestNumCombos(t *testing.T) {
 	class1 := scheduling.Class{ClassId: 1, CourseId: 1, StartTime: scheduling.MustParseTime("09:00:00"), EndTime: scheduling.MustParseTime("10:00:00"), MeetingDays: "MWF", ProfessorName: "Bob Jones", MeetingLocation: "Leigh Hall"}
@@ -289,7 +291,7 @@ func scheduling.CompareCombos(input1, input2 scheduling.Combo) bool {
 		}
 	}
 	return true
-}*/
+}
 
 func TestTime(t *testing.T) {
 	test := scheduling.MustParseTime("10:00:00")
@@ -297,3 +299,4 @@ func TestTime(t *testing.T) {
 		t.Fatalf("no")
 	}
 }
+*/

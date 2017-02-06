@@ -4,7 +4,7 @@ import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/stretchr/testify/assert"
-	"log"
+	//"log"
 	"testing"
 )
 
@@ -17,7 +17,7 @@ func TestCanGetCourseData(t *testing.T) {
 	result := accessor.GetCourse("3001 200")
 
 	assert.NotNil(t, result, "blarg")
-	log.Println(result)
+	//log.Println(result)
 }
 
 func TestCanGetClassData(t *testing.T) {
@@ -29,7 +29,7 @@ func TestCanGetClassData(t *testing.T) {
 	result := accessor.GetClasses("3001 200")
 
 	assert.NotNil(t, result, "blarg")
-	log.Println(result)
+	//log.Println(result)
 }
 
 func TestGetClassesGetsDays(t *testing.T) {
@@ -41,7 +41,7 @@ func TestGetClassesGetsDays(t *testing.T) {
 	result := accessor.GetClasses("3460 210")
 
 	assert.True(t, result[0].Times.Monday, "3460 210 Monday should be true")
-	log.Println(result) //[0].Monday)
+	//log.Println(result) //[0].Monday)
 
 }
 

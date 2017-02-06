@@ -1,10 +1,10 @@
-package tests
+package main
 
 import (
 	"testing"
 	"time"
 
-	"github.com/mibzman/CourseCorrect/scheduling"
+	"github.com/mibzman/CourseCorrect-Student/scheduling"
 )
 
 type Event struct {

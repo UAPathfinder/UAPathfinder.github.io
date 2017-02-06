@@ -1,11 +1,13 @@
-package tests
+package main
 
 import (
-	"github.com/mibzman/CourseCorrect/scheduling"
+//	"github.com/mibzman/CourseCorrect/scheduling"
 
-	"strconv"
-	"testing"
+//	"strconv"
+//	"testing"
 )
+
+/*
 
 //TODO: not only is this not implemented but this test is disabled
 
@@ -72,4 +74,4 @@ func TestScoreDays(t *testing.T) {
 		t.Fatalf("Test ScoreDays")
 	}
 
-}
+}*/
