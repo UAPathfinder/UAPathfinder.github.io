@@ -27,6 +27,9 @@ export class AppComponent {
   schedules: Array<Schedule>;
 	currentSchedule: number = 0;
 
+  classes: Array<Class>;
+  currentClass: number = 0;
+
 	ngOnInit() {
 		this.courseService.getCourses()
 			.subscribe(
@@ -73,7 +76,6 @@ export class AppComponent {
 				response => {
           this.schedules = response;
           this.schedules = populateMeetingDays(this.schedules);
-          //console.log(this.courses);
         },
 				// TODO: Handle Properly
 				err => console.error(err)
@@ -83,10 +85,6 @@ export class AppComponent {
 
 	// Helper method to get a course given a course id.
 	 getCourse(id: string, courses: Array<Course>):Course {
-    console.log("this is course :");
-    console.log(id)
-     console.log(courses
-	 	   .find((course) => course.Identifier == id));
 		return this.courses
 			.find((course) => course.Identifier == id);
 	}
@@ -125,6 +123,38 @@ export class AppComponent {
     }
     return borks;
   }
+}
+
+function populateMeetingDays(borks: Array<Class>): Array<Class>{
+  //console.log(borks);
+  for (let schedule of borks){
+    for (event of schedule.Events){
+      event.MeetingDays = "";
+      if (event.Sunday){
+        event.MeetingDays += "S";
+      }
+      if (event.Monday){
+        event.MeetingDays += "M";
+      }
+      if (event.Tuesday){
+        event.MeetingDays += "T";
+      }
+      if (event.Wednesday){
+        event.MeetingDays += "W";
+      }
+      if (event.Thursday){
+        event.MeetingDays += "Th";
+      }
+      if (event.Friday){
+        event.MeetingDays += "F";
+      }
+      if (event.Saturday){
+        event.MeetingDays += "Su";
+      }
+    }
+  }
+  return borks;
+}
 }
 
 // Parses time from input elements into a json format.

@@ -131,14 +131,14 @@
             <th>End Time</th>
         </thead>
         <tbody *ngIf='schedules[currentSchedule]'>
-          <tr *ngFor='let event of schedules[currentSchedule].Events'>
-             <td>{{ event.Identifier }}</td>
+          <tr *ngFor='let class of schedules[currentSchedule].Classes'>
+             <td>{{ class.Course }}</td>
 
-             <td>{{ getCourse(event.Course, courses).Title.String}}</td>
+             <td>{{ getCourse(class.Course, courses).Title.String}}</td>
 
-            <td>{{ event.MeetingDays }}</td>
-            <td>{{ getTime(event.RawStartTime.Int64) }}</td>
-            <td>{{ getTime(event.RawEndTime.Int64) }}</td>
+            <td>TBD</td>
+            <td>{{ getTime(class.RawStartTime.Int64) }}</td>
+            <td>{{ getTime(class.RawEndTime.Int64) }}</td>
           </tr>
         </tbody>
       </table>

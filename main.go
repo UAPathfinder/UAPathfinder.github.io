@@ -4,10 +4,11 @@ import (
 	//"database/sql"
 	"encoding/json"
 	"flag"
-	"github.com/GeertJohan/go.rice"
 	"log"
 	"net/http"
 	"sort"
+
+	"github.com/GeertJohan/go.rice"
 	//"github.com/gorilla/handlers"
 
 	"github.com/jinzhu/gorm"
@@ -29,7 +30,7 @@ func main() {
 	if err != nil {
 	}
 
-	var DevelopmentMode = false
+	var DevelopmentMode = true
 	accessor := &DatabaseAccessor{db}
 
 	mux := http.NewServeMux()

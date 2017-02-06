@@ -10,7 +10,7 @@ import { CombinationsRequest } from './models/combinations-request'
 @Injectable()
 export class CourseService {
 	//poop
-	private endpoint = "http://74.141.20.106:8080/api/v0/";
+	private endpoint = "http://localhost:8080/api/v0/";
 	private courseEndpoint = this.endpoint + 'courses';
 	private combosEndpoint = this.endpoint + 'schedules';
 

@@ -1,10 +1,5 @@
 package scheduling
 
-import (
-	"fmt"
-	"log"
-)
-
 // An interface to get classes for FindSchedules. Mockable for testing the
 // algorithm against custom data.
 type Accessor interface {
@@ -37,45 +32,43 @@ func (s BySchedule) Less(i, j int) bool { return s[i].Score < s[j].Score }
 // - Simulated Annealing
 func FindSchedules(courses []string, props map[string]EventProperties, accessor Accessor) []Schedule {
 	result := []Schedule{}
-	RecursiveFindSchedules(courses, props, accessor, &result, 0, &Schedule{})
+	RecursiveFindSchedules(courses, props, accessor, &result, 0, Schedule{})
 	return result
 }
 
 // http://stackoverflow.com/questions/17192796/generate-all-combinations-from-multiple-lists
-func RecursiveFindSchedules(courses []string, props map[string]EventProperties, accessor Accessor, result *[]Schedule, depth int, current *Schedule) {
-	//_ = "breakpoint"
-	log.Println("recurse, depth: ", depth)
-	log.Println(len(courses))
+func RecursiveFindSchedules(courses []string, props map[string]EventProperties, accessor Accessor, result *[]Schedule, depth int, current Schedule) {
+	_ = "breakpoint"
+	//log.Println("recurse, depth: ", depth)
+	//log.Println(len(courses))
 	if depth == len(courses) {
 		// Deepest Case, Called After Builder Cases for 0..(depth - 1)
-		*result = append(*result, *current)
+		*result = append(*result, current)
 		return
 	}
 
 	// Builder Case
 	course := courses[depth]
-
-	log.Println("course ident:", course)
 	// Get Classes for Course
 	classes := accessor.GetClasses(course)
-	_ = "breakpoint"
-	log.Println("GetClasses returns", len(classes), "classes")
-
 	// Get parameters for the course. If does not exist, returns zero value of
 	// CourseParam.
 	courseProps := props[course]
 
 classesLoop:
-	for index, class := range classes {
-		log.Println("classesloop")
-		if index == 5249 {
-			log.Println("It's every class")
-		}
+	for _, class := range classes {
+		//THIS IS IMPORTANT
+		//only make changes to current if you want them applied to every tree branch after this point
+		workingCurrent := current
+
+		//TODO: this is dirt stupid and needs to be broken out into another method
+		//this just assums that the class has no conflists with any other classes
+		//this should be replaced with a method that gets all classes based on the events
+		//if that's even possiable
+		workingCurrent.Classes = append(workingCurrent.Classes, class)
 
 		// Try Adding Classes From course to Schedule
 		events := class.Events(&courseProps)
-
-		//log.Println("events: ", events)
 
 		// Container to hold potential deletions.
 		var pendingDeletions []Event
@@ -83,12 +76,9 @@ classesLoop:
 		cost := 0
 
 		for _, event := range events {
-			log.Println("event loop.")
-			conflictingEvent := current.Calendar.DoesConflict(event)
-			//log.Println("got conflicts")
+			conflictingEvent := workingCurrent.Calendar.DoesConflict(event)
 
 			if conflictingEvent != nil {
-				log.Println("Found A Conflict. Fail If Possible.")
 				conflictingProps := conflictingEvent.Properties()
 
 				if !conflictingProps.Optional && !courseProps.Optional {
@@ -116,36 +106,34 @@ classesLoop:
 		}
 
 		// Incur Cost
-		current.Score -= cost
+		workingCurrent.Score -= cost
 
 		for _, deletion := range pendingDeletions {
 			switch deletion := deletion.(type) {
 			case ClassEvent:
 				// Remove All Elements of This Class
 				j := 0
-				for _, event := range current.Calendar.Events {
+				for _, event := range workingCurrent.Calendar.Events {
 					event, ok := event.(ClassEvent)
 					if !ok {
 						continue
 					}
 
 					if event.Class.Identifier != deletion.Class.Identifier {
-						current.Calendar.Events[j] = event
-						fmt.Println(event)
+						workingCurrent.Calendar.Events[j] = event
+						//fmt.Println(event)
 						j++
 					}
 				}
-				current.Calendar.Events = current.Calendar.Events[:j]
+				workingCurrent.Calendar.Events = workingCurrent.Calendar.Events[:j]
 			}
 		}
 
 		for _, event := range events {
-			current.Calendar.Add(event)
-			log.Println("added event: ", event)
+			workingCurrent.Calendar.Add(event)
 		}
-		log.Println("past event loop")
 
-		RecursiveFindSchedules(courses, props, accessor, result, depth+1, current)
+		RecursiveFindSchedules(courses, props, accessor, result, depth+1, workingCurrent)
 
 		//     Add Class to Schedule
 		//     Calculate Score of Schedule

@@ -2,12 +2,13 @@ package scheduling
 
 import (
 	"database/sql"
+	"log"
+	"testing"
+
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-	"log"
-	"testing"
 )
 
 type MockAccessor struct {
@@ -36,7 +37,7 @@ func (accessor *MockAccessor) GetClasses(courseIdentifier string) []Class {
 				String: "here",
 				Valid:  true,
 			},
-			times{
+			Times{
 				false,
 				true,
 				false,
@@ -75,7 +76,7 @@ func (accessor *MockAccessor) GetClasses(courseIdentifier string) []Class {
 				String: "there",
 				Valid:  true,
 			},
-			times{
+			Times{
 				false,
 				true,
 				false,
@@ -116,7 +117,7 @@ func (accessor *MockAccessor) GetClasses(courseIdentifier string) []Class {
 				String: "somewhere else",
 				Valid:  true,
 			},
-			times{
+			Times{
 				false,
 				false,
 				true,
@@ -173,8 +174,29 @@ func TestFindSchedulesFindsRealSchedules(t *testing.T) {
 	props := map[string]EventProperties{"3460 210": {Weight: 10, Optional: false}, "3460 455": {Weight: 10, Optional: false}}
 	//_ = "breakpoint"
 	result := FindSchedules(courses, props, accessor)
-	assert.NotNil(t, result, "blarg")
-	log.Println("bork: ", result)
+	assert.NotNil(t, result, "Find Schedules returned null")
+}
+
+func TestFindSchedulesReturnsNoRepeatClasses(t *testing.T) {
+	db, err := gorm.Open("sqlite3", "../data/test")
+	if err != nil {
+		log.Println(err)
+	}
+	accessor := &DatabaseAccessor{db}
+
+	courses := []string{"3460 210", "3460 455"}
+	props := map[string]EventProperties{"3460 210": {Weight: 10, Optional: false}, "3460 455": {Weight: 10, Optional: false}}
+
+	_ = FindSchedules(courses, props, accessor)
+	// for _, schedule := range result {
+	// 	log.Println(len(schedule.Events))
+	// 	for index, event1 := range schedule.Events {
+	// 		for _, event2 := range schedule.Events[index:] {
+	// 			//assert.NotEqual(t, event1., class2.Identifier, "classes were equal within the same schedule")
+	// 			assert.Fail(t, "because I said so")
+	// 		}
+	// 	}
+	// }
 }
 
 type DatabaseAccessor struct {
