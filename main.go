@@ -25,7 +25,7 @@ var (
 func main() {
 	flag.Parse()
 
-	_ = "breakpoint"
+	//_ = "breakpoint"
 	// Initalize Database
 	db, err := gorm.Open("sqlite3", "data/test")
 	if err != nil {
