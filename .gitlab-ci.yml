@@ -6,13 +6,12 @@ stages:
 setup-my-project:
   stage: install-environment
   script:
-    - mkdir -p /go/src/27thisotope.ddns.net/mibzman/
-    - cd /go/src/27thisotope.ddns.net/mibzman/
+    - mkdir -p /go/src/27thisotope.ddns.net/mibzman/CourseCorrect-Student
+    - cd /go/src/27thisotope.ddns.net/mibzman/CourseCorrect-Student
 
 build-my-project:
   stage: build
   script:
-    - cd CourseCorrect-Student
     - go get -d
     - go build
 
