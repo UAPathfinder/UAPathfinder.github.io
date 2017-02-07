@@ -18,7 +18,7 @@ stages:
 build-my-project:
   stage: build
   script:
-    - cd $CURRENT_BUILD_PATH
+    - echo $GOPATH
     - go build
 
 test-my-project:
