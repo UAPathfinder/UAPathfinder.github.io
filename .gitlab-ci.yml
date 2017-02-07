@@ -1,13 +1,13 @@
 stages:
-  - setup
+  - install-environment
   - build
   - test
 
 setup-my-project:
-  stage: setup
+  stage: install-environment
   script:
     - mkdir -p /go/src/27thisotope.ddns.net/mibzman/
-    - cd go/src/27thisotope.ddns.net/mibzman/
+    - cd /go/src/27thisotope.ddns.net/mibzman/
 
 build-my-project:
   stage: build
