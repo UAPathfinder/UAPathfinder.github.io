@@ -8,8 +8,8 @@ setup-my-project:
   script:
     - mkdir -p /go/src/27thisotope.ddns.net/mibzman/CourseCorrect-Student
     - cd /go/src/27thisotope.ddns.net/mibzman/CourseCorrect-Student
-    - sudo add-apt-repository ppa:masterminds/glide && sudo apt-get update
-    - sudo apt-get install glide
+    - add-apt-repository ppa:masterminds/glide && sudo apt-get update
+    - apt-get install glide
 
 build-my-project:
   stage: build
