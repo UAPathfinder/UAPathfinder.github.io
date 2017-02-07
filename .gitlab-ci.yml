@@ -12,6 +12,7 @@ setup-my-project:
 build-my-project:
   stage: build
   script:
+    - ls
     - go get -d
     - go build
 
