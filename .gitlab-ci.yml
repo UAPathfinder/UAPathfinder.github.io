@@ -7,9 +7,11 @@ setup-my-project:
   stage: install-environment
   script:
     - mkdir -p /go/src/27thisotope.ddns.net/mibzman/CourseCorrect-Student
+    - mkdir -p /go/bin
+    - curl https://glide.sh/get | sh
+    - cd /go/bin
+    - ls
     - cd /go/src/27thisotope.ddns.net/mibzman/CourseCorrect-Student
-    - add-apt-repository ppa:masterminds/glide && sudo apt-get update
-    - apt-get install glide
 
 build-my-project:
   stage: build
