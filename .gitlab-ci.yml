@@ -13,6 +13,9 @@ build-my-project:
   stage: build
   script:
     - ls
+    - cd scheduling
+    - ls
+    - cd ..
     - go get -d
     - go build
 
