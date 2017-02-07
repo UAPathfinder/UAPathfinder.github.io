@@ -14,7 +14,7 @@ import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 
-	"27thisotope.ddns.net/mibzman/CourseCorrect-Student/scheduling"
+	"CourseCorrect-Student/scheduling"
 )
 
 var (

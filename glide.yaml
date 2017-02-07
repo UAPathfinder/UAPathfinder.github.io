@@ -1,0 +1,11 @@
+package: github.com/mibzman/CourseCorrect-Student
+import:
+- package: github.com/GeertJohan/go.rice
+- package: github.com/jinzhu/gorm
+  subpackages:
+  - dialects/sqlite
+testImport:
+- package: github.com/stretchr/testify
+  subpackages:
+  - assert
+  - mock
