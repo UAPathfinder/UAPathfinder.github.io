@@ -9,6 +9,7 @@ before_script:
     - curl https://glide.sh/get | sh
     - cd /go/src/27thisotope.ddns.net/mibzman/CourseCorrect-Student
     - glide -v
+    - glide install
 
 stages:
   - build
@@ -17,11 +18,9 @@ stages:
 build-my-project:
   stage: build
   script:
-    - glide install
     - go build
 
 test-my-project:
   stage: test
   script:
-    - cd CourseCorrect-Student
     - go test
