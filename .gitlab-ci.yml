@@ -1,5 +1,4 @@
 before_script:
-  script:
     - ls
     - mkdir -p /go/src/27thisotope.ddns.net/mibzman/CourseCorrect-Student
     - mkdir -p /go/bin
