@@ -4,7 +4,7 @@ before_script:
     - cd ..
     - ls
     - mkdir -p /go/src/27thisotope.ddns.net/mibzman/
-    - cp /builds/mibzman/CourseCorrect-Student /go/src/27thisotope.ddns.net/mibzman/
+    - cp -r /builds/mibzman/CourseCorrect-Student /go/src/27thisotope.ddns.net/mibzman/
     - mkdir -p /go/bin
     - curl https://glide.sh/get | sh
     - cd /go/src/27thisotope.ddns.net/mibzman/CourseCorrect-Student
