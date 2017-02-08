@@ -1,5 +1,6 @@
 package: 27thisotope.ddns.net/mibzman/CourseCorrect-Student
 ignore:
+  - CourseCorrect-Student
   - CourseCorrect-Student/scheduling
 import:
 - package: github.com/GeertJohan/go.rice
