@@ -1,12 +1,8 @@
 package main
 
-import (
-	"testing"
-	"time"
+//"github.com/mibzman/CourseCorrect-Student/scheduling"
 
-	"github.com/mibzman/CourseCorrect-Student/scheduling"
-)
-
+/*
 type Event struct {
 	Start time.Time
 	End   time.Time
@@ -78,3 +74,4 @@ func TestDoesHaveConflictEndingDuring(t *testing.T) {
 		t.Fatal("Returned wrong conflicting event.", conflicting, otherConflict)
 	}
 }
+*/
