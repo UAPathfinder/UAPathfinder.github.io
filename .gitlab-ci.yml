@@ -1,11 +1,8 @@
 stages:
-  - install-environment
   - build
   - test
 
-setup-my-project:
-  stage: install-environment
-  script:
+before_script:
     - mkdir -p /go/src/27thisotope.ddns.net/mibzman/CourseCorrect-Student
     - mkdir -p /go/bin
     - curl https://glide.sh/get | sh
