@@ -1,4 +1,6 @@
-package: github.com/mibzman/CourseCorrect-Student
+package: 27thisotope.ddns.net/mibzman/CourseCorrect-Student
+ignore:
+  - CourseCorrect-Student/scheduling
 import:
 - package: github.com/GeertJohan/go.rice
 - package: github.com/jinzhu/gorm
