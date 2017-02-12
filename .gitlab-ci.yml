@@ -33,6 +33,9 @@ build-my-project:
 deploy-project:
   stage: deploy
   image: docker:dind
+  before_script:
+    - ls
+    # do nothing to override the global one
   script:
     - docker info
     # - docker build -t coursecorrect .
