@@ -13,14 +13,14 @@ before_script:
 
 stages:
   - build
-  - test
+#  - test
 
 build-my-project:
   stage: build
   script:
     - go build
 
-test-my-project:
-  stage: test
-  script:
-    - go test
+#test-my-project:
+#  stage: test
+#  script:
+#    - go test
