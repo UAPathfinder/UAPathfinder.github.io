@@ -23,6 +23,9 @@ services:
 build-project:
   stage: build
   image: golang:1.7
+  artifacts:
+  paths:
+  -/go/src/27thisotope.ddns.net/mibzman/CourseCorrect-Student/CourseCorrect-Student
   script:
     - go build
 
