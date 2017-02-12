@@ -22,6 +22,7 @@ services:
 
 build-my-project:
   stage: build
+  image: golang:1.7
   script:
     - go build
 
@@ -32,7 +33,6 @@ build-my-project:
 
 deploy-project:
   stage: deploy
-  image: docker:dind
   before_script:
     - ls
     # do nothing to override the global one
