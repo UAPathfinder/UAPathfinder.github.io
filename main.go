@@ -30,7 +30,7 @@ func main() {
 	if err != nil {
 	}
 
-	var DevelopmentMode = true
+	var DevelopmentMode = false
 	accessor := &DatabaseAccessor{db}
 
 	mux := http.NewServeMux()
