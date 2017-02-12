@@ -34,6 +34,7 @@ build-project:
 deploy-project:
   stage: deploy
   before_script:
+    - pwd
     - ls
     # do nothing to override the global one
   dependencies:
