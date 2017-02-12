@@ -20,7 +20,7 @@ stages:
 services:
   - docker:dind
 
-build-my-project:
+build-project:
   stage: build
   image: golang:1.7
   script:
@@ -36,6 +36,8 @@ deploy-project:
   before_script:
     - ls
     # do nothing to override the global one
+  dependencies:
+  - build-project
   script:
     #- docker info
     - docker build -t coursecorrect .
