@@ -25,9 +25,10 @@ build-project:
   image: golang:1.7
   artifacts:
     paths:
-       - /go/src/27thisotope.ddns.net/mibzman/CourseCorrect-Student/CourseCorrect-Student
+       - CourseCorrect-Student
   script:
     - go build
+    - mv CourseCorrect-Student /builds/mibzman/CourseCorrect-Student
 
 #test-my-project:
 #  stage: test
