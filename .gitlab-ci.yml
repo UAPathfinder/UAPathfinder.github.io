@@ -42,7 +42,8 @@ deploy-project:
     - ls
     # do nothing to override the global one
   dependencies:
-  - build-project
+  - build-go
+  - build-angular
   script:
     #- docker info
     - docker build -t coursecorrect .
