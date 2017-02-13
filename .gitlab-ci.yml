@@ -33,7 +33,6 @@ build-angular:
   script:
     - cd frontend/
     - npm install
-    - npm test
 
 #test-my-project:
 #  stage: test

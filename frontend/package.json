@@ -16,7 +16,7 @@
     "typings": "typings",
     "webdriver:update": "webdriver-manager update"
   },
-  "author": "Martin Charles",
+  "author": "Sam Borick",
   "dependencies": {
     "@angular/common": "~2.1.0",
     "@angular/compiler": "~2.1.0",
