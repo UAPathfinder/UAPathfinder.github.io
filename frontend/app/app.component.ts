@@ -74,8 +74,8 @@ export class AppComponent {
 		})
 			.subscribe(
 				response => {
-          this.schedules = response;
-          this.schedules = populateMeetingDays(this.schedules);
+          //this.schedules = response;
+          this.schedules = populateMeetingDays(response);
         },
 				// TODO: Handle Properly
 				err => console.error(err)
@@ -94,9 +94,9 @@ export class AppComponent {
  }
 
   function populateMeetingDays(borks: Array<Schedule>): Array<Schedule>{
-    //console.log(borks);
+    console.log("wow, I hit the method");
     for (let schedule of borks){
-      for (event of schedule.Events){
+      for (event of schedule.Classes){
         event.MeetingDays = "";
         if (event.Sunday){
           event.MeetingDays += "S";
@@ -125,12 +125,13 @@ export class AppComponent {
   }
 }
 
+/*
 function populateMeetingDays(borks: Array<Class>): Array<Class>{
   //console.log(borks);
   for (let schedule of borks){
     for (event of schedule.Events){
-      event.MeetingDays = "";
-      if (event.Sunday){
+      event.MeetingDays = "test";
+      /*if (event.Sunday){
         event.MeetingDays += "S";
       }
       if (event.Monday){
@@ -155,7 +156,8 @@ function populateMeetingDays(borks: Array<Class>): Array<Class>{
   }
   return borks;
 }
-}
+
+}*/
 
 // Parses time from input elements into a json format.
 function parseTime(input: string): string {
