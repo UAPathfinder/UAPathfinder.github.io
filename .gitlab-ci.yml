@@ -32,7 +32,7 @@ build-go:
 
 deploy-backend:
   stage: deploy
-  image: cgswong/aws
+  #image: cgswong/aws
   only: #makes the deploy only happen on master
     - master
   environment:
