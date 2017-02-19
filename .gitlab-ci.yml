@@ -47,6 +47,7 @@ deploy-backend:
   - build-go
   script:
     - docker info
+    - aws help
     # - docker build -t coursecorrect .
     # - aws ecr get-login --region us-west-2 | sh
     # - docker tag coursecorrect:latest 038978466642.dkr.ecr.us-west-2.amazonaws.com/coursecorrect:latest
