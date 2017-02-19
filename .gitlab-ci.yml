@@ -50,9 +50,11 @@ deploy-backend:
   tags:
     - deploy
   script:
-    - docker info
-    #- aws help
-    - docker build -t coursecorrect .
     - aws ecr get-login --region us-west-2 | sh
+    - docker build -t pathfinder-frontend .
+    - docker tag pathfinder-frontend:latest 038978466642.dkr.ecr.us-west-2.amazonaws.com/pathfinder-frontend:latest
+    - docker push 038978466642.dkr.ecr.us-west-2.amazonaws.com/pathfinder-frontend:latest
+
+    - docker build -t pathfinder-frontend frontend/
     - docker tag coursecorrect:latest 038978466642.dkr.ecr.us-west-2.amazonaws.com/coursecorrect:latest
     - docker push 038978466642.dkr.ecr.us-west-2.amazonaws.com/coursecorrect:latest
