@@ -10,6 +10,8 @@ services:
 build-go:
   stage: build
   image: golang:1.7
+  services:
+    - docker:dind
   before_script:
       - mkdir -p /go/src/27thisotope.ddns.net/mibzman/
       - cp -r /builds/mibzman/CourseCorrect-Student /go/src/27thisotope.ddns.net/mibzman/
