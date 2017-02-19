@@ -52,10 +52,28 @@ deploy-backend:
   script:
     - ls
     - aws ecr get-login --region us-west-2 | sh
-    - docker build -t pathfinder-frontend .
-    - docker tag pathfinder-frontend:latest 038978466642.dkr.ecr.us-west-2.amazonaws.com/pathfinder-frontend:latest
-    - docker push 038978466642.dkr.ecr.us-west-2.amazonaws.com/pathfinder-frontend:latest
-
     - docker build -t pathfinder-frontend frontend/
     - docker tag coursecorrect:latest 038978466642.dkr.ecr.us-west-2.amazonaws.com/coursecorrect:latest
     - docker push 038978466642.dkr.ecr.us-west-2.amazonaws.com/coursecorrect:latest
+
+deploy-frontend:
+  stage: deploy
+  #image: cgswong/aws
+  only: #makes the deploy only happen on master
+    - master
+  environment:
+    name: production
+    url: path-finder.ddns.net
+  before_script:
+    - pwd
+    - ls
+    # do nothing to override the global one
+  dependencies:
+  tags:
+    - deploy
+  script:
+    - ls
+    - aws ecr get-login --region us-west-2 | sh
+    - docker build -t pathfinder-frontend frontend/
+    - docker tag pathfinder-frontend:latest 038978466642.dkr.ecr.us-west-2.amazonaws.com/pathfinder-frontend:latest
+    - docker push 038978466642.dkr.ecr.us-west-2.amazonaws.com/pathfinder-frontend:latest
