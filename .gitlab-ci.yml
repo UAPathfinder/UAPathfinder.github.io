@@ -10,8 +10,6 @@ services:
 build-go:
   stage: build
   image: golang:1.7
-  services:
-    - docker:dind
   before_script:
       - mkdir -p /go/src/27thisotope.ddns.net/mibzman/
       - cp -r /builds/mibzman/CourseCorrect-Student /go/src/27thisotope.ddns.net/mibzman/
@@ -25,7 +23,6 @@ build-go:
        - CourseCorrect-Student
        - Dockerfile
   script:
-    - docker info
     - go build
     - mv CourseCorrect-Student /builds/mibzman/CourseCorrect-Student
 
@@ -50,8 +47,8 @@ deploy-backend:
   - build-go
   script:
     - docker info
-    - aws help
-    # - docker build -t coursecorrect .
-    # - aws ecr get-login --region us-west-2 | sh
-    # - docker tag coursecorrect:latest 038978466642.dkr.ecr.us-west-2.amazonaws.com/coursecorrect:latest
-    # - docker push 038978466642.dkr.ecr.us-west-2.amazonaws.com/coursecorrect:latest
+    #- aws help
+    - docker build -t coursecorrect .
+    #- aws ecr get-login --region us-west-2 | sh
+    - docker tag coursecorrect:latest 038978466642.dkr.ecr.us-west-2.amazonaws.com/coursecorrect:latest
+    - docker push 038978466642.dkr.ecr.us-west-2.amazonaws.com/coursecorrect:latest
