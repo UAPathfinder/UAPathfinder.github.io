@@ -3,8 +3,8 @@ stages:
 #  - test
   - deploy
 
-services:
-  - docker:dind
+#services:
+  #- docker:dind
   #- cgswong/aws
 
 build-go:
@@ -53,6 +53,6 @@ deploy-backend:
     - docker info
     #- aws help
     - docker build -t coursecorrect .
-    #- aws ecr get-login --region us-west-2 | sh
+    - aws ecr get-login --region us-west-2 | sh
     - docker tag coursecorrect:latest 038978466642.dkr.ecr.us-west-2.amazonaws.com/coursecorrect:latest
     - docker push 038978466642.dkr.ecr.us-west-2.amazonaws.com/coursecorrect:latest
