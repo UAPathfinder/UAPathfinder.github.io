@@ -1,4 +1,4 @@
-stages:
+ 3stages:
   - build
 #  - test
   - deploy
