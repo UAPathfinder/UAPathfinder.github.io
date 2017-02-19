@@ -20,37 +20,33 @@ build-go:
   artifacts:
     paths:
        - CourseCorrect-Student
+       - Dockerfile
   script:
     - go build
     - mv CourseCorrect-Student /builds/mibzman/CourseCorrect-Student
-
-build-angular:
-  stage: build
-  image: hoatle/angular-cli
-  artifacts:
-    paths:
-       - frontend/
-  script:
-    - cd frontend/
-    - npm install
 
 #test-my-project:
 #  stage: test
 #  script:
 #    - go test
 
-deploy-project:
+deploy-backend:
   stage: deploy
+  image: cgswong/aws
+  only: #makes the deploy only happen on master
+    - master
+  environment:
+    name: production
+    url: path-finder.ddns.net
   before_script:
     - pwd
     - ls
     # do nothing to override the global one
   dependencies:
   - build-go
-  - build-angular
   script:
-    #- docker info
-    - docker build -t coursecorrect .
-    - aws ecr get-login --region us-west-2 | sh
-    - docker tag coursecorrect:latest 038978466642.dkr.ecr.us-west-2.amazonaws.com/coursecorrect:latest
-    - docker push 038978466642.dkr.ecr.us-west-2.amazonaws.com/coursecorrect:latest
+    - docker info
+    # - docker build -t coursecorrect .
+    # - aws ecr get-login --region us-west-2 | sh
+    # - docker tag coursecorrect:latest 038978466642.dkr.ecr.us-west-2.amazonaws.com/coursecorrect:latest
+    # - docker push 038978466642.dkr.ecr.us-west-2.amazonaws.com/coursecorrect:latest
