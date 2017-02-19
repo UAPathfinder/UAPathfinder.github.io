@@ -5,6 +5,7 @@ stages:
 
 services:
   - docker:dind
+  - cgswong/aws
 
 build-go:
   stage: build
