@@ -5,7 +5,7 @@ stages:
 
 services:
   - docker:dind
-  - cgswong/aws
+  #- cgswong/aws
 
 build-go:
   stage: build
@@ -23,6 +23,7 @@ build-go:
        - CourseCorrect-Student
        - Dockerfile
   script:
+    - docker info
     - go build
     - mv CourseCorrect-Student /builds/mibzman/CourseCorrect-Student
 
