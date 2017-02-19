@@ -10,6 +10,8 @@ services:
 build-go:
   stage: build
   image: golang:1.7
+  tags:
+    -build
   before_script:
       - mkdir -p /go/src/27thisotope.ddns.net/mibzman/
       - cp -r /builds/mibzman/CourseCorrect-Student /go/src/27thisotope.ddns.net/mibzman/
@@ -45,6 +47,8 @@ deploy-backend:
     # do nothing to override the global one
   dependencies:
   - build-go
+  tags:
+    -deploy
   script:
     - docker info
     #- aws help
