@@ -30,6 +30,8 @@ export class AppComponent {
   classes: Array<Class>;
   currentClass: number = 0;
 
+  filterText: string = "";
+
 	ngOnInit() {
 		this.courseService.getCourses()
 			.subscribe(

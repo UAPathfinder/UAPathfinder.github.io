@@ -4,7 +4,7 @@
 
 <div class="form-group">
   <input [(ngModel)]='filterText'
-         placeholder="Search courses..."
+         placeholder="Start typing to filter courses..."
          type="text"
          class="form-control" />
 </div>
@@ -15,13 +15,13 @@
     <table class="table">
       <thead>
         <tr>
-          <th>?</th>
+          <th></th>
           <th>Name</th>
         </tr>
       </thead>
       <tbody>
         <!-- TODO: Use Filter -->
-        <tr *ngFor='let course of courses' [title]="course.CourseId">
+        <tr *ngFor='let course of courses | courseFilter:filterText' [title]="course.CourseId">
           <td>
             <input
               type="checkbox"
