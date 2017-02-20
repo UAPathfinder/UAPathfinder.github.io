@@ -15,17 +15,18 @@
     <table class="table">
       <thead>
         <tr>
-          <th></th>
+          <th>Select</th>
           <th>Name</th>
         </tr>
       </thead>
       <tbody>
-        <!-- TODO: Use Filter -->
         <tr *ngFor='let course of courses | courseFilter:filterText' [title]="course.CourseId">
           <td>
             <input
               type="checkbox"
-              (change)='updateSelected(course, $event)' />
+              [(ngModel)]="course.isSelected"
+              (change)='updateSelected(course, $event)' 
+              />
           </td>
           <td>{{ course.Identifier }}: {{course.Title.String}}</td>
         </tr>
@@ -38,14 +39,16 @@
     <table class="table">
       <thead>
         <tr>
-          <th>Mandatory</th>
+          <th>Select</th>
           <th>Name</th>
         </tr>
       </thead>
 
       <tbody [sortablejs]='selectedCourses'>
         <tr *ngFor='let course of selectedCourses'>
-          <td><input type="checkbox" [(ngModel)]='course.Manditory' /></td>
+          <td><input
+              type="checkbox"
+              (change)='updateSelected(course, $event)' checked/></td>
           <td>{{ course.Identifier }}: {{course.Title.String}}</td>
         </tr>
       </tbody>
