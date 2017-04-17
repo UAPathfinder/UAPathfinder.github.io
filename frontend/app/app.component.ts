@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { CourseService } from './course.service';
 
 import { Course } from './models/course';
+import { Class } from './models/class';
 import { Schedule } from './models/schedule';
 import { CombinationsRequest } from './models/combinations-request';
 import { CoursesRequest } from './models/combinations-request';
@@ -19,7 +20,7 @@ import './rxjs-operators';
 export class AppComponent {
 	constructor(private courseService: CourseService) { }
 
-	weekdays: Array<Weekday> = WEEKDAYS;
+	theseWeekdays: Array<Weekday> = WEEKDAYS;
 	startTime: string = "07:00";
 	endTime: string = "17:00";
 	courses: Array<Course>;
@@ -32,16 +33,22 @@ export class AppComponent {
 
   filterText: string = "";
 
+  tempCourse: Course;
+
 	ngOnInit() {
-		this.courseService.getCourses()
-			.subscribe(
-				courses => {
-          this.courses = courses;
-          //getCourse("3460 210", this.courses);
-        },
-				// TODO: Handle Properly
-				err => console.error(err)
-			)
+		// this.courseService.getCourses()
+		// 	.subscribe(
+		// 		courses => {
+  //         this.courses = courses;
+  //         //getCourse("3460 210", this.courses);
+  //       },
+		// 		// TODO: Handle Properly
+		// 		err => console.error(err)
+		// 	)
+
+    this.tempCourse = new Course();
+    // this.tempCourse.Title = {};
+    // this.tempCourse.Title.String = "";
 	}
 
 	selectedCourses: Array<Course> = new Array();
@@ -93,7 +100,17 @@ export class AppComponent {
 
   getTime(input: number): string {
      return new Date(1000 * input).toISOString().substr(11, 8)
- }
+   }
+
+   newTempClass(){
+     var newClass:Class = new Class();
+     this.tempCourse.Classes.push(newClass);
+   }
+
+   AddCourse(){
+     var newClass:Class = new Class();
+     this.tempCourse.Classes.push(newClass);
+   }
 
   function populateMeetingDays(borks: Array<Schedule>): Array<Schedule>{
     console.log("wow, I hit the method");
@@ -125,6 +142,8 @@ export class AppComponent {
     }
     return borks;
   }
+
+
 }
 
 /*
