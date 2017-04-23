@@ -62,17 +62,7 @@ func main() {
 
 		scheduleRequest.ParseTime()
 
-		// var courses []string
-		// props := make(map[string]scheduling.EventProperties)
-		// for _, course := range courses.Courses {
-		// 	//log.Println("looping through courses")
-		// 	courses = append(courses, course.Course)
-		// 	props[course.Course] = course.EventProperties
-		// }
-		// //log.Println("loop finished")
-		// log.Println("courses: ", courses)
-		// log.Println("props: ", props)
-		// schedules := scheduling.FindSchedules(courses, props, accessor)
+		// schedules := scheduling.FindSchedules(scheduleRequest)
 		// //log.Println("findSchedules finished")
 		// sort.Sort(sort.Reverse(scheduling.BySchedule(schedules)))
 		// //log.Println("sorted")

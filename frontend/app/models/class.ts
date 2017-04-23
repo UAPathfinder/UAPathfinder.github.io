@@ -21,6 +21,9 @@ export class Class {
 	Weekdays: Array<Weekday> = JSON.parse(JSON.stringify(WEEKDAYS));
 	RawStartTime: string = "07:00";
 	RawEndTime: string = "17:00";
+
+	Priority: number = 0;
+	Manditory: boolean;
 }
 
 //TODO:make this one file.  I'm soooooo lazy

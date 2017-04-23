@@ -2,7 +2,7 @@ package scheduling
 
 import (
 	"database/sql"
-	"log"
+	// "log"
 	"time"
 )
 
@@ -40,6 +40,12 @@ type Times struct {
 
 	StartTime time.Time
 	EndTime   time.Time
+
+	Priority  int
+	Manditory bool
+	//the oposite of manditory, becuase I don't feel like inverting the already
+	//written logic in generate.  sue me
+	Optional bool
 }
 
 // A group of classes which share some common characteristics. For example,
@@ -47,9 +53,10 @@ type Times struct {
 type Course struct {
 	Classes []Class
 
-	Title     sql.NullString
-	Priority  int
-	Manditory bool
+	Title sql.NullString
+
+	//note: we don't actually ask for these
+	//TODO: add to UI
 }
 
 type ScheduleRequest struct {

@@ -56,9 +56,12 @@ export class AppComponent {
 
 	// TODO: Proper form handling
 	onSubmit() {
-		this.courses.forEach((course, idx) => {
-			course.Priority = idx;
-		});
+		for (var thisCourse of this.courses){
+      for (var thisClass of thisCourse.Classes){
+        thisClass.Manditory = true;
+        thisClass.Priority = 1;
+      }
+    }
     var requests:any[] = [];
     this.courses.forEach(function(course){
       requests.push({

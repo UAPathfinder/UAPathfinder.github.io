@@ -28,6 +28,7 @@ func RecursiveFindSchedules(Request ScheduleRequest, Result *[]Schedule, Depth i
 
 	// 	// Builder Case
 	// 	Course := Request.Courses[Depth]
+	// 	Course.Optional = !Course.ma
 	// 	// Get Classes for Course
 	// 	Classes := Course.Classes
 
@@ -50,27 +51,25 @@ func RecursiveFindSchedules(Request ScheduleRequest, Result *[]Schedule, Depth i
 	// 			conflictingClass := workingCurrent.Calendar.DoesConflict(Class)
 
 	// 			if conflictingClass != nil {
-	// 				conflictingProps := conflictingClass.Properties()
 
-	// 				if !conflictingProps.Optional && !CourseProps.Optional {
+	// 				if !conflictingProps.Optional && !Course.Optional {
 	// 					// Both Required
 	// 					continue ClassesLoop
-	// 				} else if conflictingProps.Optional && !CourseProps.Optional {
+	// 				} else if conflictingProps.Optional && !Course.Optional {
 	// 					// Ours Required
 	// 					// Pend Deletion of Other, Keep Ours
 	// 					pendingDeletions = append(pendingDeletions, conflictingClass)
 	// 					cost += conflictingProps.Weight
-	// 				} else if !conflictingProps.Optional && CourseProps.Optional {
+	// 				} else if !conflictingProps.Optional && Course.Optional {
 	// 					// Other Required, Ours Optional
-	// 					cost += CourseProps.Weight
-	// 					// TODO: WTF?
+	// 					cost += Course.Weight
 	// 				} else {
 	// 					// Both Optional, Skip Lower Priority
-	// 					if conflictingProps.Weight < CourseProps.Weight {
+	// 					if conflictingProps.Weight < Course.Weight {
 	// 						cost += conflictingProps.Weight
 	// 						pendingDeletions = append(pendingDeletions, conflictingClass)
 	// 					} else {
-	// 						cost += CourseProps.Weight
+	// 						cost += Course.Weight
 	// 					}
 	// 				}
 	// 			}
