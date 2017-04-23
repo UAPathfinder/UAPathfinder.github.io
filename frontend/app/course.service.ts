@@ -6,7 +6,7 @@ import { Observable } from 'rxjs/Observable';
 import { Course } from './models/course';
 import { Class } from './models/class';
 import { Schedule } from './models/schedule';
-import { CombinationsRequest } from './models/combinations-request'
+import { ScheduleRequest } from './models/schedule-request'
 
 @Injectable()
 export class CourseService {
@@ -31,16 +31,9 @@ export class CourseService {
 	// 		// TODO: Handle Error
 	// }
 
-	getSchedules(request: Course[]): Observable<Schedule[]> {
+	getSchedules(request: ScheduleRequest): Observable<Schedule[]> {
 		//console.log(request);
 		return this.http.post(this.scheduleEndpoint, request)
-			.map((res: Response) => res.json());
-			// TODO: Handle Error
-	}
-
-	testGetSchedules(request: Class[]): Observable<Schedule[]> {
-		//console.log(request);
-		return this.http.post(this.testEndpoint, request)
 			.map((res: Response) => res.json());
 			// TODO: Handle Error
 	}

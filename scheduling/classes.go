@@ -47,3 +47,9 @@ type Course struct {
 	Priority  int
 	Manditory bool
 }
+
+type ScheduleRequest struct {
+	Courses []Course
+
+	Times
+}

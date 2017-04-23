@@ -4,8 +4,7 @@ import { CourseService } from './course.service';
 import { Course } from './models/course';
 import { Class } from './models/class';
 import { Schedule } from './models/schedule';
-import { CombinationsRequest } from './models/combinations-request';
-import { CoursesRequest } from './models/combinations-request';
+import { ScheduleRequest } from './models/schedule-request';
 import { WEEKDAYS, Weekday } from './models/weekday';
 
 import * as moment from 'moment';
@@ -20,11 +19,11 @@ import './rxjs-operators';
 export class AppComponent {
 	constructor(private courseService: CourseService) { }
 
-	theseWeekdays: Array<Weekday> = WEEKDAYS;
+	Weekdays: Weekday[] = WEEKDAYS;
 	startTime: string = "07:00";
 	endTime: string = "17:00";
 	courses: Array<Course> = new Array<Course>();
-	//combinations: Array<Combination>;
+
   schedules: Array<Schedule>;
 	currentSchedule: number = 0;
 
@@ -69,32 +68,13 @@ export class AppComponent {
       })
     })
 
-    for (let course of this.courses){
-      for (let thisClass of course.Classes){
-        for (let weekday of thisClass.Weekdays){
-            if (weekday.active){
-              if (weekday.name = "S"){
-                thisClass.Sunday = true;
-              }else if (weekday.name = "M"){
-                thisClass.Monday = true;
-              }else if (weekday.name = "T"){
-                thisClass.Tuesday = true;
-              }else if (weekday.name = "W"){
-                thisClass.Wednesday = true;
-              }else if (weekday.name = "Th"){
-                thisClass.Thursday = true;
-              }else if (weekday.name = "F"){
-                thisClass.Friday = true;
-              }else if (weekday.name = "Su"){
-                thisClass.Sunday = true;
-              }
-            }
-        }
-      }
-    }   
+    this.populateCourseDays(this.courses);
 
-    console.log(this.courses);
-		this.courseService.getSchedules(this.courses)
+    var scheduleRequest = new ScheduleRequest(this.startTime, this.endTime, this.courses, this.Weekdays);
+
+    console.log(scheduleRequest);
+  
+		this.courseService.getSchedules(scheduleRequest)
 			.subscribe(
 				response => {
 
@@ -107,6 +87,32 @@ export class AppComponent {
         }
 			)
 	}
+
+  populateCourseDays(courses: Course[]){
+    for (let course of courses){
+      for (let thisClass of course.Classes){
+        for (let weekday of thisClass.Weekdays){
+          if (weekday.active){
+            if (weekday.name = "S"){
+              thisClass.Sunday = true;
+            }else if (weekday.name = "M"){
+              thisClass.Monday = true;
+            }else if (weekday.name = "T"){
+              thisClass.Tuesday = true;
+            }else if (weekday.name = "W"){
+              thisClass.Wednesday = true;
+            }else if (weekday.name = "Th"){
+              thisClass.Thursday = true;
+            }else if (weekday.name = "F"){
+              thisClass.Friday = true;
+            }else if (weekday.name = "Su"){
+              thisClass.Sunday = true;
+            }
+          }
+        }
+      }
+    } 
+  }
 
 
 	// Helper method to get a course given a course id.

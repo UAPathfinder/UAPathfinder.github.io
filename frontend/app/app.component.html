@@ -105,7 +105,7 @@
           <!-- TODO: Remove this magic margin -->
           <div style='margin-top: 0.4em'>
             <round-button
-              *ngFor='let thisWeekday of theseWeekdays'
+              *ngFor='let thisWeekday of Weekdays'
               [name]='thisWeekday.name'
               [(selected)]='thisWeekday.active'></round-button>
           </div>

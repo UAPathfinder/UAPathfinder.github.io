@@ -66,16 +66,16 @@ func main() {
 		decoder := json.NewDecoder(r.Body)
 		defer r.Body.Close()
 
-		var courses []scheduling.Course
-		err := decoder.Decode(&courses)
+		var scheduleRequest scheduling.ScheduleRequest
+		err := decoder.Decode(&scheduleRequest)
 		if err != nil {
 			log.Println("Failed to decode json:", err)
 			rw.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
-		log.Println("courses: ", courses)
-		log.Println("class: ", courses[0].Classes)
+		log.Println("scheduleRequest: ", scheduleRequest)
+		log.Println("class: ", scheduleRequest.Courses[0].Classes)
 
 		// var courses []string
 		// props := make(map[string]scheduling.EventProperties)
@@ -98,35 +98,6 @@ func main() {
 		// 	log.Println("Failed to encode json:", err)
 		// 	rw.WriteHeader(http.StatusInternalServerError)
 		// }
-	})
-
-	mux.HandleFunc("/api/v0/testClass", func(rw http.ResponseWriter, r *http.Request) {
-		rw.Header().Set("Access-Control-Allow-Origin", "*")
-		rw.Header().Set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
-
-		if r.Method == "OPTIONS" {
-			return
-		}
-
-		if r.Method != http.MethodPost {
-
-			log.Println("Invalid method to post endpoint:", r.Method)
-			rw.WriteHeader(http.StatusBadRequest)
-			return
-		}
-
-		decoder := json.NewDecoder(r.Body)
-		defer r.Body.Close()
-
-		var classes []scheduling.Class
-		err := decoder.Decode(&classes)
-		if err != nil {
-			log.Println("Failed to decode json:", err)
-			rw.WriteHeader(http.StatusBadRequest)
-			return
-		}
-
-		log.Println("classes: ", classes)
 	})
 
 	log.Printf("starting Server")
