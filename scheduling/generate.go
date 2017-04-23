@@ -20,98 +20,79 @@ func FindSchedules(Request ScheduleRequest) []Schedule {
 // http://stackoverflow.com/questions/17192796/generate-all-combinations-from-multiple-lists
 func RecursiveFindSchedules(Request ScheduleRequest, Result *[]Schedule, Depth int, Current Schedule) {
 
-	// 	if Depth == len(Courses) {
-	// 		// Deepest Case, Called After Builder Cases for 0..(Depth - 1)
-	// 		*Result = append(*Result, Current)
-	// 		return
-	// 	}
+	if Depth == len(Request.Courses) {
+		// Deepest Case, Called After Builder Cases for 0..(Depth - 1)
+		*Result = append(*Result, Current)
+		return
+	}
 
-	// 	// Builder Case
-	// 	Course := Request.Courses[Depth]
-	// 	Course.Optional = !Course.ma
-	// 	// Get Classes for Course
-	// 	Classes := Course.Classes
+	// Builder Case
+	Course := Request.Courses[Depth]
 
-	// ClassesLoop:
-	// 	for _, class := range Classes {
-	// 		//THIS IS IMPORTANT
-	// 		//only make changes to Current if you want them applied to every tree branch after this point
-	// 		workingCurrent := Current
+	// Get Classes for Course
+	Classes := Course.Classes
 
-	// 		workingCurrent.Classes = append(workingCurrent.Classes, class)
+ClassesLoop:
+	for _, ThisClass := range Classes {
+		ThisClass.Optional = !ThisClass.Manditory
+		//THIS IS IMPORTANT
+		//only make changes to Current if you want them applied to every tree branch after this point
+		workingCurrent := Current
 
-	// 		// Container to hold potential deletions.
-	// 		//this is something that martin did, idk why, it seems to work
-	// 		var pendingDeletions []Class
+		workingCurrent.Classes = append(workingCurrent.Classes, ThisClass)
 
-	// 		cost := 0
+		// Container to hold potential deletions.
+		//this is something that martin did, idk why, it seems to work
+		var pendingDeletions []Class
 
-	// 		for _, Class := range workingCurrent.Classes {
+		cost := 0
 
-	// 			conflictingClass := workingCurrent.Calendar.DoesConflict(Class)
+		DoesConfict, conflictingClass := workingCurrent.DoesConflict(ThisClass)
 
-	// 			if conflictingClass != nil {
+		if DoesConfict {
 
-	// 				if !conflictingProps.Optional && !Course.Optional {
-	// 					// Both Required
-	// 					continue ClassesLoop
-	// 				} else if conflictingProps.Optional && !Course.Optional {
-	// 					// Ours Required
-	// 					// Pend Deletion of Other, Keep Ours
-	// 					pendingDeletions = append(pendingDeletions, conflictingClass)
-	// 					cost += conflictingProps.Weight
-	// 				} else if !conflictingProps.Optional && Course.Optional {
-	// 					// Other Required, Ours Optional
-	// 					cost += Course.Weight
-	// 				} else {
-	// 					// Both Optional, Skip Lower Priority
-	// 					if conflictingProps.Weight < Course.Weight {
-	// 						cost += conflictingProps.Weight
-	// 						pendingDeletions = append(pendingDeletions, conflictingClass)
-	// 					} else {
-	// 						cost += Course.Weight
-	// 					}
-	// 				}
-	// 			}
-	// 		}
+			if !conflictingClass.Optional && !ThisClass.Optional {
+				// Both Required
+				continue ClassesLoop
+			} else if conflictingClass.Optional && !ThisClass.Optional {
+				// Ours Required
+				// Pend Deletion of Other, Keep Ours
+				pendingDeletions = append(pendingDeletions, conflictingClass)
+				cost += conflictingClass.Priority
+			} else if !conflictingClass.Optional && ThisClass.Optional {
+				// Other Required, Ours Optional
+				cost += ThisClass.Priority
+			} else {
+				// Both Optional, Skip Lower Priority
+				if conflictingClass.Priority < ThisClass.Priority {
+					cost += conflictingClass.Priority
+					pendingDeletions = append(pendingDeletions, conflictingClass)
+				} else {
+					cost += ThisClass.Priority
+				}
+			}
+		}
 
-	// 		// Incur Cost
-	// 		workingCurrent.Score -= cost
+		// Incur Cost
+		workingCurrent.Score -= cost
 
-	// 		for _, deletion := range pendingDeletions {
-	// 			switch deletion := deletion.(type) {
-	// 			case ClassClass:
-	// 				// Remove All Elements of This Class
-	// 				j := 0
-	// 				for _, Class := range workingCurrent.Calendar.Classs {
-	// 					Class, ok := Class.(ClassClass)
-	// 					if !ok {
-	// 						continue
-	// 					}
+		//TODO: make this not suck
+		for _, Class := range Classes {
+			if !Class.ExistsIn(pendingDeletions) {
+				workingCurrent.Classes = append(workingCurrent.Classes, Class)
+			}
+		}
 
-	// 					if Class.Class.Identifier != deletion.Class.Identifier {
-	// 						workingCurrent.Calendar.Classs[j] = Class
-	// 						j++
-	// 					}
-	// 				}
-	// 				workingCurrent.Calendar.Classs = workingCurrent.Calendar.Classs[:j]
-	// 			}
-	// 		}
+		RecursiveFindSchedules(Request, Result, Depth+1, workingCurrent)
 
-	// 		for _, event := range events {
-	// 			workingCurrent.Calendar.Add(event)
-	// 		}
+		//     Add Class to Schedule
+		//     Calculate Score of Schedule
+		//     Descide Whether Sub-Tree Is Viable
+		//     Continue Building By Recursion (Depth + 1)
 
-	// 		RecursiveFindSchedules(Courses, props, accessor, Result, Depth+1, workingCurrent)
-
-	// 		//     Add Class to Schedule
-	// 		//     Calculate Score of Schedule
-	// 		//     Descide Whether Sub-Tree Is Viable
-	// 		//     Continue Building By Recursion (Depth + 1)
-
-	// 		// If Hard Constraint Violated, Discard All Sub-Schedules
-	// 		//     Return
-	// 		// Else, Continue Recursing:
-	// 		//     RecursiveFindSchedules(Courses, Result, Depth + 1, Current)
-	// 	}
+		// If Hard Constraint Violated, Discard All Sub-Schedules
+		//     Return
+		// Else, Continue Recursing:
+		//     RecursiveFindSchedules(Courses, Result, Depth + 1, Current)
+	}
 }

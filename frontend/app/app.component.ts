@@ -81,8 +81,7 @@ export class AppComponent {
 			.subscribe(
 				response => {
 
-          //this.schedules = response;
-          //this.schedules = populateMeetingDays(response);
+          this.schedules = response;
         },
 				// TODO: Handle Properly
 				err => {
@@ -125,7 +124,8 @@ export class AppComponent {
 	}
 
   getTime(input: number): string {
-     return new Date(1000 * input).toISOString().substr(11, 8)
+      console.log(input);
+      return new Date(1000 * input).toISOString().substr(11, 8);
    }
 
    newTempClass(){
@@ -139,42 +139,37 @@ export class AppComponent {
      this.newTempClass();
    }
 
-  populateMeetingDays(borks: Array<Schedule>): Array<Schedule>{
-    console.log("wow, I hit the method");
-    for (let schedule of borks){
-      for (event of schedule.Classes){
-        event.MeetingDays = "";
-        if (event.Sunday){
-          event.MeetingDays += "S";
-        }
-        if (event.Monday){
-          event.MeetingDays += "M";
-        }
-        if (event.Tuesday){
-          event.MeetingDays += "T";
-        }
-        if (event.Wednesday){
-          event.MeetingDays += "W";
-        }
-        if (event.Thursday){
-          event.MeetingDays += "Th";
-        }
-        if (event.Friday){
-          event.MeetingDays += "F";
-        }
-        if (event.Saturday){
-          event.MeetingDays += "Su";
-        }
-      }
+  getMeetingDays(thisClass: Class) : string{
+    var output: string = "";
+    if (thisClass.Sunday){
+      output += "S";
     }
-    return borks;
+    if (thisClass.Monday){
+      output += "M";
+    }
+    if (thisClass.Tuesday){
+      output += "T";
+    }
+    if (thisClass.Wednesday){
+      output += "W";
+    }
+    if (thisClass.Thursday){
+      output += "Th";
+    }
+    if (thisClass.Friday){
+      output += "F";
+    }
+    if (thisClass.Saturday){
+      output += "Su";
+    }
+    return output;
   }
 
 
 }
 
-// Parses time from input elements into a json format.
-function parseTime(input: string): string {
-  alert("test")
-alert(getTime(61800))
-}
+// // Parses time from input elements into a json format.
+// function parseTime(input: string): string {
+//   alert("test")
+// alert(getTime(61800))
+// }

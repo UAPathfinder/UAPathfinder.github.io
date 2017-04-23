@@ -147,7 +147,6 @@
       <table class="table">
         <thead>
           <tr>
-            <th>Class ID</th>
             <th>Course</th>
             <th>Meeting Days</th>
             <th>Start Time</th>
@@ -155,13 +154,12 @@
         </thead>
         <tbody *ngIf='schedules[currentSchedule]'>
           <tr *ngFor='let class of schedules[currentSchedule].Classes'>
-             <td>{{ class.Course }}</td>
 
              <td>{{ getCourse(class.Course, courses).Title.String}}</td>
 
-            <td>{{ class.MeetingDays }}</td>
-            <td>{{ getTime(class.RawStartTime.Int64) }}</td>
-            <td>{{ getTime(class.RawEndTime.Int64) }}</td>
+            <td>{{ getMeetingDays(class) }}</td>
+            <td>{{ class.RawStartTime }}</td>
+            <td>{{ class.RawEndTime }}</td>
           </tr>
         </tbody>
       </table>

@@ -6,7 +6,7 @@ import (
 	"flag"
 	"log"
 	"net/http"
-	// "sort"
+	"sort"
 
 	"github.com/GeertJohan/go.rice"
 	//"github.com/gorilla/handlers"
@@ -62,17 +62,17 @@ func main() {
 
 		scheduleRequest.ParseTime()
 
-		// schedules := scheduling.FindSchedules(scheduleRequest)
-		// //log.Println("findSchedules finished")
-		// sort.Sort(sort.Reverse(scheduling.BySchedule(schedules)))
-		// //log.Println("sorted")
-		// log.Println("result: ", schedules)
-		// encoder := json.NewEncoder(rw)
-		// err = encoder.Encode(schedules)
-		// if err != nil {
-		// 	log.Println("Failed to encode json:", err)
-		// 	rw.WriteHeader(http.StatusInternalServerError)
-		// }
+		schedules := scheduling.FindSchedules(scheduleRequest)
+		log.Println("findSchedules finished")
+		sort.Sort(sort.Reverse(scheduling.BySchedule(schedules)))
+		//log.Println("sorted")
+		log.Println("result: ", schedules)
+		encoder := json.NewEncoder(rw)
+		err = encoder.Encode(schedules)
+		if err != nil {
+			log.Println("Failed to encode json:", err)
+			rw.WriteHeader(http.StatusInternalServerError)
+		}
 	})
 
 	log.Printf("starting Server")

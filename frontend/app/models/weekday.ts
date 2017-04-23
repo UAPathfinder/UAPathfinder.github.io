@@ -10,6 +10,6 @@ export const WEEKDAYS: Array<Weekday> = [
 	{name: "W", active: false},
 	{name: "Th", active: false},
 	{name: "F", active: false},
-	{name: "S", active: true},
+	{name: "Su", active: true},
 ]
 

@@ -22,7 +22,23 @@ type Class struct {
 	Professor  sql.NullString
 	Location   sql.NullString
 
+	Priority  int
+	Manditory bool
+	//the oposite of manditory, becuase I don't feel like inverting the already
+	//written logic in generate.  sue me
+	Optional bool
+
 	Times
+}
+
+func (Class Class) ExistsIn(Arr []Class) bool {
+	for i := range Arr {
+		if Arr[i] == Class {
+			return true
+		}
+	}
+
+	return false
 }
 
 type Times struct {
@@ -40,12 +56,6 @@ type Times struct {
 
 	StartTime time.Time
 	EndTime   time.Time
-
-	Priority  int
-	Manditory bool
-	//the oposite of manditory, becuase I don't feel like inverting the already
-	//written logic in generate.  sue me
-	Optional bool
 }
 
 // A group of classes which share some common characteristics. For example,
