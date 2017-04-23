@@ -15,15 +15,12 @@ export class Class {
 	Thursday: boolean = false;
 	Friday: boolean = false;
 	Saturday: boolean = false;
-	MeetingDays: string = "";
-	RawStartTime: ValidInt64 = new ValidInt64();
-	RawEndTime: ValidInt64 = new ValidInt64();
 
 	//ui junk
 	//I really dont care
 	Weekdays: Array<Weekday> = JSON.parse(JSON.stringify(WEEKDAYS));
-	StartTime: string = "07:00";
-	EndTime: string = "17:00";
+	RawStartTime: string = "07:00";
+	RawEndTime: string = "17:00";
 }
 
 //TODO:make this one file.  I'm soooooo lazy

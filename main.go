@@ -24,14 +24,8 @@ var (
 
 func main() {
 	flag.Parse()
-	_ = "breakpoint"
-	// Initalize Database
-	// db, err := gorm.Open("sqlite3", "data/test")
-	// if err != nil {
-	// }
 
 	var DevelopmentMode = true
-	// accessor := &DatabaseAccessor{db}
 
 	mux := http.NewServeMux()
 
@@ -39,14 +33,6 @@ func main() {
 		staticFiles := rice.MustFindBox("frontend").HTTPBox()
 		mux.Handle("/", http.FileServer(staticFiles))
 	}
-
-	/*
-		mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-				log.Println("options hit")
-				w.Header().Set("Access-Control-Allow-Origin", "*")
-				return
-			}).Methods("OPTIONS")
-	*/
 
 	mux.HandleFunc("/api/v0/schedules", func(rw http.ResponseWriter, r *http.Request) {
 		rw.Header().Set("Access-Control-Allow-Origin", "*")
@@ -74,8 +60,7 @@ func main() {
 			return
 		}
 
-		log.Println("scheduleRequest: ", scheduleRequest)
-		log.Println("class: ", scheduleRequest.Courses[0].Classes)
+		scheduleRequest.ParseTime()
 
 		// var courses []string
 		// props := make(map[string]scheduling.EventProperties)
@@ -111,33 +96,3 @@ func main() {
 		log.Fatalln(server.ListenAndServe())
 	}
 }
-
-type CombinationsRequest struct {
-	Courses []CoursesRequest
-	// TODO: Some pre-existing calendar state
-}
-
-type CoursesRequest struct {
-	Course string
-	scheduling.EventProperties
-}
-
-// type DatabaseAccessor struct {
-// 	*gorm.DB
-// }
-
-// func (accessor *DatabaseAccessor) GetClasses(courseIdentifier string) []scheduling.Class {
-// 	classes := []scheduling.Class{}
-// 	if courseIdentifier == "" {
-// 		log.Println("identifier empty")
-// 		return classes
-// 	}
-// 	accessor.DB.Where(&scheduling.Class{Course: courseIdentifier}).Find(&classes)
-// 	return classes
-// }
-
-// func (accessor *DatabaseAccessor) GetCourse(courseIdentifier string) scheduling.Course {
-// 	course := scheduling.Course{}
-// 	accessor.DB.Where(&scheduling.Course{Identifier: courseIdentifier}).First(&course)
-// 	return course
-// }

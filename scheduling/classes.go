@@ -2,7 +2,8 @@ package scheduling
 
 import (
 	"database/sql"
-	// "time"
+	"log"
+	"time"
 )
 
 // A singular class. A class is something you could attend. There are often
@@ -34,8 +35,11 @@ type Times struct {
 	Friday    bool
 	Saturday  bool
 
-	RawStartTime sql.NullInt64 `gorm:"column:start_time"`
-	RawEndTime   sql.NullInt64 `gorm:"column:end_time"`
+	RawStartTime string
+	RawEndTime   string
+
+	StartTime time.Time
+	EndTime   time.Time
 }
 
 // A group of classes which share some common characteristics. For example,
@@ -52,4 +56,21 @@ type ScheduleRequest struct {
 	Courses []Course
 
 	Times
+}
+
+func (Request *ScheduleRequest) ParseTime() {
+	for CourseID, ThisCourse := range Request.Courses {
+		for ClassID, ThisClass := range ThisCourse.Classes {
+			Request.Courses[CourseID].Classes[ClassID].StartTime = SimpleParse(ThisClass.RawStartTime)
+			Request.Courses[CourseID].Classes[ClassID].EndTime = SimpleParse(ThisClass.RawEndTime)
+		}
+	}
+
+	Request.StartTime = SimpleParse(Request.RawStartTime)
+	Request.EndTime = SimpleParse(Request.RawEndTime)
+}
+
+func SimpleParse(input string) (output time.Time) {
+	output, _ = time.Parse("15:04", input)
+	return
 }
