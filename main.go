@@ -6,32 +6,32 @@ import (
 	"flag"
 	"log"
 	"net/http"
-	"sort"
+	// "sort"
 
 	"github.com/GeertJohan/go.rice"
 	//"github.com/gorilla/handlers"
 
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	// "github.com/jinzhu/gorm"
+	// _ "github.com/jinzhu/gorm/dialects/sqlite"
 
-	"27thisotope.ddns.net/mibzman/CourseCorrect-Student/scheduling"
+	"./scheduling"
 )
 
 var (
 	listen = flag.String("listen", ":8080", "The adress this service will be available on.")
-	dbPath = flag.String("path", "", "The path at which the database containing class scheduling information")
+	//dbPath = flag.String("path", "", "The path at which the database containing class scheduling information")
 )
 
 func main() {
 	flag.Parse()
 	_ = "breakpoint"
 	// Initalize Database
-	db, err := gorm.Open("sqlite3", "data/test")
-	if err != nil {
-	}
+	// db, err := gorm.Open("sqlite3", "data/test")
+	// if err != nil {
+	// }
 
 	var DevelopmentMode = true
-	accessor := &DatabaseAccessor{db}
+	// accessor := &DatabaseAccessor{db}
 
 	mux := http.NewServeMux()
 
@@ -47,33 +47,6 @@ func main() {
 				return
 			}).Methods("OPTIONS")
 	*/
-
-	// TODO: Restify this API!
-	mux.HandleFunc("/api/v0/courses", func(rw http.ResponseWriter, r *http.Request) {
-		rw.Header().Set("Access-Control-Allow-Origin", "*")
-		// Query Database
-		var courses []scheduling.Course
-		db.Find(&courses)
-		/*db.Where(&scheduling.Class{
-		times{
-			Sunday:    false,
-			Monday:    false,
-			Tuesday:   false,
-			Wednesday: false,
-			Thursday:  false,
-			Friday:    false,
-			Saturday:  false}}).Find(&courses)*/
-		//log.Println("looked up courses")
-
-		// Send Response
-		encoder := json.NewEncoder(rw)
-		err := encoder.Encode(courses)
-		if err != nil {
-			log.Println("Failed to encode json:", err)
-			rw.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-	})
 
 	mux.HandleFunc("/api/v0/schedules", func(rw http.ResponseWriter, r *http.Request) {
 		rw.Header().Set("Access-Control-Allow-Origin", "*")
@@ -93,35 +66,67 @@ func main() {
 		decoder := json.NewDecoder(r.Body)
 		defer r.Body.Close()
 
-		var constraints CombinationsRequest
-		err := decoder.Decode(&constraints)
+		var courses []scheduling.Course
+		err := decoder.Decode(&courses)
 		if err != nil {
 			log.Println("Failed to decode json:", err)
 			rw.WriteHeader(http.StatusBadRequest)
 			return
 		}
 
-		var courses []string
-		props := make(map[string]scheduling.EventProperties)
-		for _, course := range constraints.Courses {
-			//log.Println("looping through constraints")
-			courses = append(courses, course.Course)
-			props[course.Course] = course.EventProperties
-		}
-		//log.Println("loop finished")
 		log.Println("courses: ", courses)
-		log.Println("props: ", props)
-		schedules := scheduling.FindSchedules(courses, props, accessor)
-		//log.Println("findSchedules finished")
-		sort.Sort(sort.Reverse(scheduling.BySchedule(schedules)))
-		//log.Println("sorted")
-		log.Println("result: ", schedules)
-		encoder := json.NewEncoder(rw)
-		err = encoder.Encode(schedules)
-		if err != nil {
-			log.Println("Failed to encode json:", err)
-			rw.WriteHeader(http.StatusInternalServerError)
+		log.Println("class: ", courses[0].Classes)
+
+		// var courses []string
+		// props := make(map[string]scheduling.EventProperties)
+		// for _, course := range courses.Courses {
+		// 	//log.Println("looping through courses")
+		// 	courses = append(courses, course.Course)
+		// 	props[course.Course] = course.EventProperties
+		// }
+		// //log.Println("loop finished")
+		// log.Println("courses: ", courses)
+		// log.Println("props: ", props)
+		// schedules := scheduling.FindSchedules(courses, props, accessor)
+		// //log.Println("findSchedules finished")
+		// sort.Sort(sort.Reverse(scheduling.BySchedule(schedules)))
+		// //log.Println("sorted")
+		// log.Println("result: ", schedules)
+		// encoder := json.NewEncoder(rw)
+		// err = encoder.Encode(schedules)
+		// if err != nil {
+		// 	log.Println("Failed to encode json:", err)
+		// 	rw.WriteHeader(http.StatusInternalServerError)
+		// }
+	})
+
+	mux.HandleFunc("/api/v0/testClass", func(rw http.ResponseWriter, r *http.Request) {
+		rw.Header().Set("Access-Control-Allow-Origin", "*")
+		rw.Header().Set("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
+
+		if r.Method == "OPTIONS" {
+			return
 		}
+
+		if r.Method != http.MethodPost {
+
+			log.Println("Invalid method to post endpoint:", r.Method)
+			rw.WriteHeader(http.StatusBadRequest)
+			return
+		}
+
+		decoder := json.NewDecoder(r.Body)
+		defer r.Body.Close()
+
+		var classes []scheduling.Class
+		err := decoder.Decode(&classes)
+		if err != nil {
+			log.Println("Failed to decode json:", err)
+			rw.WriteHeader(http.StatusBadRequest)
+			return
+		}
+
+		log.Println("classes: ", classes)
 	})
 
 	log.Printf("starting Server")
@@ -146,22 +151,22 @@ type CoursesRequest struct {
 	scheduling.EventProperties
 }
 
-type DatabaseAccessor struct {
-	*gorm.DB
-}
+// type DatabaseAccessor struct {
+// 	*gorm.DB
+// }
 
-func (accessor *DatabaseAccessor) GetClasses(courseIdentifier string) []scheduling.Class {
-	classes := []scheduling.Class{}
-	if courseIdentifier == "" {
-		log.Println("identifier empty")
-		return classes
-	}
-	accessor.DB.Where(&scheduling.Class{Course: courseIdentifier}).Find(&classes)
-	return classes
-}
+// func (accessor *DatabaseAccessor) GetClasses(courseIdentifier string) []scheduling.Class {
+// 	classes := []scheduling.Class{}
+// 	if courseIdentifier == "" {
+// 		log.Println("identifier empty")
+// 		return classes
+// 	}
+// 	accessor.DB.Where(&scheduling.Class{Course: courseIdentifier}).Find(&classes)
+// 	return classes
+// }
 
-func (accessor *DatabaseAccessor) GetCourse(courseIdentifier string) scheduling.Course {
-	course := scheduling.Course{}
-	accessor.DB.Where(&scheduling.Course{Identifier: courseIdentifier}).First(&course)
-	return course
-}
+// func (accessor *DatabaseAccessor) GetCourse(courseIdentifier string) scheduling.Course {
+// 	course := scheduling.Course{}
+// 	accessor.DB.Where(&scheduling.Course{Identifier: courseIdentifier}).First(&course)
+// 	return course
+// }

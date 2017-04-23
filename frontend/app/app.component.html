@@ -16,12 +16,11 @@
       <br>
         <div
           *ngFor='let class of tempCourse.Classes; let i = index'>
-          <h4> Class: {{i + 1}} </h4>
-          <div>
+          <h4> Class {{i + 1}} </h4>
             <div class='form-group'>
               <label for='startTime' class='control-label'>Start Time</label>
               <input
-                type='time'
+                type='time' 
                 class='form-control'
                 id='startTime'
                 [(ngModel)]='class.StartTime' />
@@ -37,23 +36,25 @@
               *ngFor='let weekday of class.Weekdays;'
               [name]='weekday.name'
               [(selected)]='weekday.active'></round-button>
-            </div>
           </div>
         </div>
 
+
+      <button
+        type="submit"
+        class="btn btn-success pull-right"
+        (click)='AddCourse()'>
+          Add Course
+      </button>
+      
       <button
         type="submit"
         class="btn btn-primary pull-right"
         (click)='newTempClass()'>
           Add new Class
       </button>
-      <!--         <br>
-      <button
-        type="submit"
-        class="btn btn-primary pull-right"
-        (click)='AddCourse()'>
-          Add Course
-      </button> -->
+
+      <br>
   </div>
 
   <!-- Selected Courses -->
@@ -67,11 +68,8 @@
       </thead>
 
       <tbody [sortablejs]='selectedCourses'>
-        <tr *ngFor='let course of selectedCourses'>
-          <td><input
-              type="checkbox"
-              (change)='updateSelected(course, $event)' checked/></td>
-          <td>{{ course.Identifier }}: {{course.Title.String}}</td>
+        <tr *ngFor='let course of courses'>
+          <td>{{course.Title.String}}</td>
         </tr>
       </tbody>
     </table>

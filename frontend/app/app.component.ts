@@ -23,7 +23,7 @@ export class AppComponent {
 	theseWeekdays: Array<Weekday> = WEEKDAYS;
 	startTime: string = "07:00";
 	endTime: string = "17:00";
-	courses: Array<Course>;
+	courses: Array<Course> = new Array<Course>();
 	//combinations: Array<Combination>;
   schedules: Array<Schedule>;
 	currentSchedule: number = 0;
@@ -36,19 +36,8 @@ export class AppComponent {
   tempCourse: Course;
 
 	ngOnInit() {
-		// this.courseService.getCourses()
-		// 	.subscribe(
-		// 		courses => {
-  //         this.courses = courses;
-  //         //getCourse("3460 210", this.courses);
-  //       },
-		// 		// TODO: Handle Properly
-		// 		err => console.error(err)
-		// 	)
-
     this.tempCourse = new Course();
-    // this.tempCourse.Title = {};
-    // this.tempCourse.Title.String = "";
+    this.newTempClass();
 	}
 
 	selectedCourses: Array<Course> = new Array();
@@ -62,15 +51,17 @@ export class AppComponent {
 			this.selectedCourses.splice(
 				this.selectedCourses.indexOf(course), 1);
 		}
+
+
 	}
 
 	// TODO: Proper form handling
 	onSubmit() {
-		this.selectedCourses.forEach((course, idx) => {
+		this.courses.forEach((course, idx) => {
 			course.Priority = idx;
 		});
     var requests:any[] = [];
-    this.selectedCourses.forEach(function(course){
+    this.courses.forEach(function(course){
       requests.push({
         Course: course.Identifier,
         Weight: 10,
@@ -78,16 +69,42 @@ export class AppComponent {
       })
     })
 
-		this.courseService.getSchedules({
-			Courses: requests,
-		})
+    for (let course of this.courses){
+      for (let thisClass of course.Classes){
+        for (let weekday of thisClass.Weekdays){
+            if (weekday.active){
+              if (weekday.name = "S"){
+                thisClass.Sunday = true;
+              }else if (weekday.name = "M"){
+                thisClass.Monday = true;
+              }else if (weekday.name = "T"){
+                thisClass.Tuesday = true;
+              }else if (weekday.name = "W"){
+                thisClass.Wednesday = true;
+              }else if (weekday.name = "Th"){
+                thisClass.Thursday = true;
+              }else if (weekday.name = "F"){
+                thisClass.Friday = true;
+              }else if (weekday.name = "Su"){
+                thisClass.Sunday = true;
+              }
+            }
+        }
+      }
+    }   
+
+    console.log(this.courses);
+		this.courseService.getSchedules(this.courses)
 			.subscribe(
 				response => {
+
           //this.schedules = response;
-          this.schedules = populateMeetingDays(response);
+          //this.schedules = populateMeetingDays(response);
         },
 				// TODO: Handle Properly
-				err => console.error(err)
+				err => {
+          console.log("an error occured");
+        }
 			)
 	}
 
@@ -108,11 +125,12 @@ export class AppComponent {
    }
 
    AddCourse(){
-     var newClass:Class = new Class();
-     this.tempCourse.Classes.push(newClass);
+     this.courses.push(this.tempCourse);
+     this.tempCourse = new Course();
+     this.newTempClass();
    }
 
-  function populateMeetingDays(borks: Array<Schedule>): Array<Schedule>{
+  populateMeetingDays(borks: Array<Schedule>): Array<Schedule>{
     console.log("wow, I hit the method");
     for (let schedule of borks){
       for (event of schedule.Classes){
@@ -145,40 +163,6 @@ export class AppComponent {
 
 
 }
-
-/*
-function populateMeetingDays(borks: Array<Class>): Array<Class>{
-  //console.log(borks);
-  for (let schedule of borks){
-    for (event of schedule.Events){
-      event.MeetingDays = "test";
-      /*if (event.Sunday){
-        event.MeetingDays += "S";
-      }
-      if (event.Monday){
-        event.MeetingDays += "M";
-      }
-      if (event.Tuesday){
-        event.MeetingDays += "T";
-      }
-      if (event.Wednesday){
-        event.MeetingDays += "W";
-      }
-      if (event.Thursday){
-        event.MeetingDays += "Th";
-      }
-      if (event.Friday){
-        event.MeetingDays += "F";
-      }
-      if (event.Saturday){
-        event.MeetingDays += "Su";
-      }
-    }
-  }
-  return borks;
-}
-
-}*/
 
 // Parses time from input elements into a json format.
 function parseTime(input: string): string {
