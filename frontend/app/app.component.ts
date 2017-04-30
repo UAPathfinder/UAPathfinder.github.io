@@ -19,7 +19,7 @@ import './rxjs-operators';
 export class AppComponent {
 	constructor(private courseService: CourseService) { }
 
-	Weekdays: Weekday[] = WEEKDAYS;
+	Weekdays: Weekday[] = JSON.parse(JSON.stringify(WEEKDAYS));
 	startTime: string = "07:00";
 	endTime: string = "17:00";
 	courses: Array<Course> = new Array<Course>();
@@ -91,27 +91,9 @@ export class AppComponent {
 	}
 
   populateCourseDays(courses: Course[]){
-    for (let course of courses){
-      for (let thisClass of course.Classes){
-        for (let weekday of thisClass.Weekdays){
-          if (weekday.active){
-            if (weekday.name = "S"){
-              thisClass.Sunday = true;
-            }else if (weekday.name = "M"){
-              thisClass.Monday = true;
-            }else if (weekday.name = "T"){
-              thisClass.Tuesday = true;
-            }else if (weekday.name = "W"){
-              thisClass.Wednesday = true;
-            }else if (weekday.name = "Th"){
-              thisClass.Thursday = true;
-            }else if (weekday.name = "F"){
-              thisClass.Friday = true;
-            }else if (weekday.name = "Su"){
-              thisClass.Sunday = true;
-            }
-          }
-        }
+    for (var course of courses){
+      for (var thisClass of course.Classes){
+        thisClass.parseWeekdays();
       }
     } 
   }
@@ -167,9 +149,3 @@ export class AppComponent {
 
 
 }
-
-// // Parses time from input elements into a json format.
-// function parseTime(input: string): string {
-//   alert("test")
-// alert(getTime(61800))
-// }

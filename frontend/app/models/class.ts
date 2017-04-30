@@ -24,6 +24,28 @@ export class Class {
 
 	Priority: number = 0;
 	Manditory: boolean;
+
+	public parseWeekdays(){
+    for (var weekday of this.Weekdays){
+      if (weekday.active){
+        if (weekday.name == "S"){
+          this.Saturday = true;
+        }else if (weekday.name == "M"){
+          this.Monday = true;
+        }else if (weekday.name == "T"){
+          this.Tuesday = true;
+        }else if (weekday.name == "W"){
+          this.Wednesday = true;
+        }else if (weekday.name == "Th"){
+          this.Thursday = true;
+        }else if (weekday.name == "F"){
+          this.Friday = true;
+        }else if (weekday.name == "Su"){
+          this.Sunday = true;
+        }
+      }
+    }
+	}
 }
 
 //TODO:make this one file.  I'm soooooo lazy

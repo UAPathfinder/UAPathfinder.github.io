@@ -13,21 +13,21 @@ export class ScheduleRequest {
 	}
 
 	populateWeekdays(weekdays: Weekday[]){
-    for (let weekday of weekdays){
+    for (var weekday of weekdays){
       if (weekday.active){
-        if (weekday.name = "S"){
-          this.Sunday = true;
-        }else if (weekday.name = "M"){
+        if (weekday.name == "S"){
+          this.Saturday = true;
+        }else if (weekday.name == "M"){
           this.Monday = true;
-        }else if (weekday.name = "T"){
+        }else if (weekday.name == "T"){
           this.Tuesday = true;
-        }else if (weekday.name = "W"){
+        }else if (weekday.name == "W"){
           this.Wednesday = true;
-        }else if (weekday.name = "Th"){
+        }else if (weekday.name == "Th"){
           this.Thursday = true;
-        }else if (weekday.name = "F"){
+        }else if (weekday.name == "F"){
           this.Friday = true;
-        }else if (weekday.name = "Su"){
+        }else if (weekday.name == "Su"){
           this.Sunday = true;
         }
       }
