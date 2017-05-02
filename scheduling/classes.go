@@ -11,22 +11,22 @@ import (
 // Example: Data Structures starting at 3 PM in room 301 with professor x
 type Class struct {
 	// Class identifier string. Human readable.
-	Identifier string
+	Identifier string //unused, old DB stuff
 
 	// Course identifier string. Human readable.
-	Course string
+	Course string //title of parent course
 
 	// TODO: Omit Information About Validity In JSON
-	Capicity   sql.NullInt64
-	Registered sql.NullInt64
-	Professor  sql.NullString
-	Location   sql.NullString
+	Capicity   sql.NullInt64  //unused
+	Registered sql.NullInt64  //unused
+	Professor  sql.NullString //unused
+	Location   sql.NullString //unused
 
-	Priority  int
-	Manditory bool
+	Priority  int  //unused
+	Manditory bool //unused
 	//the oposite of manditory, becuase I don't feel like inverting the already
 	//written logic in generate.  sue me
-	Optional bool
+	Optional bool //unused
 
 	Times
 }
@@ -51,8 +51,8 @@ type Times struct {
 	Friday    bool
 	Saturday  bool
 
-	RawStartTime string
-	RawEndTime   string
+	RawStartTime string //ui only
+	RawEndTime   string //ui only
 
 	StartTime time.Time
 	EndTime   time.Time
@@ -78,12 +78,13 @@ type Course struct {
 type ScheduleRequest struct {
 	Courses []Course
 
-	Times
+	Times //we can ignore this, I'll remove it from the ui closer to the demo
 }
 
 func (Request *ScheduleRequest) ParseTime() {
 	for CourseID, ThisCourse := range Request.Courses {
 		for ClassID, ThisClass := range ThisCourse.Classes {
+			//have I mentioned how much I hate this?
 			Request.Courses[CourseID].Classes[ClassID].StartTime = SimpleParse(ThisClass.RawStartTime)
 			Request.Courses[CourseID].Classes[ClassID].EndTime = SimpleParse(ThisClass.RawEndTime)
 		}

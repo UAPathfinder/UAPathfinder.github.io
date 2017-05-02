@@ -6,7 +6,7 @@ import (
 
 type Schedule struct {
 	Classes []Class
-	Score   int
+	Score   int //unused, sort however you like
 }
 
 type BySchedule []Schedule
