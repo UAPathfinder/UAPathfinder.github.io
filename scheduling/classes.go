@@ -58,11 +58,11 @@ type Times struct {
 	EndTime   time.Time
 }
 
-type ByStartTime []Class
+type ByEndTime []Class
 
-func (s ByStartTime) Len() int           { return len(s) }
-func (s ByStartTime) Swap(i, j int)      { s[i], s[j] = s[j], s[i] }
-func (s ByStartTime) Less(i, j int) bool { return s[i].StartTime.Before(s[j].StartTime) }
+func (s ByEndTime) Len() int           { return len(s) }
+func (s ByEndTime) Swap(i, j int)      { s[i], s[j] = s[j], s[i] }
+func (s ByEndTime) Less(i, j int) bool { return s[i].EndTime.Before(s[j].EndTime) }
 
 // A group of classes which share some common characteristics. For example,
 // 3960:401 Data Structures

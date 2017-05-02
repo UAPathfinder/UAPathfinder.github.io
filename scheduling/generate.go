@@ -1,5 +1,10 @@
 package scheduling
 
+
+import (
+	"sort"
+)
+
 // An interface to get Classes for FindSchedules. Mockable for testing the
 // algorithm against custom data.
 
@@ -18,8 +23,7 @@ func FindSchedules(Request ScheduleRequest) []Schedule {
 }
 
 // http://stackoverflow.com/questions/17192796/generate-all-combinations-from-multiple-lists
-func RecursiveFindSchedules(Request ScheduleRequest, Result *[]Schedule, Depth int, Current Schedule) {
-
+func RecursiveFindSchedules(Request ScheduleRequest, Result *[]Schedule, Depth int, Current Schedule) {	
 	if Depth == len(Request.Courses) {
 		// Deepest Case, Called After Builder Cases for 0..(Depth - 1)
 		*Result = append(*Result, Current)
@@ -32,9 +36,9 @@ func RecursiveFindSchedules(Request ScheduleRequest, Result *[]Schedule, Depth i
 	// Get Classes for Course
 	Classes := Course.Classes
 
-ClassesLoop:
+	sort.Sort(ByEndTime(Classes))
+
 	for _, ThisClass := range Classes {
-		ThisClass.Optional = !ThisClass.Manditory
 		//THIS IS IMPORTANT
 		//only make changes to Current if you want them applied to every tree branch after this point
 		workingCurrent := Current
@@ -45,38 +49,12 @@ ClassesLoop:
 		//this is something that martin did, idk why, it seems to work
 		var pendingDeletions []Class
 
-		cost := 0
-
 		DoesConfict, conflictingClass := workingCurrent.DoesConflict(ThisClass)
 
 		if DoesConfict {
-
-			if !conflictingClass.Optional && !ThisClass.Optional {
-				// Both Required
-				continue ClassesLoop
-			} else if conflictingClass.Optional && !ThisClass.Optional {
-				// Ours Required
-				// Pend Deletion of Other, Keep Ours
-				pendingDeletions = append(pendingDeletions, conflictingClass)
-				cost += conflictingClass.Priority
-			} else if !conflictingClass.Optional && ThisClass.Optional {
-				// Other Required, Ours Optional
-				cost += ThisClass.Priority
-			} else {
-				// Both Optional, Skip Lower Priority
-				if conflictingClass.Priority < ThisClass.Priority {
-					cost += conflictingClass.Priority
-					pendingDeletions = append(pendingDeletions, conflictingClass)
-				} else {
-					cost += ThisClass.Priority
-				}
-			}
+			pendingDeletions = append(pendingDeletions, conflictingClass)
 		}
 
-		// Incur Cost
-		workingCurrent.Score -= cost
-
-		//TODO: make this not suck
 		for _, Class := range Classes {
 			if !Class.ExistsIn(pendingDeletions) {
 				workingCurrent.Classes = append(workingCurrent.Classes, Class)
