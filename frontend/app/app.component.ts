@@ -100,10 +100,10 @@ export class AppComponent {
 
 
 	// Helper method to get a course given a course id.
-	 getCourse(id: string, courses: Array<Course>):Course {
-		return this.courses
-			.find((course) => course.Identifier == id);
-	}
+	//  getCourse(id: string, courses: Array<Course>):Course {
+	// 	return this.courses
+	// 		.find((course) => course.Identifier == id);
+	// }
 
   getTime(input: number): string {
       console.log(input);
@@ -117,7 +117,7 @@ export class AppComponent {
 
    AddCourse(){
      for (var thisClass of this.tempCourse.Classes){
-       thisClass.Course = this.tempCourse.Title.String;
+        thisClass.Course = this.tempCourse.Title.String;
      }
      this.courses.push(this.tempCourse);
      this.tempCourse = new Course();

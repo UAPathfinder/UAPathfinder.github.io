@@ -154,7 +154,7 @@
         <tbody *ngIf='schedules[currentSchedule]'>
           <tr *ngFor='let class of schedules[currentSchedule].Classes'>
 
-             <td>{{ getCourse(class.Course, courses).Title.String}}</td>
+             <td>{{ class.Course }}</td>
 
             <td>{{ getMeetingDays(class) }}</td>
             <td>{{ class.RawStartTime }}</td>
