@@ -17,6 +17,14 @@ import (
 // - Simulated Annealing
 func FindSchedules(Request ScheduleRequest) []Schedule {
 	Result := []Schedule{}
+
+	//run interval scheduling on classes that happen on friday, not considering other days at all
+	//throw out conflicting classes
+
+	//run for classes that don't happen on friday but do on monday
+
+	//run for classes that just
+
 	RecursiveFindSchedules(Request, &Result, 0, Schedule{})
 	return Result
 }
@@ -48,19 +56,17 @@ func RecursiveFindSchedules(Request ScheduleRequest, Result *[]Schedule, Depth i
 		//this is something that martin did, idk why, it seems to work
 		// var pendingDeletions []Class
 
-		// DoesConfict, conflictingClass := workingCurrent.DoesConflict(ThisClass)9
+		DoesConfict, _ := workingCurrent.DoesConflict(ThisClass)
 
-		// if DoesConfict {
-		// 	pendingDeletions = append(pendingDeletions, conflictingClass)
-		// }
+		if !DoesConfict {
+			RecursiveFindSchedules(Request, Result, Depth+1, workingCurrent)
+		}
 
 		// for _, Class := range Classes {
 		// 	if !Class.ExistsIn(pendingDeletions) {
 		// 		workingCurrent.Classes = append(workingCurrent.Classes, Class)
 		// 	}
 		// }
-
-		RecursiveFindSchedules(Request, Result, Depth+1, workingCurrent)
 
 		//     Add Class to Schedule
 		//     Calculate Score of Schedule
