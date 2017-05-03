@@ -8,7 +8,7 @@ import (
 
 // Utility function to parse time in format (hh:mm:ss). Panics on failure.
 func MustParseTime(input string) time.Time {
-	output, err := time.Parse("15:04:05", input)
+	output, err := time.Parse("15:04", input)
 	if err != nil {
 		panic(err)
 	}

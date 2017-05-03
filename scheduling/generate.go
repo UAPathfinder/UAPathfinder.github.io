@@ -1,6 +1,5 @@
 package scheduling
 
-
 import (
 	"sort"
 )
@@ -23,7 +22,7 @@ func FindSchedules(Request ScheduleRequest) []Schedule {
 }
 
 // http://stackoverflow.com/questions/17192796/generate-all-combinations-from-multiple-lists
-func RecursiveFindSchedules(Request ScheduleRequest, Result *[]Schedule, Depth int, Current Schedule) {	
+func RecursiveFindSchedules(Request ScheduleRequest, Result *[]Schedule, Depth int, Current Schedule) {
 	if Depth == len(Request.Courses) {
 		// Deepest Case, Called After Builder Cases for 0..(Depth - 1)
 		*Result = append(*Result, Current)
@@ -47,19 +46,19 @@ func RecursiveFindSchedules(Request ScheduleRequest, Result *[]Schedule, Depth i
 
 		// Container to hold potential deletions.
 		//this is something that martin did, idk why, it seems to work
-		var pendingDeletions []Class
+		// var pendingDeletions []Class
 
-		DoesConfict, conflictingClass := workingCurrent.DoesConflict(ThisClass)
+		// DoesConfict, conflictingClass := workingCurrent.DoesConflict(ThisClass)9
 
-		if DoesConfict {
-			pendingDeletions = append(pendingDeletions, conflictingClass)
-		}
+		// if DoesConfict {
+		// 	pendingDeletions = append(pendingDeletions, conflictingClass)
+		// }
 
-		for _, Class := range Classes {
-			if !Class.ExistsIn(pendingDeletions) {
-				workingCurrent.Classes = append(workingCurrent.Classes, Class)
-			}
-		}
+		// for _, Class := range Classes {
+		// 	if !Class.ExistsIn(pendingDeletions) {
+		// 		workingCurrent.Classes = append(workingCurrent.Classes, Class)
+		// 	}
+		// }
 
 		RecursiveFindSchedules(Request, Result, Depth+1, workingCurrent)
 
