@@ -29,9 +29,7 @@ func FindBench() {
 		taken := elapsed.Nanoseconds()
 		printTime(runs+1, int(taken))
 		runs++
-		if result != nil {
-			//have to use this somewhere...
-		}
+		if result != nil {} //golang requires I use every declared variable.
 	}
 }
 
