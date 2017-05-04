@@ -105,6 +105,7 @@ func TestFindTwoSchedules(t *testing.T) {
 	// t.Fail()
 }
 
+
 func TestFindTwoCoursesSchedules(t *testing.T) {
 	result := FindSchedules(GenerateRequest(1, 2))
 

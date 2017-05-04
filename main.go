@@ -23,6 +23,9 @@ var (
 )
 
 func main() {
+	//running the below function runs a benchmark.
+	//scheduling.FindBench()
+	
 	flag.Parse()
 
 	var DevelopmentMode = true
