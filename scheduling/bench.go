@@ -10,9 +10,9 @@ package scheduling
 
 import (
 	"fmt"
-	"time"
-	"strconv"
 	"math/rand"
+	"strconv"
+	"time"
 )
 
 func FindBench() {
@@ -27,7 +27,7 @@ func FindBench() {
 		result := FindSchedules(scheduleRequest)
 		elapsed := time.Since(start)
 		taken := elapsed.Nanoseconds()
-		printTime(runs+1,int(taken))
+		printTime(runs+1, int(taken))
 		runs++
 		if result != nil {
 			//have to use this somewhere...
@@ -41,45 +41,44 @@ func genTime() (string, string) {
 	p := r.Perm(max - min + 1)
 	a, b := p[0], p[1]
 	var start, end string
-	if(a < b){
+	if a < b {
 		start = strconv.Itoa(a)
 		end = strconv.Itoa(b)
 	} else {
 		start = strconv.Itoa(b)
-		end = strconv.Itoa(a)		
+		end = strconv.Itoa(a)
 	}
-	end = fmt.Sprintf("%s%s",end,":00")
-	start = fmt.Sprintf("%s%s",start,":00")	
+	end = fmt.Sprintf("%s%s", end, ":00")
+	start = fmt.Sprintf("%s%s", start, ":00")
 	return start, end
 }
 
-
 //seven days of the week, all represented by flags (see abstraction[s])
 func genDays() []bool {
-	rand.Seed(time.Now().UTC().UnixNano())	
+	rand.Seed(time.Now().UTC().UnixNano())
 	var days []bool
 	min, max := 0, 1 //either true or false.
 	i := 0
 	for i != 7 {
- 		happens := rand.Intn(max - min) + min
- 		days = append(days, happens != 0)
- 		i++
+		happens := rand.Intn(max-min) + min
+		days = append(days, happens != 0)
+		i++
 	}
 	return days
 }
 
-func printTime(courses int, taken int){
+func printTime(courses int, taken int) {
 	runs := strconv.Itoa(courses)
 	needed := strconv.Itoa(taken)
 	fmt.Println(runs, " ", needed)
 }
 
 func genCourse() Course {
-	rand.Seed(time.Now().UTC().UnixNano())	
+	rand.Seed(time.Now().UTC().UnixNano())
 	var arbitrary Course
-	var options []Class	
+	var options []Class
 	min, max := 1, 5
-	classes := rand.Intn(max - min) + min
+	classes := rand.Intn(max-min) + min
 	index := 0
 	for index != classes {
 		newClass := genClass()
@@ -102,6 +101,6 @@ func genClass() Class {
 	arbitrary.Thursday = days[3]
 	arbitrary.Friday = days[4]
 	arbitrary.Saturday = days[5]
-	arbitrary.Sunday = days[6]	
+	arbitrary.Sunday = days[6]
 	return arbitrary
 }
