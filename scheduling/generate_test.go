@@ -73,6 +73,7 @@ func TestFindTwoSchedules(t *testing.T) {
 	// t.Fail()
 }
 
+
 func TestFindTwoCoursesSchedules(t *testing.T) {
 	var class1 Class
 	class1.StartTime = MustParseTime("7:00")
